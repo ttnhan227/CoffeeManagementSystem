@@ -1,1 +1,4 @@
-first commit
+Coffee Management System App
+
+- first commit
+
