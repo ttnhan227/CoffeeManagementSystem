@@ -6,7 +6,10 @@ public class ViewDB {
 
     // Database name and connection string
     public static final String DB_NAME = "store_manager.sqlite";
-    public static final String CONNECTION_STRING = "jdbc:sqlite:D:/CODE/code/Java/StoreManagementSystem/src/app/db/" + DB_NAME;
+    public static final String CONNECTION_STRING = "jdbc:sqlite:"
+            + System.getProperty("user.dir")
+            + "/src/main/java/app/db/"
+            + DB_NAME;
 
     public static void main(String[] args) {
         Connection conn = null;
