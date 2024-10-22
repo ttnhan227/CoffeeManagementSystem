@@ -1,9 +1,9 @@
-package controller.user;
+package controller.employee;
 
 import controller.UserSessionController;
-import controller.user.pages.UserHomeController;
-import controller.user.pages.UserOrdersController;
-import controller.user.pages.UserProductsController;
+import controller.employee.pages.UserHomeController;
+import controller.employee.pages.UserOrdersController;
+import controller.employee.pages.UserProductsController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

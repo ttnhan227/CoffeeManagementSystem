@@ -15,8 +15,8 @@ module coffeeapp {
     opens controller.admin to javafx.fxml; // Add this line
     opens controller.admin.pages to javafx.fxml;
     opens controller.admin.pages.products to javafx.fxml;
-    opens controller.user to javafx.fxml; // Add this line
-    opens controller.user.pages to javafx.fxml;
+    opens controller.employee to javafx.fxml; // Add this line
+    opens controller.employee.pages to javafx.fxml;
 
 
 

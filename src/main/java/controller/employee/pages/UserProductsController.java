@@ -1,4 +1,4 @@
-package controller.user.pages;
+package controller.employee.pages;
 
 import app.utils.HelperMethods;
 import controller.UserSessionController;
