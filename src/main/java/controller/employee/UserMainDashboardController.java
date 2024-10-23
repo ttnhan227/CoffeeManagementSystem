@@ -51,7 +51,7 @@ public class UserMainDashboardController implements Initializable {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/employee/pages/home/home.fxml");
         UserHomeController homeController = fxmlLoader.getController();
         homeController.getDashboardProdCount();
-        homeController.getDashboardOrdersCount();
+        homeController.getDashboardCostCount();
     }
 
     /**
@@ -138,6 +138,6 @@ public class UserMainDashboardController implements Initializable {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/employee/pages/home/home.fxml");
         UserHomeController homeController = fxmlLoader.getController();
         homeController.getDashboardProdCount();
-        homeController.getDashboardOrdersCount();
+        homeController.getDashboardCostCount();
     }
 }

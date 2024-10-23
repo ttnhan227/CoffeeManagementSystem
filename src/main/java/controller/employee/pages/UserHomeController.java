@@ -1,22 +1,57 @@
 package controller.employee.pages;
 
-import controller.UserSessionController;
 import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import model.Datasource;
 
 /**
- * This class handles the users home page.
+ * This class handles the admin home page.
  *
  * @author Sajmir Doko
  */
 public class UserHomeController {
 
+    @FXML
     public Label productsCount;
-    public Label ordersCount;
+    @FXML
+    public Label customersCount;
+    @FXML
+    public LineChart<String, Number> dataChart;
+
+    @FXML
+    public void initialize() {
+        // Initialize the chart with product and customer data
+        setupLineChart();
+        // Load product and customer counts
+        getDashboardProdCount();
+        getDashboardCostCount();
+    }
 
     /**
-     * This method gets the products count for the user dashboard and sets it to the productsCount label.
+     * This method sets up the line chart with product and customer data.
+     *
+     * @since 1.0.0
+     */
+    private void setupLineChart() {
+        XYChart.Series<String, Number> productSeries = new XYChart.Series<>();
+        productSeries.setName("Products");
+
+        XYChart.Series<String, Number> customerSeries = new XYChart.Series<>();
+        customerSeries.setName("Customers");
+
+        // Adding placeholder values (0) initially
+        productSeries.getData().add(new XYChart.Data<>("Product Count", 0));
+        customerSeries.getData().add(new XYChart.Data<>("Customer Count", 0));
+
+        // Add the series to the chart
+        dataChart.getData().addAll(productSeries, customerSeries);
+    }
+
+    /**
+     * This method gets the products count for the admin dashboard and sets it to the productsCount label.
      *
      * @since 1.0.0
      */
@@ -29,30 +64,41 @@ public class UserHomeController {
         };
 
         getDashProdCount.setOnSucceeded(e -> {
-            productsCount.setText(String.valueOf(getDashProdCount.valueProperty().getValue()));
+            int productCount = getDashProdCount.valueProperty().getValue();
+            productsCount.setText(String.valueOf(productCount));
+
+            // Update the chart with actual product count
+            XYChart.Series<String, Number> productSeries = dataChart.getData().get(0); // Products series is the first one
+            productSeries.getData().clear(); // Clear placeholder data
+            productSeries.getData().add(new XYChart.Data<>("Product Count", productCount));
         });
 
         new Thread(getDashProdCount).start();
     }
 
     /**
-     * This method gets the orders count for the user dashboard and sets it to the ordersCount label.
+     * This method gets the customers count for the admin dashboard and sets it to the customersCount label.
      *
      * @since 1.0.0
      */
-    public void getDashboardOrdersCount() {
-        Task<Integer> getDashOrderCount = new Task<Integer>() {
+    public void getDashboardCostCount() {
+        Task<Integer> getDashCostCount = new Task<Integer>() {
             @Override
             protected Integer call() {
-                return Datasource.getInstance().countUserOrders(UserSessionController.getUserId());
+                return Datasource.getInstance().countAllCustomers();
             }
         };
 
-        getDashOrderCount.setOnSucceeded(e -> {
-            ordersCount.setText(String.valueOf(getDashOrderCount.valueProperty().getValue()));
+        getDashCostCount.setOnSucceeded(e -> {
+            int customerCount = getDashCostCount.valueProperty().getValue();
+            customersCount.setText(String.valueOf(customerCount));
+
+            // Update the chart with actual customer count
+            XYChart.Series<String, Number> customerSeries = dataChart.getData().get(1); // Customers series is the second one
+            customerSeries.getData().clear(); // Clear placeholder data
+            customerSeries.getData().add(new XYChart.Data<>("Customer Count", customerCount));
         });
 
-        new Thread(getDashOrderCount).start();
+        new Thread(getDashCostCount).start();
     }
-
 }

@@ -55,7 +55,7 @@
                         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                             <ImageView fitHeight="50.0" fitWidth="322.0" preserveRatio="true">
                                 <image>
-                                    <Image url="@../resources/img/brand/360_F_784277349_wCyNJz9BpCaDeZ3OqGUBD6SMKPEeMTDI.jpg"/>
+                                    <Image url="@../resources/img/brand/360_F_784277349_wCyNJz9BpCaDeZ3OqGUBD6SMKPEeMTDI.jpg" />
                                 </image>
                                 <HBox.margin>
                                     <Insets left="10.0"/>
