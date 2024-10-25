@@ -797,6 +797,46 @@ public class Datasource extends Product {
         }
     }
 
+    public List<Integer> getAllTableID(){
+        String query = "SELECT id FROM \"table\"";
+
+        try (Statement statement = conn.createStatement();
+             ResultSet results = statement.executeQuery(query)){
+            List<Integer> list = new ArrayList<>();
+            while (results.next()) {
+                list.add(results.getInt("id"));
+            }
+            return list;
+
+        }catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public List<Coupon> getAllCoupon(){
+        String query = "SELECT * FROM coupon";
+
+        try (Statement statement = conn.createStatement();
+             ResultSet results = statement.executeQuery(query)){
+            List<Coupon> list = new ArrayList<>();
+            while (results.next()) {
+                Coupon c = new Coupon();
+                c.setId(results.getInt("couponID"));
+                c.setDiscount(results.getInt("discount"));
+                c.setExpiry(results.getString("expiry"));
+                list.add(c);
+//                System.out.println(c.getId());
+//                System.out.println(c.getExpiry());
+//                System.out.println(c.getDiscount());
+            }
+            return list;
+
+        }catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
+        }
+    }
 }
 
 
