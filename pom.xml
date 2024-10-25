@@ -76,7 +76,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.coffeestore.coffeemanagementsystem/com.coffeestore.coffeemanagementsystem.HelloApplication
+                                app.Main
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
