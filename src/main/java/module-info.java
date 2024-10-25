@@ -19,6 +19,4 @@ module coffeeapp {
     opens controller.employee.pages to javafx.fxml;
 
 
-
-
 }

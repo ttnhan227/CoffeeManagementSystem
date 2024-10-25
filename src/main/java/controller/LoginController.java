@@ -24,6 +24,7 @@ public class LoginController {
     public PasswordField passwordField;
     Stage dialogStage = new Stage();
     Scene scene;
+
     public void handleLoginButtonAction(ActionEvent event) throws SQLException, IOException {
         String username = usernameField.getText();
         String providedPassword = passwordField.getText();
@@ -65,6 +66,7 @@ public class LoginController {
             }
         }
     }
+
     public void handleRegisterButtonAction(ActionEvent actionEvent) throws IOException {
         Stage dialogStage;
         Node node = (Node) actionEvent.getSource();
