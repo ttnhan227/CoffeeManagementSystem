@@ -1,28 +1,125 @@
 @import "bootstrap3.css";
 
-.menuButton{
+/* Color variables */
+:root {
+    -coffee-dark: #4A3428;
+    -coffee-medium: #8B7355;
+    -coffee-light: #D4B59D;
+    -bg-cream: #FAF3E0;
+    -coffee-accent: #6F4E37;
+}
+
+.menuButton {
     -fx-border-width: 0px 0px 0px 5px;
     -fx-border-radius: 0px;
     -fx-background-radius: 0px;
-    -fx-text-fill: #4E4F52;
-    -fx-background-color: #e5e5e5;
+    -fx-text-fill: #FAF3E0;
+    -fx-background-color: #4A3428;
     -fx-min-height: 90;
+    -fx-font-size: 14px;
+    -fx-border-color: transparent;
+    -fx-padding: 10px;
+    -fx-graphic-text-gap: 10px;
 }
 
-.menuButton:hover{
-    -fx-background-color: #f3f3f3;
-    /*-fx-text-fill: white;*/
+.menuButton:hover {
+    -fx-background-color: #5C432F;
+    -fx-border-color: #D4B59D;
+    -fx-border-width: 0px 0px 0px 5px;
+    -fx-cursor: hand;
 }
 
-#dashHead{
-    -fx-background-color: #e5e5e5;
+.menuButton:pressed {
+    -fx-background-color: #6B4E37;
 }
-#acDashBord{
-    -fx-background-color:#e5e5e5;
+
+#dashHead {
+    -fx-background-color: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 3);
+    -fx-padding: 10px;
+}
+
+#acDashBord {
+    -fx-background-color: #4A3428;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 5, 0);
 }
 
 .table-view {
-    -fx-focus-color: #cecece;
+    -fx-focus-color: #D4B59D;
     -fx-effect: null;
-    -fx-outer-border : #cecece;
+    -fx-outer-border: #D4B59D;
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #4A3428;
+    -fx-padding: 5px;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FAF3E0;
+    -fx-font-weight: bold;
+    -fx-padding: 10px;
+}
+
+.table-view .table-cell {
+    -fx-padding: 10px;
+    -fx-text-fill: #4A3428;
+}
+
+.table-row-cell {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #FAF3E0;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #D4B59D;
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Button Styles */
+.button {
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+/* Logout Button specific style */
+.logout-button {
+    -fx-background-color: #ff6b6b;
+    -fx-text-fill: white;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 4px;
+}
+
+.logout-button:hover {
+    -fx-background-color: #ff5252;
+}
+
+/* Header Text Styles */
+.header-text {
+    -fx-text-fill: #4A3428;
+    -fx-font-size: 14px;
+}
+
+/* Custom Scroll Bar */
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical .thumb,
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: #8B7355;
+    -fx-background-radius: 5em;
+}
+
+.scroll-bar:vertical .track,
+.scroll-bar:horizontal .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
 }
