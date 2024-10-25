@@ -4,16 +4,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This class handles all the queries to the database.
- * It is constructed with the Singleton Design Pattern.
- * <p>
- * This pattern involves a single class which is responsible to create an object while making sure that only single
- * object gets created. This class provides a way to access its only object which can be accessed directly without
- * need to instantiate the object of the class.
- *
- * @author Sajmir Doko
- */
 public class Datasource extends Product {
 
     public static final String DB_NAME = "store_manager.sqlite";
@@ -64,29 +54,12 @@ public class Datasource extends Product {
     private static final Datasource instance = new Datasource();
     private Connection conn;
 
-    /**
-     * Make the constructor private so that this class cannot be instantiated
-     */
     private Datasource() {
     }
-
-    /**
-     * Get the only object available
-     *
-     * @return Datasource instance.
-     * @since 1.0.0
-     */
     public static Datasource getInstance() {
         return instance;
     }
 
-    /**
-     * This method makes the connection to the database and assigns the Connection to the conn variable.
-     * It is designed to be called in the application's Main method.
-     *
-     * @return boolean      Returns true or false.
-     * @since 1.0.0
-     */
     public boolean open() {
         try {
             conn = DriverManager.getConnection(CONNECTION_STRING);
@@ -96,13 +69,6 @@ public class Datasource extends Product {
             return false;
         }
     }
-
-    /**
-     * This method closes the connection to the database.
-     * It is designed to be called in the application's Main method.
-     *
-     * @since 1.0.0
-     */
     public void close() {
         try {
             if (conn != null) {
@@ -112,16 +78,6 @@ public class Datasource extends Product {
             System.out.println("Couldn't close connection: " + e.getMessage());
         }
     }
-
-    // BEGIN PRODUCTS QUERIES
-
-    /**
-     * This method get all the products from the database.
-     *
-     * @param sortOrder Results sort order.
-     * @return List         Returns Product array list.
-     * @since 1.0.0
-     */
     public List<Product> getAllProducts(int sortOrder) {
 
         StringBuilder queryProducts = queryProducts();
@@ -157,14 +113,6 @@ public class Datasource extends Product {
             return null;
         }
     }
-
-    /**
-     * This method get one product from the database based on the provided product_id.
-     *
-     * @param product_id Product id.
-     * @return List         Returns Product array list.
-     * @since 1.0.0
-     */
     public List<Product> getOneProduct(int product_id) {
 
         StringBuilder queryProducts = queryProducts();
@@ -192,15 +140,6 @@ public class Datasource extends Product {
             return null;
         }
     }
-
-    /**
-     * This method searches products from the database based on the provided searchString.
-     *
-     * @param searchString String to search product name or product description.
-     * @param sortOrder    Results sort order.
-     * @return List         Returns Product array list.
-     * @since 1.0.0
-     */
     public List<Product> searchProducts(String searchString, int sortOrder) {
         StringBuilder queryProducts = queryProducts();
         queryProducts.append(" WHERE (" + TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_NAME + " LIKE ? OR " + TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_DESCRIPTION + " LIKE ?)");
@@ -240,12 +179,6 @@ public class Datasource extends Product {
         }
     }
 
-    /**
-     * This private method returns an default query for the products.
-     *
-     * @return StringBuilder
-     * @since 1.0.0
-     */
     private StringBuilder queryProducts() {
         return new StringBuilder("SELECT " +
                 TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_ID + ", " +
@@ -728,14 +661,7 @@ public class Datasource extends Product {
             return false;
         }
     }
-    // END ORDERS QUERIES
 
-    /**
-     * This method counts all the products on the database.
-     *
-     * @return int      Returns count of the products.
-     * @since 1.0.0
-     */
     public Integer countAllProducts() {
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery("SELECT COUNT(*) FROM " + TABLE_PRODUCTS)) {
@@ -750,12 +676,6 @@ public class Datasource extends Product {
         }
     }
 
-    /**
-     * This method counts all the simple users on the database.
-     *
-     * @return int      Returns count of the simple users.
-     * @since 1.0.0
-     */
     public Integer countAllCustomers() {
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery("SELECT COUNT(*) FROM " + TABLE_USERS +
@@ -773,13 +693,6 @@ public class Datasource extends Product {
         }
     }
 
-    /**
-     * This method counts all the orders on the database.
-     *
-     * @param user_id Provided user id.
-     * @return int      Returns count of the orders.
-     * @since 1.0.0
-     */
     public Integer countUserOrders(int user_id) {
 
         try (PreparedStatement statement = conn.prepareStatement(String.valueOf("SELECT COUNT(*) FROM " + TABLE_ORDERS + " WHERE " + COLUMN_ORDERS_USER_ID + "= ?"))) {

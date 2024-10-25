@@ -23,11 +23,6 @@ import java.util.Optional;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
-/**
- * This class handles the admin products page.
- *
- * @author Sajmir Doko
- */
 public class ProductsController {
 
     @FXML
@@ -40,15 +35,7 @@ public class ProductsController {
     private StackPane productsContent;
     @FXML
     private TableView<Product> tableProductsPage;
-
-    /**
-     * This method returns the TextFormatter for validating as double text input fields.
-     *
-     * @return TextFormatter
-     * @since 1.0.0
-     */
     public static TextFormatter<Double> formatDoubleField() {
-//        Pattern validEditingState = Pattern.compile("^[0-9]+(|\\.)[0-9]+$");
         Pattern validEditingState = Pattern.compile("-?(([1-9][0-9]*)|0)?(\\.[0-9]*)?");
         UnaryOperator<TextFormatter.Change> filter = c -> {
             String text = c.getControlNewText();
@@ -76,13 +63,6 @@ public class ProductsController {
 
         return new TextFormatter<>(converter, 0.0, filter);
     }
-
-    /**
-     * This method returns the TextFormatter for validating as int text input fields.
-     *
-     * @return TextFormatter
-     * @since 1.0.0
-     */
     public static TextFormatter<Integer> formatIntField() {
 //        Pattern validEditingState = Pattern.compile("-?(0|[1-9]\\d*)");
         Pattern validEditingState = Pattern.compile("^[0-9]+$");
