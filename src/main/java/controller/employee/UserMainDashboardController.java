@@ -1,6 +1,7 @@
 package controller.employee;
 
 import controller.UserSessionController;
+import controller.employee.pages.NewOrderController;
 import controller.employee.pages.UserHomeController;
 import controller.employee.pages.UserOrdersController;
 import controller.employee.pages.UserProductsController;
@@ -34,6 +35,7 @@ public class UserMainDashboardController implements Initializable {
     public Button btnOrders;
     public Button lblLogOut;
     public AnchorPane dashHead;
+    public Button btnNewOrder;
     @FXML
     private StackPane dashContent;
     @FXML
@@ -106,6 +108,11 @@ public class UserMainDashboardController implements Initializable {
             dialogStage.setScene(scene);
             dialogStage.show();
         }
+    }
+
+    public void onClickNewOrder(ActionEvent actionEvent) throws IOException{
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/employee/pages/orders/newOrder.fxml");
+        //NewOrderController controller = fxmlLoader.getController();
     }
 
     /**
