@@ -6,6 +6,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import model.Datasource;
+import model.User;
 
 /**
  * This class handles the admin home page.

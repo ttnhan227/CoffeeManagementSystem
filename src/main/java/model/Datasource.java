@@ -3,7 +3,8 @@ package model;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.io.File;
+import java.net.URL;
 public class Datasource extends Product {
 
     public static final String DB_NAME = "store_manager.sqlite";
@@ -22,6 +23,8 @@ public class Datasource extends Product {
     public static final String COLUMN_PRODUCTS_PRICE = "price";
     public static final String COLUMN_PRODUCTS_QUANTITY = "quantity";
     public static final String COLUMN_PRODUCTS_CATEGORY_ID = "category_id";
+    public static final String COLUMN_PRODUCTS_IMAGE = "image";
+
 
     public static final String TABLE_CATEGORIES = "categories";
     public static final String COLUMN_CATEGORIES_ID = "id";
@@ -79,7 +82,6 @@ public class Datasource extends Product {
         }
     }
     public List<Product> getAllProducts(int sortOrder) {
-
         StringBuilder queryProducts = queryProducts();
 
         if (sortOrder != ORDER_BY_NONE) {
@@ -91,20 +93,61 @@ public class Datasource extends Product {
                 queryProducts.append(" ASC");
             }
         }
+
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery(queryProducts.toString())) {
 
             List<Product> products = new ArrayList<>();
             while (results.next()) {
-                Product product = new Product();
-                product.setId(results.getInt(1));
-                product.setName(results.getString(2));
-                product.setDescription(results.getString(3));
-                product.setPrice(results.getDouble(4));
-                product.setQuantity(results.getInt(5));
-                product.setCategory_name(results.getString(6));
-                product.setNr_sales(results.getInt(7));
-                products.add(product);
+                try {
+                    Product product = new Product();
+                    product.setId(results.getInt(1));
+                    product.setName(results.getString(2));
+                    product.setDescription(results.getString(3));
+                    product.setPrice(results.getDouble(4));
+                    product.setQuantity(results.getInt(5));
+                    product.setCategory_name(results.getString(6));
+
+                    // Handle image path
+                    String imagePath = results.getString(7);
+                    if (imagePath != null && !imagePath.trim().isEmpty()) {
+                        // Ensure the path starts with "/" if it doesn't already
+                        if (!imagePath.startsWith("/")) {
+                            imagePath = "/" + imagePath;
+                        }
+
+                        // Debug information
+                        System.out.println("Loading image for product " + product.getName() + ": " + imagePath);
+
+                        // Check if file exists in resources
+                        URL resourceUrl = getClass().getResource(imagePath);
+                        if (resourceUrl != null) {
+                            System.out.println("Found image in resources: " + resourceUrl);
+                        } else {
+                            // Check if file exists in project directory
+                            String projectPath = System.getProperty("user.dir");
+                            File imageFile = new File(projectPath + imagePath);
+                            if (imageFile.exists()) {
+                                System.out.println("Found image in project directory: " + imageFile.getAbsolutePath());
+                            } else {
+                                System.out.println("Image file not found: " + imagePath);
+                            }
+                        }
+
+                        product.setImage(imagePath);
+                    } else {
+                        // Set a default placeholder image path if no image is specified
+                        product.setImage("/view/resources/img/placeholder.png");
+                    }
+
+                    products.add(product);
+
+                } catch (Exception e) {
+                    System.err.println("Error processing product from database:");
+                    e.printStackTrace();
+                    // Continue processing other products even if one fails
+                    continue;
+                }
             }
             return products;
 
@@ -131,6 +174,7 @@ public class Datasource extends Product {
                 product.setCategory_name(results.getString(6));
                 product.setNr_sales(results.getInt(7));
                 product.setCategory_id(results.getInt(8));
+                product.setImage(results.getString(9));
                 products.add(product);
             }
             return products;
@@ -187,6 +231,7 @@ public class Datasource extends Product {
                 TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_PRICE + ", " +
                 TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_QUANTITY + ", " +
                 TABLE_CATEGORIES + "." + COLUMN_CATEGORIES_NAME + ", " +
+                TABLE_PRODUCTS   + "." + COLUMN_PRODUCTS_IMAGE + ", " +
                 " (SELECT COUNT(*) FROM " + TABLE_ORDERS + " WHERE " + TABLE_ORDERS + "." + COLUMN_ORDERS_PRODUCT_ID + " = " + TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_ID + ") AS nr_sales" + ", " +
                 TABLE_CATEGORIES + "." + COLUMN_CATEGORIES_ID +
                 " FROM " + TABLE_PRODUCTS +

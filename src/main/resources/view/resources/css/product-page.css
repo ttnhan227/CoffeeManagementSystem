@@ -1,0 +1,134 @@
+.products-page {
+    -fx-background-color: #f5f5f5;
+}
+
+.page-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-fill: #442c2e;
+}
+
+.search-field {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 4px;
+}
+
+.products-scroll {
+    -fx-background-color: transparent;
+}
+
+.products-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.products-grid {
+    -fx-background-color: transparent;
+    -fx-alignment: center;
+}
+
+.product-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+    -fx-min-width: 250px;
+    -fx-max-width: 250px;
+}
+
+.product-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 15, 0, 0, 4);
+    -fx-cursor: hand;
+}
+
+.image-container {
+    -fx-min-height: 250px;
+    -fx-max-height: 250px;
+    -fx-background-color: #f8f8f8;
+}
+
+.product-image {
+    -fx-background-color: #f8f8f8;
+}
+
+.product-info {
+    -fx-padding: 20 15;
+    -fx-spacing: 15;
+    -fx-background-color: white;
+    -fx-background-radius: 0 0 8 8;
+}
+
+.product-header {
+    -fx-spacing: 5;
+}
+
+.product-name {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-fill: #2d3748;
+}
+
+.product-category {
+    -fx-font-size: 12px;
+    -fx-fill: #718096;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 0.05em;
+}
+
+.product-details {
+    -fx-spacing: 20;
+    -fx-padding: 5 0;
+    -fx-border-color: transparent transparent #e2e8f0 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.price-container, .stock-container {
+    -fx-spacing: 5;
+    -fx-alignment: center-left;
+}
+
+.price-label, .stock-label {
+    -fx-font-size: 14px;
+    -fx-fill: #718096;
+}
+
+.product-price {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-fill: #2c5282;
+}
+
+.product-stock {
+    -fx-font-size: 14px;
+    -fx-fill: #4a5568;
+    -fx-font-weight: bold;
+}
+
+.product-actions {
+    -fx-spacing: 10;
+    -fx-alignment: center;
+    -fx-padding: 5 0 0 0;
+}
+
+.button.primary {
+    -fx-background-color: #4299e1;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-background-radius: 4;
+}
+
+.button.primary:hover {
+    -fx-background-color: #3182ce;
+}
+
+.button.danger {
+    -fx-background-color: #fc8181;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-background-radius: 4;
+}
+
+.button.danger:hover {
+    -fx-background-color: #f56565;
+}

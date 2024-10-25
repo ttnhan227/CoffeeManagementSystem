@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.text.Text?>
+<?import javafx.geometry.Insets?>
+
+<VBox styleClass="product-card" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" stylesheets="/view/resources/css/product-page.css">
+    <StackPane styleClass="image-container">
+        <ImageView fx:id="productImage" fitWidth="250.0" fitHeight="250.0" styleClass="product-image">
+            <preserveRatio>false</preserveRatio>
+        </ImageView>
+    </StackPane>
+    <VBox styleClass="product-info">
+        <VBox styleClass="product-header">
+            <Text fx:id="productName" styleClass="product-name" />
+            <Text fx:id="productCategory" styleClass="product-category" />
+        </VBox>
+
+        <HBox styleClass="product-details">
+            <HBox styleClass="price-container">
+                <Text styleClass="price-label" text="Price: " />
+                <Text fx:id="productPrice" styleClass="product-price" />
+            </HBox>
+            <HBox styleClass="stock-container">
+                <Text styleClass="stock-label" text="Stock: " />
+                <Text fx:id="productStock" styleClass="product-stock" />
+            </HBox>
+        </HBox>
+
+        <HBox styleClass="product-actions">
+            <Button fx:id="editButton" mnemonicParsing="false" styleClass="button,primary,xs" text="Edit" />
+            <Button fx:id="deleteButton" mnemonicParsing="false" styleClass="button,danger,xs" text="Delete" />
+        </HBox>
+    </VBox>
+</VBox>

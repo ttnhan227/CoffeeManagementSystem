@@ -1,5 +1,11 @@
 package model;
 
+
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import java.io.File;
+import java.net.URL;
+
 public class Product {
 
     private int id;
@@ -10,6 +16,9 @@ public class Product {
     private int category_id;
     private String category_name;
     private int nr_sales;
+    private String image;
+    private ImageView imageView;
+
 
     public int getId() {
         return id;
@@ -74,4 +83,62 @@ public class Product {
     public void setNr_sales(int nr_sales) {
         this.nr_sales = nr_sales;
     }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String imagePath) {
+        this.image = imagePath;
+
+        // Create ImageView when image path is set
+        try {
+            // Get the project path
+            String projectPath = System.getProperty("user.dir");
+            File imageFile = new File(projectPath + imagePath);
+
+            System.out.println("Attempting to load image from: " + imageFile.getAbsolutePath());
+
+            Image img;
+            if (imageFile.exists()) {
+                img = new Image(imageFile.toURI().toString());
+                System.out.println("Image loaded successfully from file.");
+            } else {
+                // Fallback to loading from resources
+                URL resourceUrl = getClass().getResource(imagePath);
+                System.out.println("Loading image from resources: " + resourceUrl);
+                if (resourceUrl != null) {
+                    img = new Image(resourceUrl.toString());
+                    System.out.println("Image loaded successfully from resources.");
+                } else {
+                    // If image cannot be found, load a placeholder
+                    URL placeholderUrl = getClass().getResource("/view/resources/img/coffee_pictures/placeholder.png");
+                    if (placeholderUrl != null) {
+                        img = new Image(placeholderUrl.toString());
+                        System.err.println("Using placeholder image.");
+                    } else {
+                        System.err.println("Neither image nor placeholder could be loaded: " + imagePath);
+                        return;
+                    }
+                }
+            }
+
+            imageView = new ImageView(img);
+            // Resize the image to a fixed size of 100x100 pixels
+            imageView.setFitHeight(100);  // Set the desired height
+            imageView.setFitWidth(100);    // Set the desired width
+            imageView.setPreserveRatio(true);  // Preserve the aspect ratio
+
+        } catch (Exception e) {
+            System.err.println("Error loading image: " + imagePath);
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public ImageView getImageView() {
+        return imageView;
+    }
+
 }
