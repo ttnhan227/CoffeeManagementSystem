@@ -309,8 +309,6 @@ public class ProductsController {
         productsContent.getChildren().clear();
         productsContent.getChildren().add(root);
 
-        ViewProductController controller = fxmlLoader.getController();
-        controller.fillViewingProductFields(product_id);
     }
 
     /**
