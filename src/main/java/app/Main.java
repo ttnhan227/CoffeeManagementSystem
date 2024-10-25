@@ -21,7 +21,7 @@ public class Main extends Application {
         primaryStage.setTitle("Coffee Store System");
         primaryStage.getIcons().add(new Image(getClass().getResource("/view/resources/img/brand/360_F_784277349_wCyNJz9BpCaDeZ3OqGUBD6SMKPEeMTDI.jpg").toString()));
 
-        primaryStage.setScene(new Scene(root, 1280, 800));
+        primaryStage.setScene(new Scene(root, 640, 400));
         primaryStage.show();
     }
 
