@@ -7,7 +7,6 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -24,11 +23,6 @@ import java.util.Optional;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
-/**
- * This class handles the admin products page.
- *
- * @author Sajmir Doko
- */
 public class ProductsController {
 
     @FXML
@@ -41,15 +35,7 @@ public class ProductsController {
     private StackPane productsContent;
     @FXML
     private TableView<Product> tableProductsPage;
-
-    /**
-     * This method returns the TextFormatter for validating as double text input fields.
-     *
-     * @return TextFormatter
-     * @since 1.0.0
-     */
     public static TextFormatter<Double> formatDoubleField() {
-//        Pattern validEditingState = Pattern.compile("^[0-9]+(|\\.)[0-9]+$");
         Pattern validEditingState = Pattern.compile("-?(([1-9][0-9]*)|0)?(\\.[0-9]*)?");
         UnaryOperator<TextFormatter.Change> filter = c -> {
             String text = c.getControlNewText();
@@ -77,13 +63,6 @@ public class ProductsController {
 
         return new TextFormatter<>(converter, 0.0, filter);
     }
-
-    /**
-     * This method returns the TextFormatter for validating as int text input fields.
-     *
-     * @return TextFormatter
-     * @since 1.0.0
-     */
     public static TextFormatter<Integer> formatIntField() {
 //        Pattern validEditingState = Pattern.compile("-?(0|[1-9]\\d*)");
         Pattern validEditingState = Pattern.compile("^[0-9]+$");
@@ -113,13 +92,6 @@ public class ProductsController {
 
         return new TextFormatter<>(converter, 0, filter);
     }
-
-    /**
-     * This method lists all the product to the view table.
-     * It starts a new Task, gets all the products from the database then bind the results to the view.
-     *
-     * @since 1.0.0
-     */
     @FXML
     public void listProducts() {
 
@@ -135,12 +107,6 @@ public class ProductsController {
         new Thread(getAllProductsTask).start();
 
     }
-
-    /**
-     * This private method adds the action buttons to the table rows.
-     *
-     * @since 1.0.0
-     */
     @FXML
     private void addActionButtonsToTable() {
         TableColumn colBtnEdit = new TableColumn("Actions");
@@ -149,22 +115,9 @@ public class ProductsController {
             @Override
             public TableCell<Product, Void> call(final TableColumn<Product, Void> param) {
                 return new TableCell<Product, Void>() {
-
-                    //private final Button viewButton = new Button("View");
                     private final Button editButton = new Button("Edit");
                     private final Button deleteButton = new Button("Delete");
                     private final HBox buttonsPane = new HBox();
-
-//                    {
-//                        viewButton.getStyleClass().add("button");
-//                        viewButton.getStyleClass().add("xs");
-//                        viewButton.getStyleClass().add("info");
-//                        viewButton.setOnAction((ActionEvent event) -> {
-//                            Product productData = getTableView().getItems().get(getIndex());
-//                            btnViewProduct(productData.getId());
-//                        });
-//                    }
-
                     {
                         editButton.getStyleClass().add("button");
                         editButton.getStyleClass().add("xs");
@@ -200,8 +153,6 @@ public class ProductsController {
 
                     {
                         buttonsPane.setSpacing(10);
-                        buttonsPane.setAlignment(Pos.CENTER);
-                        //buttonsPane.getChildren().add(viewButton);
                         buttonsPane.getChildren().add(editButton);
                         buttonsPane.getChildren().add(deleteButton);
                     }
@@ -225,13 +176,6 @@ public class ProductsController {
         tableProductsPage.getColumns().add(colBtnEdit);
 
     }
-
-    /**
-     * This private method handles the products search functionality.
-     * It creates a new task, gets the search results from the database and binds them to the view table.
-     *
-     * @since 1.0.0
-     */
     @FXML
     private void btnProductsSearchOnAction() {
         Task<ObservableList<Product>> searchProductsTask = new Task<ObservableList<Product>>() {
@@ -246,11 +190,6 @@ public class ProductsController {
         new Thread(searchProductsTask).start();
     }
 
-    /**
-     * This private method loads the add product view page.
-     *
-     * @since 1.0.0
-     */
     @FXML
     private void btnAddProductOnClick() {
         FXMLLoader fxmlLoader = new FXMLLoader();
@@ -265,13 +204,6 @@ public class ProductsController {
         productsContent.getChildren().add(root);
 
     }
-
-    /**
-     * This private method loads the edit product view page.
-     *
-     * @param product_id Product id.
-     * @since 1.0.0
-     */
     @FXML
     private void btnEditProduct(int product_id) {
         FXMLLoader fxmlLoader = new FXMLLoader();
@@ -290,35 +222,6 @@ public class ProductsController {
 
     }
 
-    /**
-     * This private method loads single add product view page.
-     *
-     * @param product_id Product id.
-     * @since 1.0.0
-     */
-    @FXML
-    private void btnViewProduct(int product_id) {
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        try {
-            fxmlLoader.load(getClass().getResource("/view/admin/pages/products/view-product.fxml").openStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        AnchorPane root = fxmlLoader.getRoot();
-        productsContent.getChildren().clear();
-        productsContent.getChildren().add(root);
-
-        ViewProductController controller = fxmlLoader.getController();
-        controller.fillViewingProductFields(product_id);
-    }
-
-    /**
-     * This private method validates the user input fields for the product.
-     *
-     * @return boolean          Returns true or false.
-     * @since 1.0.0
-     */
     @FXML
     boolean areProductInputsValid(String fieldAddProductName, String fieldAddProductDescription, String fieldAddProductPrice, String fieldAddProductQuantity, int productCategoryId) {
         // TODO
