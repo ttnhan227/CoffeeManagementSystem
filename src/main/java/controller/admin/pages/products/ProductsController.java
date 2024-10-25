@@ -7,6 +7,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -149,20 +150,20 @@ public class ProductsController {
             public TableCell<Product, Void> call(final TableColumn<Product, Void> param) {
                 return new TableCell<Product, Void>() {
 
-                    private final Button viewButton = new Button("View");
+                    //private final Button viewButton = new Button("View");
                     private final Button editButton = new Button("Edit");
                     private final Button deleteButton = new Button("Delete");
                     private final HBox buttonsPane = new HBox();
 
-                    {
-                        viewButton.getStyleClass().add("button");
-                        viewButton.getStyleClass().add("xs");
-                        viewButton.getStyleClass().add("info");
-                        viewButton.setOnAction((ActionEvent event) -> {
-                            Product productData = getTableView().getItems().get(getIndex());
-                            btnViewProduct(productData.getId());
-                        });
-                    }
+//                    {
+//                        viewButton.getStyleClass().add("button");
+//                        viewButton.getStyleClass().add("xs");
+//                        viewButton.getStyleClass().add("info");
+//                        viewButton.setOnAction((ActionEvent event) -> {
+//                            Product productData = getTableView().getItems().get(getIndex());
+//                            btnViewProduct(productData.getId());
+//                        });
+//                    }
 
                     {
                         editButton.getStyleClass().add("button");
@@ -199,7 +200,8 @@ public class ProductsController {
 
                     {
                         buttonsPane.setSpacing(10);
-                        buttonsPane.getChildren().add(viewButton);
+                        buttonsPane.setAlignment(Pos.CENTER);
+                        //buttonsPane.getChildren().add(viewButton);
                         buttonsPane.getChildren().add(editButton);
                         buttonsPane.getChildren().add(deleteButton);
                     }

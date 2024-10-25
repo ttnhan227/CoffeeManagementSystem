@@ -23,7 +23,7 @@
                     <AnchorPane prefWidth="127.0">
                         <Button fx:id="btnHome" contentDisplay="TOP" layoutY="13.0" mnemonicParsing="false" onAction="#btnHomeOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Home" />
                         <Button fx:id="btnProducts" contentDisplay="TOP" layoutY="104.0" mnemonicParsing="false" onAction="#btnProductsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Products" />
-                        <Button fx:id="btnCustomers" contentDisplay="TOP" layoutY="287.0" mnemonicParsing="false" onAction="#btnCustomersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Customers" />
+                        <Button fx:id="btnCustomers" contentDisplay="TOP" layoutY="287.0" mnemonicParsing="false" onAction="#btnCustomersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Employee" />
                         <Button fx:id="btnOrders" contentDisplay="TOP" layoutY="196.0" mnemonicParsing="false" onAction="#btnOrdersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Orders" />
                         <Button fx:id="btnSettings" contentDisplay="TOP" layoutY="376.0" mnemonicParsing="false" onAction="#btnSettingsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Settings" />
                     </AnchorPane>
