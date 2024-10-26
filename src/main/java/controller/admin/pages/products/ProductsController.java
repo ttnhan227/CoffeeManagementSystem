@@ -198,38 +198,35 @@ public class ProductsController {
         Button editButton = (Button) productCard.lookup("#editButton");
         Button deleteButton = (Button) productCard.lookup("#deleteButton");
 
-        // Handle image loading in a separate thread
         Task<Image> loadImageTask = new Task<Image>() {
             @Override
             protected Image call() throws Exception {
                 if (product.getImage() != null && !product.getImage().isEmpty()) {
                     try {
-                        // Try loading from resources first
+                        // Try multiple approaches to load the image
                         String imagePath = product.getImage();
+
+                        // Try loading from resources first
                         URL resourceUrl = getClass().getResource(imagePath);
                         if (resourceUrl != null) {
                             return new Image(resourceUrl.toString(),
-                                    250, 250,  // Width and height
-                                    false,     // Preserve ratio
-                                    true      // Smooth
-                            );
+                                    350, 250, false, true);
                         }
 
-                        // If resource not found, try loading from file system
+                        // If resource loading fails, try loading from absolute path
                         String projectPath = System.getProperty("user.dir");
-                        Path fullPath = Paths.get(projectPath, "src/main/resources", imagePath);
-                        if (Files.exists(fullPath)) {
-                            return new Image(fullPath.toUri().toString(),
-                                    250, 250,  // Width and height
-                                    false,     // Preserve ratio
-                                    true      // Smooth
-                            );
+                        Path absolutePath = Paths.get(projectPath, "src/main/resources" + imagePath);
+                        if (Files.exists(absolutePath)) {
+                            return new Image(absolutePath.toUri().toString(),
+                                    350, 250, false, true);
                         }
+
+                        System.err.println("Could not find image at: " + imagePath);
                     } catch (Exception e) {
                         System.err.println("Error loading image: " + e.getMessage());
+                        e.printStackTrace();
                     }
                 }
-                // Return default image if loading fails
                 return DEFAULT_IMAGE;
             }
         };
@@ -237,7 +234,7 @@ public class ProductsController {
         loadImageTask.setOnSucceeded(event -> {
             Image loadedImage = loadImageTask.getValue();
             productImage.setImage(loadedImage);
-            productImage.setFitWidth(250);
+            productImage.setFitWidth(350);
             productImage.setFitHeight(250);
             productImage.setPreserveRatio(false);
         });
@@ -380,9 +377,7 @@ public class ProductsController {
         System.out.println("TODO: Better validate inputs.");
         String errorMessage = "";
 
-        if (productCategoryId == 0) {
-            errorMessage += "Not valid category id!\n";
-        }
+
         if (fieldAddProductName == null || fieldAddProductName.length() < 3) {
             errorMessage += "please enter a valid name!\n";
         }

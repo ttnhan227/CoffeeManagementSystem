@@ -107,7 +107,10 @@ public class EditProductController extends ProductsController {
             double productPrice = Double.parseDouble(fieldEditProductPrice.getText());
             int productQuantity = Integer.parseInt(fieldEditProductQuantity.getText());
             int productCategoryId = category.getId();
-            String imagePath = saveImageFile();
+
+            // Retrieve current image path or use new one
+            final String currentImagePath = productImageView.getImage() != DEFAULT_IMAGE ? fieldEditProductId.getText() : null;
+            final String imagePath = (saveImageFile() != null) ? saveImageFile() : currentImagePath;
 
             Task<Boolean> editProductTask = new Task<Boolean>() {
                 @Override
@@ -131,6 +134,8 @@ public class EditProductController extends ProductsController {
             new Thread(editProductTask).start();
         }
     }
+
+
 
     public void fillEditingProductFields(int product_id) {
         Task<ObservableList<Product>> fillProductTask = new Task<ObservableList<Product>>() {

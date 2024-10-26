@@ -60,7 +60,7 @@
                 <Text fx:id="viewProductName" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="heading-text" text="Edit product" BorderPane.alignment="CENTER_LEFT" />
             </top>
         </BorderPane>
-            <ImageView fx:id="productImageView" fitHeight="200" fitWidth="200" layoutX="224.0" layoutY="456.0" preserveRatio="true" />
-            <Button fx:id="selectImageButton" layoutX="153.0" layoutY="558.0" onAction="#selectImage" text="Select Image" />
+        <ImageView fx:id="productImageView" fitHeight="200" fitWidth="200" layoutX="224.0" layoutY="456.0" preserveRatio="true" />
+        <Button fx:id="selectImageButton" layoutX="153.0" layoutY="558.0" onAction="#selectImage" text="Select Image" />
     </children>
 </AnchorPane>

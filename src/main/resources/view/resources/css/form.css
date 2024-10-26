@@ -1,151 +1,61 @@
-/* Global Styles */
 .root {
-    -fx-background-color: #f5f5f5;
-    -fx-font-family: 'Segoe UI', system-serif;
+    -fx-background-color: #f4f4f4;
 }
 
-/* Main Container Styles */
 .border-pane {
-    -fx-padding: 40px;
-    -fx-background-color: white;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 2);
-    -fx-background-radius: 8px;
-    -fx-border-radius: 8px;
-    -fx-border-color: #e2e8f0;
-    -fx-border-width: 1px;
+    -fx-padding: 20;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 8;
 }
 
-/* Grid Layout Styles */
-.grid-pane {
-    -fx-hgap: 20;
-    -fx-vgap: 25;
-    -fx-padding: 30px 0;
+.heading-text {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
 }
 
-/* Form Labels */
 .label {
     -fx-font-size: 14px;
-    -fx-text-fill: #2d3748;
-    -fx-font-weight: bold;
+    -fx-text-fill: #555555;
 }
 
-/* Form Input Fields */
-.text-field, .text-area, .combo-box {
-    -fx-background-color: #f8f9fa;
-    -fx-border-color: #e2e8f0;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 4px;
-    -fx-padding: 8px;
-    -fx-font-size: 14px;
+.text-field, .combo-box, .text-area {
+    -fx-padding: 8;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #aaaaaa;
+    -fx-border-radius: 5;
 }
 
-.text-field:focused, .text-area:focused, .combo-box:focused {
-    -fx-border-color: #4299e1;
-    -fx-background-color: white;
-    -fx-effect: dropshadow(gaussian, rgba(66, 153, 225, 0.2), 5, 0, 0, 0);
+.text-field:focused, .combo-box:focused, .text-area:focused {
+    -fx-border-color: #007bff; /* Blue focus border */
 }
 
-/* TextArea Specific Styles */
-.text-area {
-    -fx-pref-row-count: 4;
-}
-
-.text-area .content {
-    -fx-background-color: #f8f9fa;
-    -fx-background-radius: 4px;
-}
-
-/* ComboBox Specific Styles */
-.combo-box {
-    -fx-background-color: #f8f9fa;
-}
-
-.combo-box:hover {
-    -fx-background-color: #edf2f7;
-}
-
-.combo-box .list-cell {
-    -fx-padding: 4px 8px;
-}
-
-/* Button Styles */
 .button {
-    -fx-padding: 10px 20px;
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-padding: 10 20;
+    -fx-border-radius: 5;
+}
+
+.button:hover {
+    -fx-background-color: #0056b3; /* Darker blue on hover */
+}
+
+.image-view {
+    -fx-border-color: #dddddd;
+    -fx-border-radius: 5;
+}
+
+.select-image {
+    -fx-background-color: #28a745; /* Green background for select image */
+}
+
+.select-image:hover {
+    -fx-background-color: #218838; /* Darker green on hover */
+}
+
+.response-text {
     -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-background-radius: 4px;
-    -fx-cursor: hand;
-    -fx-transition: background-color 0.2s;
-}
-
-.button.success {
-    -fx-background-color: #48bb78;
-    -fx-text-fill: white;
-}
-
-.button.success:hover {
-    -fx-background-color: #38a169;
-}
-
-.button.primary {
-    -fx-background-color: #4299e1;
-    -fx-text-fill: white;
-}
-
-.button.primary:hover {
-    -fx-background-color: #3182ce;
-}
-
-#selectImageButton {
-    -fx-background-color: #718096;
-    -fx-text-fill: white;
-}
-
-#selectImageButton:hover {
-    -fx-background-color: #4a5568;
-}
-
-/* Heading Styles */
-.heading-text {
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
-    -fx-fill: #2d3748;
-    -fx-padding: 0 0 20px 0;
-}
-
-/* Response Message Styles */
-#viewProductResponse {
-    -fx-fill: #48bb78;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-}
-
-/* Image Container Styles */
-.image-view-container {
-    -fx-border-color: #e2e8f0;
-    -fx-border-radius: 4px;
-    -fx-padding: 10px;
-    -fx-background-color: white;
-    -fx-alignment: center-left;
-    -fx-spacing: 15;
-}
-
-/* Hover Effects */
-.text-field:hover, .text-area:hover, .combo-box:hover {
-    -fx-border-color: #cbd5e0;
-}
-
-/* Disabled State Styles */
-.text-field:disabled, .text-area:disabled, .combo-box:disabled {
-    -fx-opacity: 0.7;
-}
-
-/* Error State Styles */
-.error {
-    -fx-border-color: #fc8181;
-}
-
-.error-text {
-    -fx-fill: #fc8181;
-    -fx-font-size: 12px;
+    -fx-text-fill: #28a745; /* Green for success messages */
 }

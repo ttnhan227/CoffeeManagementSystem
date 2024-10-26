@@ -59,7 +59,7 @@
                 <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="heading-text" text="Add new product" BorderPane.alignment="CENTER_LEFT" />
             </top>
         </BorderPane>
-        <ImageView fx:id="productImageView" fitHeight="200" fitWidth="200" layoutX="190.0" layoutY="381.0" preserveRatio="true" />
-        <Button fx:id="selectImageButton" layoutX="106.0" layoutY="481.0" onAction="#selectImage" text="Select Image" />
+            <ImageView fx:id="productImageView" fitHeight="200" fitWidth="200" layoutX="190.0" layoutY="381.0" preserveRatio="true" />
+            <Button fx:id="selectImageButton" layoutX="106.0" layoutY="481.0" onAction="#selectImage" text="Select Image" />
     </children>
 </AnchorPane>
