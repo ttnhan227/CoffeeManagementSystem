@@ -18,6 +18,9 @@ import model.Product;
 import java.io.File;
 import java.net.URL;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
@@ -94,7 +97,7 @@ public class ProductsController {
 
         return new TextFormatter<>(converter, 0, filter);
     }
-    private static final Image DEFAULT_IMAGE = new Image(
+    public static final Image DEFAULT_IMAGE = new Image(
             ProductsController.class.getResourceAsStream("/view/resources/img/coffee_pictures/placeholder.png"),
             250, 250, true, true
     );
@@ -195,26 +198,59 @@ public class ProductsController {
         Button editButton = (Button) productCard.lookup("#editButton");
         Button deleteButton = (Button) productCard.lookup("#deleteButton");
 
-        // Handle image setting with consistent size
-        if (product.getImageView() != null && product.getImageView().getImage() != null) {
-            Image originalImage = product.getImageView().getImage();
-            // Create a new image with desired dimensions while maintaining aspect ratio
-            Image resizedImage = new Image(
-                    originalImage.getUrl(),
-                    250, 250,  // Width and height
-                    false,     // Preserve ratio
-                    true      // Smooth
-            );
-            productImage.setImage(resizedImage);
-        } else {
+        // Handle image loading in a separate thread
+        Task<Image> loadImageTask = new Task<Image>() {
+            @Override
+            protected Image call() throws Exception {
+                if (product.getImage() != null && !product.getImage().isEmpty()) {
+                    try {
+                        // Try loading from resources first
+                        String imagePath = product.getImage();
+                        URL resourceUrl = getClass().getResource(imagePath);
+                        if (resourceUrl != null) {
+                            return new Image(resourceUrl.toString(),
+                                    250, 250,  // Width and height
+                                    false,     // Preserve ratio
+                                    true      // Smooth
+                            );
+                        }
+
+                        // If resource not found, try loading from file system
+                        String projectPath = System.getProperty("user.dir");
+                        Path fullPath = Paths.get(projectPath, "src/main/resources", imagePath);
+                        if (Files.exists(fullPath)) {
+                            return new Image(fullPath.toUri().toString(),
+                                    250, 250,  // Width and height
+                                    false,     // Preserve ratio
+                                    true      // Smooth
+                            );
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Error loading image: " + e.getMessage());
+                    }
+                }
+                // Return default image if loading fails
+                return DEFAULT_IMAGE;
+            }
+        };
+
+        loadImageTask.setOnSucceeded(event -> {
+            Image loadedImage = loadImageTask.getValue();
+            productImage.setImage(loadedImage);
+            productImage.setFitWidth(250);
+            productImage.setFitHeight(250);
+            productImage.setPreserveRatio(false);
+        });
+
+        loadImageTask.setOnFailed(event -> {
+            System.err.println("Failed to load image: " + loadImageTask.getException());
             productImage.setImage(DEFAULT_IMAGE);
-        }
+        });
 
-        // Ensure the ImageView maintains consistent size
-        productImage.setFitWidth(250);
-        productImage.setFitHeight(250);
-        productImage.setPreserveRatio(false);
+        // Start image loading in background
+        new Thread(loadImageTask).start();
 
+        // Set other product information
         productName.setText(product.getName());
         productCategory.setText(product.getCategory_name());
         productPrice.setText(String.format("$%.2f", product.getPrice()));

@@ -90,8 +90,6 @@ public class Product {
 
     public void setImage(String imagePath) {
         this.image = imagePath;
-
-        // Create ImageView when image path is set
         try {
             // Get the project path
             String projectPath = System.getProperty("user.dir");

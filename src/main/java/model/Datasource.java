@@ -12,10 +12,6 @@ public class Datasource extends Product {
             + System.getProperty("user.dir")
             + "/src/main/java/app/db/"
             + DB_NAME;
-
-    // All the database tables and their columns are stored as String variables.
-    // This to facilitate later changing of table/columns names, if needed, for example when expanding
-    // the Datasource Class.
     public static final String TABLE_PRODUCTS = "products";
     public static final String COLUMN_PRODUCTS_ID = "id";
     public static final String COLUMN_PRODUCTS_NAME = "name";
@@ -51,9 +47,6 @@ public class Datasource extends Product {
     public static final int ORDER_BY_NONE = 1;
     public static final int ORDER_BY_ASC = 2;
     public static final int ORDER_BY_DESC = 3;
-    /**
-     * Create an object of Datasource
-     */
     private static final Datasource instance = new Datasource();
     private Connection conn;
 
@@ -255,15 +248,16 @@ public class Datasource extends Product {
         }
     }
 
-    public boolean insertNewProduct(String name, String description, double price, int quantity, int category_id) {
-
+    public boolean insertNewProduct(String name, String description, double price,
+                                    int quantity, int category_id, String imagePath) {
         String sql = "INSERT INTO " + TABLE_PRODUCTS + " ("
                 + COLUMN_PRODUCTS_NAME + ", "
                 + COLUMN_PRODUCTS_DESCRIPTION + ", "
                 + COLUMN_PRODUCTS_PRICE + ", "
                 + COLUMN_PRODUCTS_QUANTITY + ", "
-                + COLUMN_PRODUCTS_CATEGORY_ID +
-                ") VALUES (?, ?, ?, ?, ?)";
+                + COLUMN_PRODUCTS_CATEGORY_ID + ", "
+                + COLUMN_PRODUCTS_IMAGE
+                + ") VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setString(1, name);
@@ -271,6 +265,7 @@ public class Datasource extends Product {
             statement.setDouble(3, price);
             statement.setInt(4, quantity);
             statement.setInt(5, category_id);
+            statement.setString(6, imagePath);
 
             statement.executeUpdate();
             return true;
@@ -280,15 +275,16 @@ public class Datasource extends Product {
         }
     }
 
-    public boolean updateOneProduct(int product_id, String name, String description, double price, int quantity, int category_id) {
+    public boolean updateOneProduct(int product_id, String name, String description, double price, int quantity, int category_id, String imagePath) {
 
         String sql = "UPDATE " + TABLE_PRODUCTS + " SET "
-                + COLUMN_PRODUCTS_NAME + " = ?" + ", "
-                + COLUMN_PRODUCTS_DESCRIPTION + " = ?" + ", "
-                + COLUMN_PRODUCTS_PRICE + " = ?" + ", "
-                + COLUMN_PRODUCTS_QUANTITY + " = ?" + ", "
-                + COLUMN_PRODUCTS_CATEGORY_ID + " = ?" +
-                " WHERE " + COLUMN_PRODUCTS_ID + " = ?";
+                + COLUMN_PRODUCTS_NAME + " = ?, "
+                + COLUMN_PRODUCTS_DESCRIPTION + " = ?, "
+                + COLUMN_PRODUCTS_PRICE + " = ?, "
+                + COLUMN_PRODUCTS_QUANTITY + " = ?, "
+                + COLUMN_PRODUCTS_CATEGORY_ID + " = ?, "
+                + COLUMN_PRODUCTS_IMAGE + " = ? "
+                + "WHERE " + COLUMN_PRODUCTS_ID + " = ?";
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setString(1, name);
@@ -296,7 +292,8 @@ public class Datasource extends Product {
             statement.setDouble(3, price);
             statement.setInt(4, quantity);
             statement.setInt(5, category_id);
-            statement.setInt(6, product_id);
+            statement.setString(6, imagePath);
+            statement.setInt(7, product_id);
 
             statement.executeUpdate();
             return true;
@@ -305,6 +302,7 @@ public class Datasource extends Product {
             return false;
         }
     }
+
 
     public void decreaseStock(int product_id) {
 
