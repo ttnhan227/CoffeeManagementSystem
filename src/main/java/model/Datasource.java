@@ -795,6 +795,47 @@ public class Datasource extends Product {
             return null;
         }
     }
+
+    public Product searchOneProductByName(String searchName){
+        String query = "SELECT * FROM products WHERE name = '" + searchName + "'";
+        Product product = new Product();
+        try (Statement statement = conn.createStatement();
+             ResultSet results = statement.executeQuery(query)){
+            if (results.next()) {
+                product.setId(results.getInt("id"));
+                product.setName(results.getString("name"));
+                product.setDescription(results.getString("description"));
+                product.setPrice(results.getDouble("price"));
+                product.setQuantity(results.getInt("quantity"));
+                product.setCategory_id(results.getInt("category_id"));
+                product.setImage(results.getString("image"));
+                return product;
+            }
+            else{
+                System.out.println("No product found with search name");
+                return null;
+            }
+            //return product;
+
+        }catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public String getCategoryName(int id){
+        String query = "SELECT * FROM categories WHERE id = ?";
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
 
 

@@ -100,7 +100,7 @@
                         <Insets bottom="5.0" />
                      </VBox.margin>
                   </HBox>
-                  <HBox alignment="CENTER" maxHeight="25.0" prefHeight="100.0" prefWidth="200.0">
+                  <HBox fx:id="searchHBox" alignment="CENTER" maxHeight="25.0" prefHeight="100.0" prefWidth="200.0">
                      <children>
                         <TextField fx:id="searchField" maxHeight="25.0" maxWidth="300.0" minHeight="25.0" minWidth="300.0" prefHeight="25.0" prefWidth="200.0" promptText="search product name to add">
                            <font>
@@ -110,16 +110,16 @@
                               <Insets right="5.0" />
                            </HBox.margin>
                         </TextField>
-                        <Button mnemonicParsing="false" text="search">
+                        <Button mnemonicParsing="false" onAction="#onClickSearch" text="search">
                            <font>
                               <Font size="13.0" />
                            </font>
                         </Button>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER" maxHeight="30.0" prefHeight="100.0" prefWidth="200.0">
+                  <HBox fx:id="productHBox" alignment="CENTER" maxHeight="30.0" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <TextField editable="false" maxHeight="25.0" maxWidth="50.0" minHeight="25.0" promptText="id">
+                        <TextField fx:id="idField" editable="false" maxHeight="25.0" maxWidth="50.0" minHeight="25.0" promptText="id">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
@@ -127,7 +127,7 @@
                               <Font size="13.0" />
                            </font>
                         </TextField>
-                        <TextField editable="false" maxHeight="25.0" maxWidth="200.0" minHeight="25.0" promptText="product name">
+                        <TextField fx:id="productNameField" editable="false" maxHeight="25.0" maxWidth="200.0" minHeight="25.0" promptText="product name">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
@@ -140,12 +140,17 @@
                               <Font size="15.0" />
                            </font>
                         </Text>
-                        <Spinner editable="true" maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0">
+                        <Spinner fx:id="quantitySpinner" editable="true" maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
                         </Spinner>
-                        <TextField editable="false" maxHeight="25.0" maxWidth="150.0" minHeight="25.0" promptText="total">
+                        <Text layoutX="428.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Total:">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <TextField fx:id="totalField" editable="false" maxHeight="25.0" maxWidth="150.0" minHeight="25.0" promptText="total">
                            <font>
                               <Font size="13.0" />
                            </font>
@@ -153,17 +158,19 @@
                               <Insets right="5.0" />
                            </HBox.margin>
                         </TextField>
-                        <Button mnemonicParsing="false" text="Add to order" />
+                        <Button fx:id="addBtn" mnemonicParsing="false" onAction="#addBtnClick" text="Add to order" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="5.0" />
                      </VBox.margin>
                   </HBox>
-                  <TableView maxHeight="800.0" minHeight="300.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black;">
+                  <TableView fx:id="orderDetailView" maxHeight="800.0" minHeight="300.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black;">
                     <columns>
-                      <TableColumn editable="false" prefWidth="277.0" style="-fx-background-color: #cccccc; -fx-border-color: black;" text="Name" />
-                      <TableColumn editable="false" minWidth="0.0" prefWidth="74.0" style="-fx-background-color: #cccccc; -fx-border-color: black;" text="Quantity" />
-                        <TableColumn editable="false" minWidth="0.0" prefWidth="181.0" style="-fx-background-color: #cccccc; -fx-border-color: black;" text="Total" />
+                      <TableColumn fx:id="nameColumn" editable="false" prefWidth="240.0" style="-fx-background-color: #cccccc; -fx-border-color: black;" text="Name" />
+                        <TableColumn fx:id="categoryColumn" editable="false" minWidth="0.0" prefWidth="140.0" style="-fx-background-color: #cccccc; -fx-border-color: black;" text="Categories" />
+                        <TableColumn fx:id="priceColumn" editable="false" minWidth="0.0" prefWidth="100.0" style="-fx-background-color: #cccccc; -fx-border-color: black;" text="Price" />
+                      <TableColumn fx:id="quantityColumn" editable="false" minWidth="0.0" prefWidth="100.0" style="-fx-background-color: #cccccc; -fx-border-color: black;" text="Quantity" />
+                        <TableColumn fx:id="totalColumn" editable="false" minWidth="0.0" prefWidth="120.0" style="-fx-background-color: #cccccc; -fx-border-color: black;" text="Total" />
                     </columns>
                      <VBox.margin>
                         <Insets left="10.0" right="10.0" />
