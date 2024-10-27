@@ -1,7 +1,7 @@
 package controller.admin;
 
 import controller.UserSessionController;
-import controller.admin.pages.EmployeesController;
+import controller.admin.pages.users.UsersController;
 import controller.admin.pages.HomeController;
 import controller.admin.pages.OrdersController;
 import controller.admin.pages.products.ProductsController;
@@ -24,11 +24,6 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-/**
- * This class handles the admin user dashboard interactions.
- *
- * @author Sajmir Doko
- */
 public class MainDashboardController implements Initializable {
     @FXML
     public Button btnHome;
@@ -49,14 +44,6 @@ public class MainDashboardController implements Initializable {
     @FXML
     private Label lblUsrName;
 
-
-    /**
-     * This method handles the Home button click.
-     * It loads the home page and it's contents.
-     *
-     * @param actionEvent Accepts ActionEvent.
-     * @since 1.0.0
-     */
     public void btnHomeOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/home/home.fxml");
         HomeController homeController = fxmlLoader.getController();
@@ -69,50 +56,22 @@ public class MainDashboardController implements Initializable {
         controller.listProducts();
     }
 
-    /**
-     * This method handles the orders button click.
-     * It loads the orders page and it's contents.
-     *
-     * @param actionEvent Accepts ActionEvent.
-     * @since 1.0.0
-     */
     public void btnOrdersOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/orders/orders.fxml");
         OrdersController orders = fxmlLoader.getController();
         orders.listOrders();
     }
 
-    /**
-     * This method customers the Home button click.
-     * It loads the customers page and it's contents.
-     *
-     * @param actionEvent Accepts ActionEvent.
-     * @since 1.0.0
-     */
     public void btnCustomersOnClick(ActionEvent actionEvent) {
-        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/employees/employees.fxml");
-        EmployeesController controller = fxmlLoader.getController();
-        controller.listEmployees();
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/users/users.fxml");
+        UsersController controller = fxmlLoader.getController();
+        controller.listCustomers();
     }
 
-    /**
-     * This method handles the settings button click.
-     *
-     * @param actionEvent Accepts ActionEvent.
-     * @since 1.0.0
-     */
     public void btnSettingsOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/settings/settings.fxml");
     }
 
-    /**
-     * This method handles the LogOut button click.
-     * On click and confirmation it opens the login view and clears the user session instance.
-     *
-     * @param actionEvent Accepts ActionEvent.
-     * @throws IOException If an input or output exception occurred.
-     * @since 1.0.0
-     */
     public void btnLogOutOnClick(ActionEvent actionEvent) throws IOException {
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -132,12 +91,6 @@ public class MainDashboardController implements Initializable {
         }
     }
 
-    /**
-     * This private helper method loads the view file.
-     *
-     * @param view_path Accepts path of view file.
-     * @since 1.0.0
-     */
     private FXMLLoader loadFxmlPage(String view_path) {
         FXMLLoader fxmlLoader = new FXMLLoader();
         try {
@@ -152,9 +105,6 @@ public class MainDashboardController implements Initializable {
         return fxmlLoader;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         lblUsrName.setText(UserSessionController.getUserFullName());

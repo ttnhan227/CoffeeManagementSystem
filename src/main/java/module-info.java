@@ -17,6 +17,7 @@ module app {
     opens controller.admin.pages.products to javafx.fxml;
     opens controller.employee to javafx.fxml; // Add this line
     opens controller.employee.pages to javafx.fxml;
+    opens controller.admin.pages.users to javafx.fxml;
 
 
 }

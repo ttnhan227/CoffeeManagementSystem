@@ -353,70 +353,68 @@ public class Datasource extends Product {
         }
     }
 
-    public List<Employee> getAllEmployees(int sortOrder) {
+    public List<User> getAllCustomers(int sortOrder) {
 
-        StringBuilder queryEmployees = queryEmployees();
+        StringBuilder queryCustomers = queryCustomers();
 
         if (sortOrder != ORDER_BY_NONE) {
-            queryEmployees.append(" ORDER BY ");
-            queryEmployees.append(COLUMN_USERS_FULLNAME);
+            queryCustomers.append(" ORDER BY ");
+            queryCustomers.append(COLUMN_USERS_FULLNAME);
             if (sortOrder == ORDER_BY_DESC) {
-                queryEmployees.append(" DESC");
+                queryCustomers.append(" DESC");
             } else {
-                queryEmployees.append(" ASC");
+                queryCustomers.append(" ASC");
             }
         }
         try (Statement statement = conn.createStatement();
-             ResultSet results = statement.executeQuery(queryEmployees.toString())) {
+             ResultSet results = statement.executeQuery(queryCustomers.toString())) {
 
-            List<Employee> employees = new ArrayList<>();
+            List<User> users = new ArrayList<>();
             while (results.next()) {
-                Employee employee = new Employee();
-                employee.setId(results.getInt(1));
-                employee.setFullname(results.getString(2));
-                employee.setEmail(results.getString(3));
-                employee.setUsername(results.getString(4));
-                employee.setOrders(results.getInt(5));
-                employee.setStatus(results.getString(6));
-                employees.add(employee);
+                User user = new User();
+                user.setId(results.getInt(1));
+                user.setFullname(results.getString(2));
+                user.setEmail(results.getString(3));
+                user.setUsername(results.getString(4));
+                user.setOrders(results.getInt(5));
+                user.setStatus(results.getString(6));
+                users.add(user);
             }
-            return employees;
+            return users;
 
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }
     }
+    public List<User> getOneCustomer(int customer_id) {
 
-    public List<Employee> getOneCustomer(int customer_id) {
-
-        StringBuilder queryCustomers = queryEmployees();
+        StringBuilder queryCustomers = queryCustomers();
         queryCustomers.append(" AND " + TABLE_USERS + "." + COLUMN_USERS_ID + " = ?");
         try (PreparedStatement statement = conn.prepareStatement(String.valueOf(queryCustomers))) {
             statement.setInt(1, customer_id);
             ResultSet results = statement.executeQuery();
-            List<Employee> employees = new ArrayList<>();
+            List<User> users = new ArrayList<>();
             while (results.next()) {
-                Employee employee = new Employee();
-                employee.setId(results.getInt(1));
-                employee.setFullname(results.getString(2));
-                employee.setEmail(results.getString(3));
-                employee.setUsername(results.getString(4));
-                employee.setOrders(results.getInt(5));
-                employee.setStatus(results.getString(6));
-                employees.add(employee);
+                User user = new User();
+                user.setId(results.getInt(1));
+                user.setFullname(results.getString(2));
+                user.setEmail(results.getString(3));
+                user.setUsername(results.getString(4));
+                user.setOrders(results.getInt(5));
+                user.setStatus(results.getString(6));
+                users.add(user);
             }
-            return employees;
+            return users;
 
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }
     }
+    public List<User> searchCustomers(String searchString, int sortOrder) {
 
-    public List<Employee> searchCustomers(String searchString, int sortOrder) {
-
-        StringBuilder queryCustomers = queryEmployees();
+        StringBuilder queryCustomers = queryCustomers();
 
         queryCustomers.append(" AND (" + TABLE_USERS + "." + COLUMN_USERS_FULLNAME + " LIKE ? OR " + TABLE_USERS + "." + COLUMN_USERS_USERNAME + " LIKE ?)");
 
@@ -429,32 +427,84 @@ public class Datasource extends Product {
                 queryCustomers.append(" ASC");
             }
         }
-
         try (PreparedStatement statement = conn.prepareStatement(queryCustomers.toString())) {
             statement.setString(1, "%" + searchString + "%");
             statement.setString(2, "%" + searchString + "%");
             ResultSet results = statement.executeQuery();
 
-            List<Employee> employees = new ArrayList<>();
+            List<User> users = new ArrayList<>();
             while (results.next()) {
-                Employee employee = new Employee();
-                employee.setId(results.getInt(1));
-                employee.setFullname(results.getString(2));
-                employee.setEmail(results.getString(3));
-                employee.setUsername(results.getString(4));
-                employee.setOrders(results.getInt(5));
-                employee.setStatus(results.getString(6));
-                employees.add(employee);
+                User user = new User();
+                user.setId(results.getInt(1));
+                user.setFullname(results.getString(2));
+                user.setEmail(results.getString(3));
+                user.setUsername(results.getString(4));
+                user.setOrders(results.getInt(5));
+                user.setStatus(results.getString(6));
+                users.add(user);
             }
-            return employees;
+            return users;
 
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }
     }
+    public boolean insertNewCustomer(String fullName, String username, String email, String password, String salt, String status) {
+        String sql = "INSERT INTO " + TABLE_USERS + " ("
+                + COLUMN_USERS_FULLNAME + ", "
+                + COLUMN_USERS_USERNAME + ", "
+                + COLUMN_USERS_EMAIL + ", "
+                + COLUMN_USERS_PASSWORD + ", "
+                + COLUMN_USERS_SALT + ", "
+                + COLUMN_USERS_ADMIN + ", "
+                + COLUMN_USERS_STATUS +
+                ") VALUES (?, ?, ?, ?, ?, 0, ?)";
 
-    private StringBuilder queryEmployees() {
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, fullName);
+            statement.setString(2, username);
+            statement.setString(3, email);
+            statement.setString(4, password);
+            statement.setString(5, salt);
+            statement.setString(6, status);
+
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean updateOneCustomer(int customer_id, String fullName, String username, String email, String status) {
+        String sql = "UPDATE " + TABLE_USERS + " SET "
+                + COLUMN_USERS_FULLNAME + " = ?, "
+                + COLUMN_USERS_USERNAME + " = ?, "
+                + COLUMN_USERS_EMAIL + " = ?, "
+                + COLUMN_USERS_STATUS + " = ? "
+                + "WHERE " + COLUMN_USERS_ID + " = ? AND " + COLUMN_USERS_ADMIN + " = 0";
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, fullName);
+            statement.setString(2, username);
+            statement.setString(3, email);
+            statement.setString(4, status);  // Adjusted index for status
+            statement.setInt(5, customer_id); // Adjusted index for customer_id
+
+            System.out.println("Updating User: " + customer_id + ", " + fullName + ", " + email + ", " + username + ", " + status);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+
+
+
+    private StringBuilder queryCustomers() {
         return new StringBuilder("SELECT " +
                 TABLE_USERS + "." + COLUMN_USERS_ID + ", " +
                 TABLE_USERS + "." + COLUMN_USERS_FULLNAME + ", " +
@@ -835,6 +885,25 @@ public class Datasource extends Product {
         }
         return null;
     }
+
+    public String getSalt(int customerId) {
+        String sql = "SELECT " + COLUMN_USERS_SALT + " FROM " + TABLE_USERS + " WHERE " + COLUMN_USERS_ID + " = ? AND " + COLUMN_USERS_ADMIN + " = 0";
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, customerId);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString(COLUMN_USERS_SALT);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving salt: " + e.getMessage());
+        }
+
+        return null; // Return null if no salt found or an error occurred
+    }
+
+
 }
 
 

@@ -10,6 +10,16 @@ public class User {
     private String salt;
     private int admin;
     private String status;
+    private int orders;
+
+    public int getOrders() {
+        return orders;
+    }
+
+    public void setOrders(int orders) {
+        this.orders = orders;
+    }
+
 
     public String getFullname() {
         return fullname;
@@ -82,5 +92,4 @@ public class User {
     public void setStatus(String status) {
         this.status = status;
     }
-
 }
