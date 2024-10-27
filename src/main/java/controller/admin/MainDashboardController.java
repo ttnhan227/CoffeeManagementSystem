@@ -1,7 +1,7 @@
 package controller.admin;
 
 import controller.UserSessionController;
-import controller.admin.pages.CustomersController;
+import controller.admin.pages.EmployeesController;
 import controller.admin.pages.HomeController;
 import controller.admin.pages.OrdersController;
 import controller.admin.pages.products.ProductsController;
@@ -63,14 +63,6 @@ public class MainDashboardController implements Initializable {
         homeController.getDashboardProdCount();
         homeController.getDashboardCostCount();
     }
-
-    /**
-     * This method handles the products button click.
-     * It loads the products page and it's contents.
-     *
-     * @param actionEvent Accepts ActionEvent.
-     * @since 1.0.0
-     */
     public void btnProductsOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/products/products.fxml");
         ProductsController controller = fxmlLoader.getController();
@@ -98,9 +90,9 @@ public class MainDashboardController implements Initializable {
      * @since 1.0.0
      */
     public void btnCustomersOnClick(ActionEvent actionEvent) {
-        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/customers/customers.fxml");
-        CustomersController controller = fxmlLoader.getController();
-        controller.listCustomers();
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/employees/employees.fxml");
+        EmployeesController controller = fxmlLoader.getController();
+        controller.listEmployees();
     }
 
     /**

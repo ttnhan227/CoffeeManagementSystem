@@ -45,7 +45,7 @@ public class UserHomeController {
 
         // Adding placeholder values (0) initially
         productSeries.getData().add(new XYChart.Data<>("Product Count", 0));
-        customerSeries.getData().add(new XYChart.Data<>("Customer Count", 0));
+        customerSeries.getData().add(new XYChart.Data<>("Employee Count", 0));
 
         // Add the series to the chart
         dataChart.getData().addAll(productSeries, customerSeries);
@@ -97,7 +97,7 @@ public class UserHomeController {
             // Update the chart with actual customer count
             XYChart.Series<String, Number> customerSeries = dataChart.getData().get(1); // Customers series is the second one
             customerSeries.getData().clear(); // Clear placeholder data
-            customerSeries.getData().add(new XYChart.Data<>("Customer Count", customerCount));
+            customerSeries.getData().add(new XYChart.Data<>("Employee Count", customerCount));
         });
 
         new Thread(getDashCostCount).start();

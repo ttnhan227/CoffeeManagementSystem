@@ -5,8 +5,8 @@
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/"
-            fx:controller="controller.admin.pages.CustomersController">
-    <StackPane fx:id="customersContent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+            fx:controller="controller.admin.pages.EmployeesController">
+    <StackPane fx:id="employeesContent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <BorderPane prefHeight="521.0" prefWidth="743.0">
             <padding>
@@ -25,8 +25,8 @@
                         <Insets top="20.0"/>
                     </BorderPane.margin>
                     <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                        <TextField fx:id="fieldCustomersSearch" layoutX="1.0" layoutY="2.0" prefHeight="25.0"
-                                   prefWidth="291.0" promptText="search customer"/>
+                        <TextField fx:id="fieldEmployeesSearch" layoutX="1.0" layoutY="2.0" prefHeight="25.0"
+                                   prefWidth="291.0" promptText="search employee..."/>
                         <Button layoutX="300.0" layoutY="2.0" mnemonicParsing="false" styleClass="button, info, sm"
                                 onAction="#btnCustomersSearchOnAction" prefHeight="26.0" text="Search"/>
                     </AnchorPane>

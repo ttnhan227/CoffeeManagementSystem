@@ -205,7 +205,9 @@ public class Datasource extends Product {
                 product.setPrice(results.getDouble(4));
                 product.setQuantity(results.getInt(5));
                 product.setCategory_name(results.getString(6));
-                product.setNr_sales(results.getInt(7));
+                // Add this line to set the image
+                product.setImage(results.getString(7));  // Get image path from column 7
+                product.setNr_sales(results.getInt(8)); // Note: nr_sales is now column 8
                 products.add(product);
             }
             return products;
@@ -215,7 +217,6 @@ public class Datasource extends Product {
             return null;
         }
     }
-
     private StringBuilder queryProducts() {
         return new StringBuilder("SELECT " +
                 TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_ID + ", " +
@@ -352,34 +353,34 @@ public class Datasource extends Product {
         }
     }
 
-    public List<Customer> getAllCustomers(int sortOrder) {
+    public List<Employee> getAllEmployees(int sortOrder) {
 
-        StringBuilder queryCustomers = queryCustomers();
+        StringBuilder queryEmployees = queryEmployees();
 
         if (sortOrder != ORDER_BY_NONE) {
-            queryCustomers.append(" ORDER BY ");
-            queryCustomers.append(COLUMN_USERS_FULLNAME);
+            queryEmployees.append(" ORDER BY ");
+            queryEmployees.append(COLUMN_USERS_FULLNAME);
             if (sortOrder == ORDER_BY_DESC) {
-                queryCustomers.append(" DESC");
+                queryEmployees.append(" DESC");
             } else {
-                queryCustomers.append(" ASC");
+                queryEmployees.append(" ASC");
             }
         }
         try (Statement statement = conn.createStatement();
-             ResultSet results = statement.executeQuery(queryCustomers.toString())) {
+             ResultSet results = statement.executeQuery(queryEmployees.toString())) {
 
-            List<Customer> customers = new ArrayList<>();
+            List<Employee> employees = new ArrayList<>();
             while (results.next()) {
-                Customer customer = new Customer();
-                customer.setId(results.getInt(1));
-                customer.setFullname(results.getString(2));
-                customer.setEmail(results.getString(3));
-                customer.setUsername(results.getString(4));
-                customer.setOrders(results.getInt(5));
-                customer.setStatus(results.getString(6));
-                customers.add(customer);
+                Employee employee = new Employee();
+                employee.setId(results.getInt(1));
+                employee.setFullname(results.getString(2));
+                employee.setEmail(results.getString(3));
+                employee.setUsername(results.getString(4));
+                employee.setOrders(results.getInt(5));
+                employee.setStatus(results.getString(6));
+                employees.add(employee);
             }
-            return customers;
+            return employees;
 
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
@@ -387,25 +388,25 @@ public class Datasource extends Product {
         }
     }
 
-    public List<Customer> getOneCustomer(int customer_id) {
+    public List<Employee> getOneCustomer(int customer_id) {
 
-        StringBuilder queryCustomers = queryCustomers();
+        StringBuilder queryCustomers = queryEmployees();
         queryCustomers.append(" AND " + TABLE_USERS + "." + COLUMN_USERS_ID + " = ?");
         try (PreparedStatement statement = conn.prepareStatement(String.valueOf(queryCustomers))) {
             statement.setInt(1, customer_id);
             ResultSet results = statement.executeQuery();
-            List<Customer> customers = new ArrayList<>();
+            List<Employee> employees = new ArrayList<>();
             while (results.next()) {
-                Customer customer = new Customer();
-                customer.setId(results.getInt(1));
-                customer.setFullname(results.getString(2));
-                customer.setEmail(results.getString(3));
-                customer.setUsername(results.getString(4));
-                customer.setOrders(results.getInt(5));
-                customer.setStatus(results.getString(6));
-                customers.add(customer);
+                Employee employee = new Employee();
+                employee.setId(results.getInt(1));
+                employee.setFullname(results.getString(2));
+                employee.setEmail(results.getString(3));
+                employee.setUsername(results.getString(4));
+                employee.setOrders(results.getInt(5));
+                employee.setStatus(results.getString(6));
+                employees.add(employee);
             }
-            return customers;
+            return employees;
 
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
@@ -413,9 +414,9 @@ public class Datasource extends Product {
         }
     }
 
-    public List<Customer> searchCustomers(String searchString, int sortOrder) {
+    public List<Employee> searchCustomers(String searchString, int sortOrder) {
 
-        StringBuilder queryCustomers = queryCustomers();
+        StringBuilder queryCustomers = queryEmployees();
 
         queryCustomers.append(" AND (" + TABLE_USERS + "." + COLUMN_USERS_FULLNAME + " LIKE ? OR " + TABLE_USERS + "." + COLUMN_USERS_USERNAME + " LIKE ?)");
 
@@ -434,18 +435,18 @@ public class Datasource extends Product {
             statement.setString(2, "%" + searchString + "%");
             ResultSet results = statement.executeQuery();
 
-            List<Customer> customers = new ArrayList<>();
+            List<Employee> employees = new ArrayList<>();
             while (results.next()) {
-                Customer customer = new Customer();
-                customer.setId(results.getInt(1));
-                customer.setFullname(results.getString(2));
-                customer.setEmail(results.getString(3));
-                customer.setUsername(results.getString(4));
-                customer.setOrders(results.getInt(5));
-                customer.setStatus(results.getString(6));
-                customers.add(customer);
+                Employee employee = new Employee();
+                employee.setId(results.getInt(1));
+                employee.setFullname(results.getString(2));
+                employee.setEmail(results.getString(3));
+                employee.setUsername(results.getString(4));
+                employee.setOrders(results.getInt(5));
+                employee.setStatus(results.getString(6));
+                employees.add(employee);
             }
-            return customers;
+            return employees;
 
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
@@ -453,7 +454,7 @@ public class Datasource extends Product {
         }
     }
 
-    private StringBuilder queryCustomers() {
+    private StringBuilder queryEmployees() {
         return new StringBuilder("SELECT " +
                 TABLE_USERS + "." + COLUMN_USERS_ID + ", " +
                 TABLE_USERS + "." + COLUMN_USERS_FULLNAME + ", " +

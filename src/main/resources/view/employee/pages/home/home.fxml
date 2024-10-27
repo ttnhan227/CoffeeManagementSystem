@@ -60,7 +60,7 @@
                 </children>
             </HBox>
 
-            <!-- LineChart for displaying product and customer data -->
+            <!-- LineChart for displaying product and employee data -->
             <LineChart fx:id="dataChart" GridPane.columnSpan="2" GridPane.rowIndex="4">
                 <xAxis>
                     <CategoryAxis label="Category"/>

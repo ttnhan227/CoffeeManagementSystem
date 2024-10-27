@@ -195,6 +195,7 @@ public class ProductsController {
         Text productCategory = (Text) productCard.lookup("#productCategory");
         Text productPrice = (Text) productCard.lookup("#productPrice");
         Text productStock = (Text) productCard.lookup("#productStock");
+//        Text productDescription = (Text) productCard.lookup("#productDescription");
         Button editButton = (Button) productCard.lookup("#editButton");
         Button deleteButton = (Button) productCard.lookup("#deleteButton");
 
@@ -252,6 +253,10 @@ public class ProductsController {
         productCategory.setText(product.getCategory_name());
         productPrice.setText(String.format("$%.2f", product.getPrice()));
         productStock.setText(String.format("Stock: %d", product.getQuantity()));
+//        productDescription.setText(product.getDescription());
+
+
+
 
         // Set up button actions
         editButton.setOnAction(event -> btnEditProduct(product.getId()));

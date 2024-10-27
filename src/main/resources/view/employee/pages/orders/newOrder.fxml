@@ -52,7 +52,7 @@
                   </HBox>
                   <HBox alignment="CENTER" maxHeight="25.0" maxWidth="400.0" minHeight="25.0" minWidth="200.0" prefHeight="25.0" prefWidth="200.0">
                      <children>
-                        <Button mnemonicParsing="false" text="Add new customer">
+                        <Button mnemonicParsing="false" text="Add new employee">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
