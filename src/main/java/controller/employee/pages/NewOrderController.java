@@ -209,6 +209,7 @@ public class NewOrderController implements Initializable {
 
                 Platform.runLater(() -> {
                     suggestionList.getSelectionModel().clearSelection();
+                    onClickSearch();
                 });
             }
         });
