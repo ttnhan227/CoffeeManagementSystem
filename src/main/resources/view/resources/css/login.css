@@ -1,0 +1,77 @@
+.root {
+    -fx-background-image: url("../img/brand/loginBg.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: bottom;
+    -fx-background-repeat: no-repeat;
+}
+
+.anchor-pane-overlay {
+    -fx-background-color: rgba(44, 28, 20, 0.65);
+}
+
+#welcome-text {
+    -fx-fill: #f4e4d4; /* Lighter, warmer cream color */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 6, 0, 0, 2),
+                innershadow(gaussian, #d4a574, 1, 0, 0, 1); /* Added inner glow */
+    -fx-font-weight: bold;
+}
+
+.text-field, .password-field {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #8b5e3c;
+    -fx-border-width: 1;
+    -fx-text-fill: #2c1c14;
+    -fx-prompt-text-fill: #8b5e3c;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #d4a574;
+    -fx-border-width: 2;
+}
+
+.button {
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 6, 0, 0, 3);
+    -fx-padding: 8 16;
+    -fx-min-width: 200;
+    -fx-min-height: 35;
+}
+
+.button.success {
+    -fx-background-color: linear-gradient(to bottom, #c17f59, #8b5e3c);
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #d4a574;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+}
+
+.button.success:hover {
+    -fx-background-color: linear-gradient(to bottom, #d4a574, #c17f59);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 4);
+    -fx-border-color: #e6b788;
+}
+
+.button.primary {
+    -fx-background-color: linear-gradient(to bottom, #e6b788, #d4a574);
+    -fx-text-fill: #2c1c14;
+    -fx-border-color: #8b5e3c;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+}
+
+.button.primary:hover {
+    -fx-background-color: linear-gradient(to bottom, #f0c79c, #e6b788);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 4);
+    -fx-border-color: #c17f59;
+}
+
+#text {
+     -fx-fill: #f4e4d4; /* Lighter, warmer cream color */
+         -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 6, 0, 0, 2),
+                     innershadow(gaussian, #d4a574, 1, 0, 0, 1); /* Added inner glow */
+         -fx-font-weight: bold;
+}

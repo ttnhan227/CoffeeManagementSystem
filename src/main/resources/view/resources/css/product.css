@@ -1,0 +1,133 @@
+/* Variables for consistent theming */
+
+/* Product Card Container */
+.product-card {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 2);
+    -fx-background-radius: 8px;
+    -fx-padding: 0;
+    -fx-pref-width: 280px;
+    -fx-spacing: 0;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+.product-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 15, 0, 0, 4);
+    -fx-cursor: hand;
+}
+
+/* Image Container */
+.image-container {
+    -fx-background-color: #F8F8F8;
+    -fx-padding: 16px;
+    -fx-alignment: CENTER;
+    -fx-border-radius: 8px 8px 0 0;
+}
+
+/* Product Information Section */
+.product-info {
+    -fx-padding: 16px;
+    -fx-spacing: 12px;
+}
+
+/* Product Header */
+.product-header {
+    -fx-spacing: 4px;
+}
+
+.product-name {
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-font-size: 18px;
+}
+
+.product-category {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+}
+
+/* Product Details */
+.product-details {
+    -fx-spacing: 16px;
+    -fx-padding: 8px 0;
+}
+
+.price-container, .stock-container {
+    -fx-spacing: 6px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.price-label, .stock-label {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+    -fx-fill: -fx-text-secondary;
+}
+
+.product-price {
+    -fx-font-family: "Segoe UI Bold";
+    -fx-font-size: 16px;
+    -fx-fill: -fx-coffee-primary;
+}
+
+.product-stock {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+    -fx-fill: -fx-text-primary;
+}
+
+/* Action Buttons */
+.product-actions {
+    -fx-spacing: 8px;
+    -fx-padding: 8px 0 0 0;
+}
+
+.button {
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+}
+
+.button.primary {
+    -fx-background-color: -fx-coffee-primary;
+    -fx-text-fill: white;
+}
+
+.button.primary:hover {
+    -fx-background-color: derive(-fx-coffee-primary, 10%);
+}
+
+.button.danger {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-danger;
+    -fx-border-color: -fx-danger;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+}
+
+.button.danger:hover {
+    -fx-background-color: derive(-fx-danger, 90%);
+}
+
+.button.small {
+    -fx-padding: 6px 12px;
+    -fx-font-size: 12px;
+}
+.product-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 0);
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.product-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 0);
+    -fx-translate-y: -2px;
+}
+
+/* Make sure buttons don't trigger the hover effect */
+.product-card .button:hover {
+    -fx-translate-y: 0;
+}

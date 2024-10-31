@@ -1,0 +1,30 @@
+package controller.admin.pages;
+
+import controller.admin.MainDashboardController;
+import javafx.fxml.Initializable;
+import javafx.scene.control.TextField;
+import model.Order;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class ViewOrderController implements Initializable {
+    public MainDashboardController mainDashboardController;
+
+    public TextField orderIdField;
+
+    private Order order;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        //orderIdField.setText(String.valueOf(order.getId()));
+    }
+
+    public void setAdminMainDashboardController(UserMainDashboardController mainDashboardController) {
+        this.mainDashboardController = mainDashboardController;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+}

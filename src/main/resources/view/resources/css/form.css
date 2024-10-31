@@ -1,0 +1,98 @@
+/* General styles for the root AnchorPane */
+.root {
+    -fx-background-color: #f9f9f9; /* Light background color */
+    -fx-padding: 20; /* Padding around the content */
+}
+
+/* Styles for the BorderPane */
+.border-pane {
+    -fx-background-color: #ffffff; /* White background for the form */
+    -fx-padding: 15; /* Padding inside the BorderPane */
+    -fx-border-color: #e0e0e0; /* Light grey border */
+    -fx-border-width: 1; /* Thin border width */
+}
+
+/* Heading styles */
+.heading-text {
+    -fx-font-size: 24px; /* Larger font size for the heading */
+    -fx-font-weight: bold; /* Bold text */
+    -fx-text-fill: #333333; /* Dark text color */
+    -fx-padding: 10; /* Padding around the heading */
+}
+
+/* Label styles */
+.label {
+    -fx-font-size: 14px; /* Font size for labels */
+    -fx-text-fill: #555555; /* Dark grey text color */
+    -fx-padding: 5; /* Padding around the label */
+}
+
+/* TextField styles */
+.text-field {
+    -fx-border-color: #cccccc; /* Light grey border for text fields */
+    -fx-border-radius: 4; /* Rounded corners */
+    -fx-padding: 10; /* Padding inside text fields */
+    -fx-background-color: #ffffff; /* White background */
+}
+
+.text-field:focused {
+    -fx-border-color: #007bff; /* Blue border when focused */
+}
+
+/* TextArea styles */
+.text-area {
+    -fx-border-color: #cccccc; /* Light grey border for text areas */
+    -fx-border-radius: 4; /* Rounded corners */
+    -fx-padding: 10; /* Padding inside text areas */
+    -fx-background-color: #ffffff; /* White background */
+}
+
+.text-area:focused {
+    -fx-border-color: #007bff; /* Blue border when focused */
+}
+
+/* ComboBox styles */
+.combo-box {
+    -fx-border-color: #cccccc; /* Light grey border for ComboBoxes */
+    -fx-border-radius: 4; /* Rounded corners */
+    -fx-background-color: #ffffff; /* White background */
+}
+
+.combo-box:focused {
+    -fx-border-color: #007bff; /* Blue border when focused */
+}
+
+/* Button styles */
+.button {
+    -fx-background-color: #007bff; /* Primary blue color */
+    -fx-text-fill: #ffffff; /* White text color */
+    -fx-font-size: 14px; /* Font size for buttons */
+    -fx-padding: 10 20; /* Padding around the button */
+    -fx-border-radius: 4; /* Rounded corners */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.0, 0, 1); /* Shadow effect */
+}
+
+.button:hover {
+    -fx-background-color: #0056b3; /* Darker blue on hover */
+}
+
+.button:pressed {
+    -fx-background-color: #004085; /* Even darker blue when pressed */
+}
+
+/* ImageView styles */
+.image-view-container {
+    -fx-alignment: center; /* Center the image */
+}
+
+/* Message Text styles */
+.message-text {
+    -fx-font-size: 14px; /* Font size for messages */
+    -fx-text-fill: #28a745; /* Green color for success messages */
+    -fx-padding: 10; /* Padding around the message */
+    -fx-opacity: 0; /* Initially hidden */
+}
+
+.message-text.visible {
+    -fx-opacity: 1; /* Make visible when the product is updated */
+}

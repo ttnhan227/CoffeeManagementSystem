@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="800.0" prefWidth="1280.0" styleClass="root" stylesheets="/view/resources/css/form.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.users.pages.products.AddProductController">
+    <children>
+        <BorderPane layoutX="14.0" layoutY="14.0" styleClass="border-pane">
+            <center>
+                <GridPane alignment="CENTER_RIGHT" prefHeight="332.0" prefWidth="712.0" styleClass="grid-pane">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="350.0" minWidth="10.0" prefWidth="148.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="603.0" minWidth="10.0" prefWidth="279.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="603.0" minWidth="10.0" prefWidth="140.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="603.0" minWidth="10.0" prefWidth="146.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="603.0" minWidth="10.0" prefWidth="215.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+
+                    <Label styleClass="label" text="Product Name" />
+                    <TextField fx:id="fieldAddProductName" promptText="product name" GridPane.columnIndex="1" />
+
+                    <Label styleClass="label" text="Product Price" GridPane.columnIndex="3" />
+                    <TextField fx:id="fieldAddProductPrice" promptText="0.0" GridPane.columnIndex="4" />
+
+                    <Label styleClass="label" text="Product Stock" GridPane.rowIndex="1" />
+                    <TextField fx:id="fieldAddProductQuantity" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                    <Label styleClass="label" text="Product Category" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                    <ComboBox fx:id="fieldAddProductCategoryId" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+
+                    <Label styleClass="label" text="Description" GridPane.rowIndex="2" />
+                    <TextArea fx:id="fieldAddProductDescription" prefHeight="200.0" prefWidth="522.0" promptText="description here" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                    <Text fx:id="viewProductResponse" strokeType="OUTSIDE" strokeWidth="0.0" text="Product added!" visible="false" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+
+                    <HBox spacing="10" styleClass="image-view-container" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                    <Button mnemonicParsing="false" onAction="#btnAddProductOnAction" styleClass="button, success" text="Add Product" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                </GridPane>
+            </center>
+            <top>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="heading-text" text="Add new product" BorderPane.alignment="CENTER_LEFT" />
+            </top>
+        </BorderPane>
+        <ImageView fx:id="productImageView" fitHeight="200" fitWidth="200" layoutX="190.0" layoutY="381.0" preserveRatio="true" />
+        <Button fx:id="selectImageButton" layoutX="106.0" layoutY="481.0" onAction="#selectImage" text="Select Image" />
+    </children>
+</AnchorPane>
