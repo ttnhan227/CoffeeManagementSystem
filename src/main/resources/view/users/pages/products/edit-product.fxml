@@ -14,7 +14,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1280.0" styleClass="root" stylesheets="/view/resources/css/form.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.users.pages.products.EditProductController">
+<AnchorPane prefHeight="800.0" prefWidth="1280.0" styleClass="root" stylesheets="@../../../resources/css/form.css"
+
+            xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.users.pages.products.EditProductController">
     <children>
         <BorderPane layoutX="14.0" layoutY="14.0" styleClass="border-pane">
             <center>

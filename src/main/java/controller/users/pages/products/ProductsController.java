@@ -1,9 +1,7 @@
 package controller.users.pages.products;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.geometry.Insets;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import app.utils.HelperMethods;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,8 +10,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -21,6 +17,11 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import model.Datasource;
 import model.Product;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+
 
 import java.io.File;
 import java.net.URL;
@@ -31,7 +32,6 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
-
 
 public class ProductsController {
 
@@ -45,6 +45,7 @@ public class ProductsController {
     private FlowPane productsContainer;
     @FXML
     private StackPane productsContent;
+    @FXML
     private TableView<Product> tableProductsPage;
     private TableColumn<Product, Void> colBtnEdit;
 
@@ -302,6 +303,8 @@ public class ProductsController {
                 stage.setMinHeight(400);
             }
         });
+
+        // Make the card look clickable
         productCard.setStyle(productCard.getStyle() + "; -fx-cursor: hand;");
 
         Task<Image> loadImageTask = new Task<Image>() {
@@ -359,9 +362,6 @@ public class ProductsController {
         productPrice.setText(String.format("$%.2f", product.getPrice()));
         productStock.setText(String.format("Stock: %d", product.getQuantity()));
 //        productDescription.setText(product.getDescription());
-
-
-
 
         // Set up button actions
         editButton.setOnAction(event -> btnEditProduct(product.getId()));
@@ -454,27 +454,44 @@ public class ProductsController {
 
     @FXML
     private void btnAddProductOnClick() {
-        FXMLLoader fxmlLoader = new FXMLLoader();
         try {
-            fxmlLoader.load(getClass().getResource("/view/users/pages/products/add-product.fxml").openStream());
-            AnchorPane root = fxmlLoader.getRoot();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/users/pages/products/add-product.fxml"));
+            AnchorPane root = fxmlLoader.load();
+
+            // Try to load CSS
+            URL cssUrl = getClass().getResource("/css/form.css");
+            if (cssUrl != null) {
+                root.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
+            // Clear and add the new content
             productsContent.getChildren().clear();
             productsContent.getChildren().add(root);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     @FXML
     private void btnEditProduct(int product_id) {
-        FXMLLoader fxmlLoader = new FXMLLoader();
         try {
-            fxmlLoader.load(getClass().getResource("/view/users/pages/products/edit-product.fxml").openStream());
-            AnchorPane root = fxmlLoader.getRoot();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/users/pages/products/edit-product.fxml"));
+            AnchorPane root = fxmlLoader.load();
+
+            // Try to load CSS
+            URL cssUrl = getClass().getResource("/css/form.css");
+            if (cssUrl != null) {
+                root.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
+            // Clear and add the new content
             productsContent.getChildren().clear();
             productsContent.getChildren().add(root);
 
+            // Get controller and fill fields
             EditProductController controller = fxmlLoader.getController();
             controller.fillEditingProductFields(product_id);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
