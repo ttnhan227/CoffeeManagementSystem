@@ -1,7 +1,18 @@
-/* Root Background */
+
+
 .root, #mainContainer {
-    -fx-background-color: #FAF3E0; /* Solid coffee cream color */
+    -fx-background-color: #FAF3E0;
 }
+
+/*
+.root, #mainContainer {
+    -fx-background-color: #FAF3E0;
+      -fx-background-image: url("../img/brand/realistic-coffee-background-with-drawings_79603-607.jpg");
+        -fx-background-size: cover;
+        -fx-background-position: bottom;
+        -fx-background-repeat: no-repeat;
+}
+*/
 
 /* General Button Style */
 .button {

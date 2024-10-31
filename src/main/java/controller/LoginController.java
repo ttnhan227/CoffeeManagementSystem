@@ -1,6 +1,5 @@
 package controller;
 
-
 import app.utils.HelperMethods;
 import app.utils.PasswordUtils;
 import javafx.event.ActionEvent;
@@ -8,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;  // Ensure this line is present
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -16,28 +16,29 @@ import model.User;
 import java.io.IOException;
 import java.sql.SQLException;
 
-
 public class LoginController {
     @FXML
     public TextField usernameField;
     @FXML
     public PasswordField passwordField;
+    @FXML
+    public Label messageLabel;  // Declare the messageLabel here
     Stage dialogStage = new Stage();
     Scene scene;
 
     public void handleLoginButtonAction(ActionEvent event) throws SQLException, IOException {
         String username = usernameField.getText();
         String providedPassword = passwordField.getText();
+        messageLabel.setText(""); // Clear previous messages
 
-        if ((username == null || username.isEmpty()) || (providedPassword == null || providedPassword.isEmpty())) {
-            HelperMethods.alertBox("Please enter the Username and Password", null, "Login Failed!");
+        if (username.isEmpty() || providedPassword.isEmpty()) {
+            messageLabel.setText("Please enter the Username and Password.");
         } else if (!HelperMethods.validateUsername(username)) {
-            HelperMethods.alertBox("Please enter a valid Username!", null, "Login Failed!");
+            messageLabel.setText("Please enter a valid Username!");
         } else {
-
             User user = model.Datasource.getInstance().getUserByUsername(username);
             if (user.getPassword() == null || user.getPassword().isEmpty()) {
-                HelperMethods.alertBox("There is no user registered with that username!", null, "Login Failed!");
+                messageLabel.setText("There is no user registered with that username!");
             } else {
                 boolean passwordMatch = PasswordUtils.verifyUserPassword(providedPassword, user.getPassword(), user.getSalt());
 
@@ -52,16 +53,17 @@ public class LoginController {
                     Node node = (Node) event.getSource();
                     dialogStage = (Stage) node.getScene().getWindow();
                     dialogStage.close();
+
+                    // Load appropriate dashboard based on user role
                     if (user.getAdmin() == 0) {
                         scene = new Scene(FXMLLoader.load(getClass().getResource("/view/users/main-dashboard.fxml")));
-                    } else if (user.getAdmin() == 1) {
+                    } else {
                         scene = new Scene(FXMLLoader.load(getClass().getResource("/view/admin/main-dashboard.fxml")));
-
                     }
                     dialogStage.setScene(scene);
                     dialogStage.show();
                 } else {
-                    HelperMethods.alertBox("Please enter correct Email and Password", null, "Login Failed!");
+                    messageLabel.setText("Incorrect username or password.");
                 }
             }
         }

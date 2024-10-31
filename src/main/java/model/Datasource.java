@@ -113,7 +113,6 @@ public class Datasource extends Product {
                         }
 
                         // Debug information
-                        System.out.println("Loading image for product " + product.getName() + ": " + imagePath);
 
                         // Check if file exists in resources
                         URL resourceUrl = getClass().getResource(imagePath);

@@ -19,7 +19,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/view/login.fxml"));
         primaryStage.setTitle("Coffee Store System");
-        primaryStage.getIcons().add(new Image(getClass().getResource("/view/resources/img/brand/360_F_784277349_wCyNJz9BpCaDeZ3OqGUBD6SMKPEeMTDI.jpg").toString()));
+        primaryStage.getIcons().add(new Image(getClass().getResource("/view/resources/img/brand/realistic-coffee-background-with-drawings_79603-607.jpg").toString()));
 
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();

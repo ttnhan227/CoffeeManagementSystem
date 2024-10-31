@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label; // Import Label for error messages
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -17,27 +18,27 @@ import model.User;
 import java.io.IOException;
 import java.sql.SQLException;
 
-
 public class RegisterController {
 
     @FXML
-    public TextField fullNameField;
+    private TextField fullNameField;
     @FXML
-    public TextField usernameField;
+    private TextField usernameField;
     @FXML
-    public TextField emailField;
+    private TextField emailField;
     @FXML
-    public PasswordField passwordField;
+    private PasswordField passwordField;
+    @FXML
+    private Label messageLabel; // Declare messageLabel for displaying errors
 
     Stage dialogStage = new Stage();
     Scene scene;
 
     public void handleLoginButtonAction(ActionEvent actionEvent) throws IOException {
-        Stage dialogStage;
         Node node = (Node) actionEvent.getSource();
         dialogStage = (Stage) node.getScene().getWindow();
         dialogStage.close();
-        Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/view/login.fxml")));
+        scene = new Scene(FXMLLoader.load(getClass().getResource("/view/login.fxml")));
         dialogStage.setScene(scene);
         dialogStage.show();
     }
@@ -52,78 +53,80 @@ public class RegisterController {
 
         // Validate Full Name
         if (fullName == null || fullName.isEmpty()) {
-            validationErrors += "Please enter your Name and Surname! \n";
+            validationErrors += "Please enter your Name and Surname!\n";
             errors = true;
         } else if (!HelperMethods.validateFullName(fullName)) {
-            validationErrors += "Please enter a valid Name and Surname! \n";
+            validationErrors += "Please enter a valid Name and Surname!\n";
             errors = true;
         }
 
         // Validate Username
         if (username == null || username.isEmpty()) {
-            validationErrors += "Please enter a username! \n";
+            validationErrors += "Please enter a username!\n";
             errors = true;
         } else if (!HelperMethods.validateUsername(username)) {
-            validationErrors += "Please enter a valid Username! \n";
+            validationErrors += "Please enter a valid Username!\n";
             errors = true;
         } else {
-            User userByUsername = model.Datasource.getInstance().getUserByUsername(username);
-            if (userByUsername.getUsername() != null) {
-                validationErrors += "There is already a user registered with this username! \n";
+            User userByUsername = Datasource.getInstance().getUserByUsername(username);
+            if (userByUsername != null && userByUsername.getUsername() != null) {
+                validationErrors += "There is already a user registered with this username!\n";
                 errors = true;
             }
         }
 
         // Validate Email
         if (email == null || email.isEmpty()) {
-            validationErrors += "Please enter an email address! \n";
+            validationErrors += "Please enter an email address!\n";
             errors = true;
         } else if (!HelperMethods.validateEmail(email)) {
-            validationErrors += "Please enter a valid Email address! \n";
+            validationErrors += "Please enter a valid Email address!\n";
             errors = true;
         } else {
-            User userByEmail = model.Datasource.getInstance().getUserByEmail(email);
-            if (userByEmail.getEmail() != null) {
-                validationErrors += "There is already a user registered with this email address! \n";
+            User userByEmail = Datasource.getInstance().getUserByEmail(email);
+            if (userByEmail != null && userByEmail.getEmail() != null) {
+                validationErrors += "There is already a user registered with this email address!\n";
                 errors = true;
             }
         }
 
         // Validate Password
         if (providedPassword == null || providedPassword.isEmpty()) {
-            validationErrors += "Please enter the password! \n";
+            validationErrors += "Please enter the password!\n";
             errors = true;
         } else if (!HelperMethods.validatePassword(providedPassword)) {
-            validationErrors += "Password must be at least 6 and maximum 16 characters! \n";
+            validationErrors += "Password must be at least 6 and maximum 16 characters!\n";
             errors = true;
         }
 
+        // Display validation errors or proceed
         if (errors) {
-            HelperMethods.alertBox(validationErrors, null, "Registration Failed!");
-        } else {
+            messageLabel.setText(validationErrors); // Set error message in the label
+            return; // Early exit if there are validation errors
+        }
 
-            String salt = PasswordUtils.getSalt(30);
-            String securePassword = PasswordUtils.generateSecurePassword(providedPassword, salt);
+        // Proceed with user registration
+        String salt = PasswordUtils.getSalt(30);
+        String securePassword = PasswordUtils.generateSecurePassword(providedPassword, salt);
 
-            Task<Boolean> addUserTask = new Task<Boolean>() {
-                @Override
-                protected Boolean call() {
-                    return Datasource.getInstance().insertNewUser(fullName, username, email, securePassword, salt);
+        Task<Boolean> addUserTask = new Task<Boolean>() {
+            @Override
+            protected Boolean call() {
+                return Datasource.getInstance().insertNewUser(fullName, username, email, securePassword, salt);
+            }
+        };
+
+        addUserTask.setOnSucceeded(e -> {
+            if (addUserTask.getValue()) {
+                User user;
+                try {
+                    user = Datasource.getInstance().getUserByEmail(email);
+                } catch (SQLException err) {
+                    err.printStackTrace();
+                    return;
                 }
-            };
 
-            addUserTask.setOnSucceeded(e -> {
-                if (addUserTask.valueProperty().get()) {
-                    User user = null;
-                    try {
-                        user = Datasource.getInstance().getUserByEmail(email);
-                    } catch (SQLException err) {
-                        err.printStackTrace();
-                    }
-
-                    // Method invocation 'getId' may produce 'NullPointerException'
-                    assert user != null;
-
+                if (user != null) {
                     UserSessionController.setUserId(user.getId());
                     UserSessionController.setUserFullName(user.getFullname());
                     UserSessionController.setUserName(user.getUsername());
@@ -134,26 +137,19 @@ public class RegisterController {
                     Node node = (Node) actionEvent.getSource();
                     dialogStage = (Stage) node.getScene().getWindow();
                     dialogStage.close();
-                    if (user.getAdmin() == 0) {
-                        try {
-                            scene = new Scene(FXMLLoader.load(getClass().getResource("/view/users/main-dashboard.fxml")));
-                        } catch (IOException ioException) {
-                            ioException.printStackTrace();
-                        }
-                    } else if (user.getAdmin() == 1) {
-                        try {
-                            scene = new Scene(FXMLLoader.load(getClass().getResource("/view/admin/main-dashboard.fxml")));
-                        } catch (IOException ioException) {
-                            ioException.printStackTrace();
-                        }
+                    try {
+                        scene = new Scene(FXMLLoader.load(getClass().getResource(user.getAdmin() == 0 ? "/view/users/main-dashboard.fxml" : "/view/admin/main-dashboard.fxml")));
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
                     }
                     dialogStage.setScene(scene);
                     dialogStage.show();
                 }
-            });
+            } else {
+                messageLabel.setText("Registration failed! Please try again.");
+            }
+        });
 
-            new Thread(addUserTask).start();
-
-        }
+        new Thread(addUserTask).start();
     }
 }
