@@ -118,27 +118,35 @@ public class ViewOrderController implements Initializable {
         productTable.setItems(productList);
     }
 
-    public void loadTable(){
-
+    public void loadTable() {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+
         categoryColumn.setCellValueFactory(cellData -> {
             Product product = cellData.getValue();
             String category = Datasource.getInstance().getCategoryName(product.getCategory_id());
             return new SimpleStringProperty(category);
         });
+
         quantityColumn.setCellValueFactory(cellData -> {
-            // Use the row index to get the corresponding quantity
             int index = productTable.getItems().indexOf(cellData.getValue());
-            return new SimpleIntegerProperty(orderDetailsList.get(index).getQuantity()).asObject();
+            if (index >= 0 && index < orderDetailsList.size()) {  // Ensure index is within bounds
+                return new SimpleIntegerProperty(orderDetailsList.get(index).getQuantity()).asObject();
+            }
+            return new SimpleIntegerProperty(0).asObject();  // Default value if index out of bounds
         });
+
         totalColumn.setCellValueFactory(cellData -> {
             Product product = cellData.getValue();
             int index = productTable.getItems().indexOf(product);
-            return new SimpleDoubleProperty(orderDetailsList.get(index).getTotal()).asObject();
+            if (index >= 0 && index < orderDetailsList.size()) {  // Ensure index is within bounds
+                return new SimpleDoubleProperty(orderDetailsList.get(index).getTotal()).asObject();
+            }
+            return new SimpleDoubleProperty(0.0).asObject();  // Default value if index out of bounds
         });
     }
+
 
     @FXML
     private void toOrder() {
