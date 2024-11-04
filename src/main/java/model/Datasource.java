@@ -830,6 +830,7 @@ public class Datasource extends Product {
                 product.setQuantity(results.getInt("quantity"));
                 product.setCategory_id(results.getInt("category_id"));
                 product.setImage(results.getString("image"));
+                product.setDisabled(results.getBoolean("active"));
                 return product;
             }
             else{

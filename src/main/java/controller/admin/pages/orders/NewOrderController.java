@@ -259,7 +259,7 @@ public class NewOrderController implements Initializable {
         String searchName = searchField.getText();
         //Product product = new Product();
         tempProduct = Datasource.getInstance().searchOneProductByName(searchName);
-        if(tempProduct != null){
+        if(tempProduct != null && !tempProduct.isDisabled()){
             if(tempProduct.getQuantity() == 0){
                 invalid.setText("Product has no stock remain");
                 invalid.setFill(Color.RED);
@@ -272,8 +272,8 @@ public class NewOrderController implements Initializable {
             quantitySpinner.setValueFactory(spinnerValue);
             //return;
         }
-        else{
-            invalid.setText("No product found");
+        else if(tempProduct == null || tempProduct.isDisabled()){
+            invalid.setText("No product found or product is disabled");
             invalid.setFill(Color.RED);
             searchHBox.getChildren().add(invalid);
             //return;
