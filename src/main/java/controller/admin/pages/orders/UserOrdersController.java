@@ -43,12 +43,12 @@ public class UserOrdersController implements Initializable {
         tableColumn.setCellValueFactory(new PropertyValueFactory<>("tableID"));
         employeeColumn.setCellValueFactory(cellData -> {
             int index = tableOrdersPage.getItems().indexOf(cellData.getValue());
-            Integer emid = orderList.get(index).getEmployeeID();
+            Integer emid = filteredList.get(index).getEmployeeID();
             return new SimpleStringProperty(Datasource.getInstance().searchOneEmployeeById(emid).getFullname());
         });
         customerColumn.setCellValueFactory(cellData -> {
             int index = tableOrdersPage.getItems().indexOf(cellData.getValue());
-            Integer cusid = orderList.get(index).getCustomerID();
+            Integer cusid = filteredList.get(index).getCustomerID();
             if (cusid == null) {
                 return null;
             } else {
@@ -57,7 +57,7 @@ public class UserOrdersController implements Initializable {
         });
 
         addActionButton();
-        filteredList = FXCollections.observableArrayList(orderList);
+        //filteredList = FXCollections.observableArrayList(orderList);
         tableOrdersPage.setItems(filteredList);
     }
 
@@ -167,6 +167,7 @@ public class UserOrdersController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         orderList = FXCollections.observableArrayList(Datasource.getInstance().getAllOrder());
+        filteredList = FXCollections.observableArrayList(orderList);
         listOrders();
         loadSearch();
     }
