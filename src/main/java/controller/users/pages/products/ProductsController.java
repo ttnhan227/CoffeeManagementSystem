@@ -198,7 +198,7 @@ public class ProductsController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/users/pages/products/product-card.fxml"));
         VBox productCard = loader.load();
 
-        // Set product data
+        // Get UI elements
         ImageView productImage = (ImageView) productCard.lookup("#productImage");
         Text productName = (Text) productCard.lookup("#productName");
         Text productCategory = (Text) productCard.lookup("#productCategory");
@@ -207,10 +207,76 @@ public class ProductsController {
         Button editButton = (Button) productCard.lookup("#editButton");
         Button deleteButton = (Button) productCard.lookup("#deleteButton");
         Button toggleStatusButton = (Button) productCard.lookup("#toggleStatusButton");
+
         productImage.setOnMouseClicked(event -> showProductDescription(product));
+        updateProductCardStatus(product, productCard, productName, toggleStatusButton);
 
+        // Toggle status button action
+        toggleStatusButton.setOnAction(event -> {
+            product.setDisabled(!product.isDisabled());
+            if (Datasource.getInstance().updateProductStatus(product.getId(), product.isDisabled())) {
+                updateProductCardStatus(product, productCard, productName, toggleStatusButton);
+            } else {
+                new Alert(Alert.AlertType.ERROR, "Failed to update the product status. Please try again.").showAndWait();
+            }
+        });
 
-        // Update UI based on disabled state
+        // Load image asynchronously
+        Task<Image> loadImageTask = new Task<Image>() {
+            @Override
+            protected Image call() {
+                if (product.getImage() != null && !product.getImage().isEmpty()) {
+                    try {
+                        URL resourceUrl = getClass().getResource(product.getImage());
+                        if (resourceUrl != null) {
+                            return new Image(resourceUrl.toString(), 350, 250, false, true);
+                        }
+                        Path absolutePath = Paths.get(System.getProperty("user.dir"), "src/main/resources" + product.getImage());
+                        if (Files.exists(absolutePath)) {
+                            return new Image(absolutePath.toUri().toString(), 350, 250, false, true);
+                        }
+                    } catch (Exception ignored) {}
+                }
+                return DEFAULT_IMAGE;
+            }
+        };
+
+        loadImageTask.setOnSucceeded(event -> {
+            productImage.setImage(loadImageTask.getValue());
+            productImage.setFitWidth(350);
+            productImage.setFitHeight(250);
+            productImage.setPreserveRatio(false);
+        });
+
+        loadImageTask.setOnFailed(event -> productImage.setImage(DEFAULT_IMAGE));
+        new Thread(loadImageTask).start();
+
+        // Set product information
+        productName.setText(product.getName());
+        productCategory.setText(product.getCategory_name());
+        productPrice.setText(String.format("$%.2f", product.getPrice()));
+        productStock.setText(String.format("Stock: %d", product.getQuantity()));
+        productCard.setStyle(productCard.getStyle() + "; -fx-cursor: hand;");
+
+        // Set up button actions
+        editButton.setOnAction(event -> btnEditProduct(product.getId()));
+        deleteButton.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Are you sure you want to delete " + product.getName() + "?",
+                    ButtonType.OK, ButtonType.CANCEL);
+            alert.setTitle("Delete " + product.getName() + "?");
+
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK && Datasource.getInstance().deleteSingleProduct(product.getId())) {
+                    productsContainer.getChildren().remove(productCard);
+                }
+            });
+        });
+
+        productsContainer.getChildren().add(productCard);
+    }
+
+    private void updateProductCardStatus(Product product, VBox productCard, Text productName, Button toggleStatusButton) {
         if (product.isDisabled()) {
             productCard.getStyleClass().add("disabled");
             productName.getStyleClass().add("unavailable");
@@ -219,106 +285,13 @@ public class ProductsController {
             toggleStatusButton.getStyleClass().remove("warning");
             toggleStatusButton.getStyleClass().add("enable");
         } else {
+            productCard.getStyleClass().remove("disabled");
+            productName.getStyleClass().remove("unavailable");
             productName.setText(product.getName());
             toggleStatusButton.setText("Disable");
             toggleStatusButton.getStyleClass().remove("enable");
             toggleStatusButton.getStyleClass().add("warning");
         }
-
-        // Toggle status button action
-        toggleStatusButton.setOnAction(event -> {
-            product.setDisabled(!product.isDisabled()); // Toggle disabled state
-            if (Datasource.getInstance().updateProductStatus(product.getId(), product.isDisabled())) {
-                // Update UI based on the new disabled state
-                if (product.isDisabled()) {
-                    productCard.getStyleClass().add("disabled");
-                    productName.getStyleClass().add("unavailable");
-                    productName.setText(product.getName() + " (Unavailable)");
-                    toggleStatusButton.setText("Enable");
-                    toggleStatusButton.getStyleClass().remove("warning");
-                    toggleStatusButton.getStyleClass().add("enable");
-                } else {
-                    productCard.getStyleClass().remove("disabled");
-                    productName.getStyleClass().remove("unavailable");
-                    productName.setText(product.getName());
-                    toggleStatusButton.setText("Disable");
-                    toggleStatusButton.getStyleClass().remove("enable");
-                    toggleStatusButton.getStyleClass().add("warning");
-                }
-            } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("Status Update Failed");
-                alert.setContentText("Failed to update the product status. Please try again.");
-                alert.showAndWait();
-            }
-        });
-
-        // Make the card look clickable
-        productCard.setStyle(productCard.getStyle() + "; -fx-cursor: hand;");
-
-        // Load product image asynchronously
-        Task<Image> loadImageTask = new Task<Image>() {
-            @Override
-            protected Image call() throws Exception {
-                if (product.getImage() != null && !product.getImage().isEmpty()) {
-                    try {
-                        String imagePath = product.getImage();
-                        URL resourceUrl = getClass().getResource(imagePath);
-                        if (resourceUrl != null) {
-                            return new Image(resourceUrl.toString(), 350, 250, false, true);
-                        }
-                        String projectPath = System.getProperty("user.dir");
-                        Path absolutePath = Paths.get(projectPath, "src/main/resources" + imagePath);
-                        if (Files.exists(absolutePath)) {
-                            return new Image(absolutePath.toUri().toString(), 350, 250, false, true);
-                        }
-                    } catch (Exception e) {
-                        System.err.println("Error loading image: " + e.getMessage());
-                        e.printStackTrace();
-                    }
-                }
-                return DEFAULT_IMAGE; // Fallback image
-            }
-        };
-
-        loadImageTask.setOnSucceeded(event -> {
-            Image loadedImage = loadImageTask.getValue();
-            productImage.setImage(loadedImage);
-            productImage.setFitWidth(350);
-            productImage.setFitHeight(250);
-            productImage.setPreserveRatio(false);
-        });
-
-        loadImageTask.setOnFailed(event -> {
-            System.err.println("Failed to load image: " + loadImageTask.getException());
-            productImage.setImage(DEFAULT_IMAGE);
-        });
-
-        new Thread(loadImageTask).start();
-
-        // Set other product information
-        productName.setText(product.getName());
-        productCategory.setText(product.getCategory_name());
-        productPrice.setText(String.format("$%.2f", product.getPrice()));
-        productStock.setText(String.format("Stock: %d", product.getQuantity()));
-
-        // Set up button actions for editing and deleting products
-        editButton.setOnAction(event -> btnEditProduct(product.getId()));
-        deleteButton.setOnAction(event -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setHeaderText("Are you sure you want to delete " + product.getName() + "?");
-            alert.setTitle("Delete " + product.getName() + "?");
-            Optional<ButtonType> deleteConfirmation = alert.showAndWait();
-
-            if (deleteConfirmation.isPresent() && deleteConfirmation.get() == ButtonType.OK) {
-                if (Datasource.getInstance().deleteSingleProduct(product.getId())) {
-                    productsContainer.getChildren().remove(productCard);
-                }
-            }
-        });
-
-        productsContainer.getChildren().add(productCard);
     }
     private void showProductDescription(Product product) {
         // Create an alert to show the product description
