@@ -105,13 +105,14 @@ public class AddProductController extends ProductsController {
             int productQuantity = Integer.parseInt(fieldAddProductQuantity.getText());
             int productCategoryId = category.getId();
             String imagePath = saveImageFile();
+            boolean isEnabled = true; // Change this logic as per your requirements
 
             Task<Boolean> addProductTask = new Task<Boolean>() {
                 @Override
                 protected Boolean call() {
                     return Datasource.getInstance().insertNewProduct(
                             productName, productDescription, productPrice,
-                            productQuantity, productCategoryId, imagePath);
+                            productQuantity, productCategoryId, imagePath, isEnabled);
                 }
             };
 

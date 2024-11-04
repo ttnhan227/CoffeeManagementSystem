@@ -17,6 +17,16 @@ public class Product {
     private String category_name;
     private String image;
     private ImageView imageView;
+    private boolean isDisabled; // Renamed field to indicate disabled status
+
+    // Getters and Setters for isDisabled
+    public boolean isDisabled() {
+        return isDisabled;
+    }
+
+    public void setDisabled(boolean isDisabled) {
+        this.isDisabled = isDisabled;
+    }
 
 
     public int getId() {

@@ -195,7 +195,7 @@ public class ProductsController {
         new Thread(getAllProductsTask).start();
     }
     private void addProductCard(Product product) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/users/pages/products/product-card.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/admin/pages/products/product-card.fxml"));
         VBox productCard = loader.load();
 
         // Set product data
@@ -204,139 +204,79 @@ public class ProductsController {
         Text productCategory = (Text) productCard.lookup("#productCategory");
         Text productPrice = (Text) productCard.lookup("#productPrice");
         Text productStock = (Text) productCard.lookup("#productStock");
-//        Text productDescription = (Text) productCard.lookup("#productDescription");
         Button editButton = (Button) productCard.lookup("#editButton");
         Button deleteButton = (Button) productCard.lookup("#deleteButton");
-        // Add click handler to the entire card
-        productCard.setOnMouseClicked(event -> {
-            // Don't show dialog if clicked on buttons
-            if (!(event.getTarget() instanceof Button)) {
-                Dialog<ButtonType> dialog = new Dialog<>();
-                dialog.setTitle("Product Details");
+        Button toggleStatusButton = (Button) productCard.lookup("#toggleStatusButton");
 
-                // Create content pane
-                VBox contentBox = new VBox(20); // 20 is spacing between elements
-                contentBox.setPadding(new Insets(20));
-                contentBox.setPrefWidth(600); // Set preferred width
+        // Update UI based on disabled state
+        if (product.isDisabled()) {
+            productCard.getStyleClass().add("disabled");
+            productName.getStyleClass().add("unavailable");
+            productName.setText(product.getName() + " (Unavailable)");
+            toggleStatusButton.setText("Enable");
+            toggleStatusButton.getStyleClass().remove("warning");
+            toggleStatusButton.getStyleClass().add("enable");
+        } else {
+            productName.setText(product.getName());
+            toggleStatusButton.setText("Disable");
+            toggleStatusButton.getStyleClass().remove("enable");
+            toggleStatusButton.getStyleClass().add("warning");
+        }
 
-                // Product name as header
-                Text headerText = new Text(product.getName());
-                headerText.setStyle(
-                        "-fx-font-size: 24px; " +
-                                "-fx-font-weight: bold;"
-                );
-
-                // Product image
-                ImageView dialogImage = new ImageView(productImage.getImage());
-                dialogImage.setFitWidth(300);
-                dialogImage.setFitHeight(200);
-                dialogImage.setPreserveRatio(true);
-
-                // Price and category info
-                HBox infoBox = new HBox(20);
-                Text priceText = new Text("Price: $" + String.format("%.2f", product.getPrice()));
-                Text categoryText = new Text("Category: " + product.getCategory_name());
-                Text stockText = new Text("Stock: " + product.getQuantity());
-
-                priceText.setStyle("-fx-font-size: 16px;");
-                categoryText.setStyle("-fx-font-size: 16px;");
-                stockText.setStyle("-fx-font-size: 16px;");
-
-                infoBox.getChildren().addAll(priceText, categoryText, stockText);
-
-                // Description section
-                Text descriptionHeader = new Text("Description");
-                descriptionHeader.setStyle(
-                        "-fx-font-size: 18px; " +
-                                "-fx-font-weight: bold;"
-                );
-
-                Label descriptionLabel = new Label(product.getDescription());
-                descriptionLabel.setWrapText(true);
-                descriptionLabel.setStyle(
-                        "-fx-font-size: 14px; " +
-                                "-fx-line-spacing: 1.5;"
-                );
-
-                // ScrollPane for description
-                ScrollPane scrollPane = new ScrollPane(descriptionLabel);
-                scrollPane.setFitToWidth(true);
-                scrollPane.setPrefViewportHeight(150);
-                scrollPane.setStyle(
-                        "-fx-background-color: transparent; " +
-                                "-fx-padding: 10px;"
-                );
-
-                // Add all elements to the content box
-                contentBox.getChildren().addAll(
-                        headerText,
-                        dialogImage,
-                        infoBox,
-                        descriptionHeader,
-                        scrollPane
-                );
-
-                // Set dialog content
-                dialog.getDialogPane().setContent(contentBox);
-
-                // Add close button
-                dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-
-                // Set size and styling for dialog pane
-                DialogPane dialogPane = dialog.getDialogPane();
-                dialogPane.setPrefSize(600, 600); // Set preferred size
-                dialogPane.setStyle(
-                        "-fx-background-color: white; " +
-                                "-fx-padding: 20px;"
-                );
-
-                // Optional: Set min and max sizes
-                dialogPane.setMinHeight(400);
-                dialogPane.setMinWidth(500);
-
-                // Show the dialog
-                dialog.show();
-
-                // Center the dialog on the screen
-                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-                stage.setMinWidth(500);
-                stage.setMinHeight(400);
+        // Toggle status button action
+        toggleStatusButton.setOnAction(event -> {
+            product.setDisabled(!product.isDisabled()); // Toggle disabled state
+            if (Datasource.getInstance().updateProductStatus(product.getId(), product.isDisabled())) {
+                // Update UI based on the new disabled state
+                if (product.isDisabled()) {
+                    productCard.getStyleClass().add("disabled");
+                    productName.getStyleClass().add("unavailable");
+                    productName.setText(product.getName() + " (Unavailable)");
+                    toggleStatusButton.setText("Enable");
+                    toggleStatusButton.getStyleClass().remove("warning");
+                    toggleStatusButton.getStyleClass().add("enable");
+                } else {
+                    productCard.getStyleClass().remove("disabled");
+                    productName.getStyleClass().remove("unavailable");
+                    productName.setText(product.getName());
+                    toggleStatusButton.setText("Disable");
+                    toggleStatusButton.getStyleClass().remove("enable");
+                    toggleStatusButton.getStyleClass().add("warning");
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Status Update Failed");
+                alert.setContentText("Failed to update the product status. Please try again.");
+                alert.showAndWait();
             }
         });
 
         // Make the card look clickable
         productCard.setStyle(productCard.getStyle() + "; -fx-cursor: hand;");
 
+        // Load product image asynchronously
         Task<Image> loadImageTask = new Task<Image>() {
             @Override
             protected Image call() throws Exception {
                 if (product.getImage() != null && !product.getImage().isEmpty()) {
                     try {
-                        // Try multiple approaches to load the image
                         String imagePath = product.getImage();
-
-                        // Try loading from resources first
                         URL resourceUrl = getClass().getResource(imagePath);
                         if (resourceUrl != null) {
-                            return new Image(resourceUrl.toString(),
-                                    350, 250, false, true);
+                            return new Image(resourceUrl.toString(), 350, 250, false, true);
                         }
-
-                        // If resource loading fails, try loading from absolute path
                         String projectPath = System.getProperty("user.dir");
                         Path absolutePath = Paths.get(projectPath, "src/main/resources" + imagePath);
                         if (Files.exists(absolutePath)) {
-                            return new Image(absolutePath.toUri().toString(),
-                                    350, 250, false, true);
+                            return new Image(absolutePath.toUri().toString(), 350, 250, false, true);
                         }
-
-                        System.err.println("Could not find image at: " + imagePath);
                     } catch (Exception e) {
                         System.err.println("Error loading image: " + e.getMessage());
                         e.printStackTrace();
                     }
                 }
-                return DEFAULT_IMAGE;
+                return DEFAULT_IMAGE; // Fallback image
             }
         };
 
@@ -353,7 +293,6 @@ public class ProductsController {
             productImage.setImage(DEFAULT_IMAGE);
         });
 
-        // Start image loading in background
         new Thread(loadImageTask).start();
 
         // Set other product information
@@ -361,9 +300,8 @@ public class ProductsController {
         productCategory.setText(product.getCategory_name());
         productPrice.setText(String.format("$%.2f", product.getPrice()));
         productStock.setText(String.format("Stock: %d", product.getQuantity()));
-//        productDescription.setText(product.getDescription());
 
-        // Set up button actions
+        // Set up button actions for editing and deleting products
         editButton.setOnAction(event -> btnEditProduct(product.getId()));
         deleteButton.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

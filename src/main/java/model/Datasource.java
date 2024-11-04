@@ -23,6 +23,8 @@ public class Datasource extends Product {
     public static final String COLUMN_PRODUCTS_QUANTITY = "quantity";
     public static final String COLUMN_PRODUCTS_CATEGORY_ID = "category_id";
     public static final String COLUMN_PRODUCTS_IMAGE = "image";
+    public static final String COLUMN_PRODUCTS_ACTIVE = "active"; // New column for isDisabled
+
 
 
     public static final String TABLE_CATEGORIES = "categories";
@@ -103,44 +105,15 @@ public class Datasource extends Product {
                     product.setPrice(results.getDouble(4));
                     product.setQuantity(results.getInt(5));
                     product.setCategory_name(results.getString(6));
-
-                    // Handle image path
-                    String imagePath = results.getString(7);
-                    if (imagePath != null && !imagePath.trim().isEmpty()) {
-                        // Ensure the path starts with "/" if it doesn't already
-                        if (!imagePath.startsWith("/")) {
-                            imagePath = "/" + imagePath;
-                        }
-
-                        // Debug information
-
-                        // Check if file exists in resources
-                        URL resourceUrl = getClass().getResource(imagePath);
-                        if (resourceUrl != null) {
-                            System.out.println("Found image in resources: " + resourceUrl);
-                        } else {
-                            // Check if file exists in project directory
-                            String projectPath = System.getProperty("user.dir");
-                            File imageFile = new File(projectPath + imagePath);
-                            if (imageFile.exists()) {
-                                System.out.println("Found image in project directory: " + imageFile.getAbsolutePath());
-                            } else {
-                                System.out.println("Image file not found: " + imagePath);
-                            }
-                        }
-
-                        product.setImage(imagePath);
-                    } else {
-                        // Set a default placeholder image path if no image is specified
-                        product.setImage("/view/resources/img/placeholder.png");
-                    }
+                    product.setImage(results.getString(7));
+                    product.setCategory_id(results.getInt(8));
+                    product.setDisabled(results.getBoolean(9)); // Set isDisabled field
 
                     products.add(product);
 
                 } catch (Exception e) {
                     System.err.println("Error processing product from database:");
                     e.printStackTrace();
-                    // Continue processing other products even if one fails
                     continue;
                 }
             }
@@ -151,6 +124,8 @@ public class Datasource extends Product {
             return null;
         }
     }
+
+
     public Product getOneProduct(int product_id) {
         StringBuilder queryProducts = queryProducts();
         queryProducts.append(" WHERE " + TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_ID + " = ? LIMIT 1");
@@ -222,15 +197,18 @@ public class Datasource extends Product {
                 TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_DESCRIPTION + ", " +
                 TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_PRICE + ", " +
                 TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_QUANTITY + ", " +
-                TABLE_CATEGORIES + "." + COLUMN_CATEGORIES_NAME + " AS category_name, " + // Get category name from categories table
+                TABLE_CATEGORIES + "." + COLUMN_CATEGORIES_NAME + " AS category_name, " +
                 TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_IMAGE + ", " +
-                TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_CATEGORY_ID + // Include category_id from products table
+                TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_CATEGORY_ID + ", " +
+                TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_ACTIVE + // Include isDisabled column
                 " FROM " + TABLE_PRODUCTS +
                 " LEFT JOIN " + TABLE_CATEGORIES +
                 " ON " + TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_CATEGORY_ID +
                 " = " + TABLE_CATEGORIES + "." + COLUMN_CATEGORIES_ID
         );
     }
+
+
 
 
     public boolean deleteSingleProduct(int productId) {
@@ -248,15 +226,16 @@ public class Datasource extends Product {
     }
 
     public boolean insertNewProduct(String name, String description, double price,
-                                    int quantity, int category_id, String imagePath) {
+                                    int quantity, int category_id, String imagePath, boolean isDisabled) {
         String sql = "INSERT INTO " + TABLE_PRODUCTS + " ("
                 + COLUMN_PRODUCTS_NAME + ", "
                 + COLUMN_PRODUCTS_DESCRIPTION + ", "
                 + COLUMN_PRODUCTS_PRICE + ", "
                 + COLUMN_PRODUCTS_QUANTITY + ", "
                 + COLUMN_PRODUCTS_CATEGORY_ID + ", "
-                + COLUMN_PRODUCTS_IMAGE
-                + ") VALUES (?, ?, ?, ?, ?, ?)";
+                + COLUMN_PRODUCTS_IMAGE + ", "
+                + COLUMN_PRODUCTS_ACTIVE + // Include the isDisabled column in insert
+                ") VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setString(1, name);
@@ -265,16 +244,19 @@ public class Datasource extends Product {
             statement.setInt(4, quantity);
             statement.setInt(5, category_id);
             statement.setString(6, imagePath);
+            statement.setBoolean(7, isDisabled); // Set isDisabled value
 
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
-            System.out.println("Query failed: " + e.getMessage());
+            System.out.println("Insert failed: " + e.getMessage());
             return false;
         }
     }
 
-    public boolean updateOneProduct(int product_id, String name, String description, double price, int quantity, int category_id, String imagePath) {
+    public boolean updateOneProduct(int product_id, String name, String description,
+                                    double price, int quantity, int category_id,
+                                    String imagePath, boolean isDisabled) {
 
         String sql = "UPDATE " + TABLE_PRODUCTS + " SET "
                 + COLUMN_PRODUCTS_NAME + " = ?, "
@@ -282,7 +264,8 @@ public class Datasource extends Product {
                 + COLUMN_PRODUCTS_PRICE + " = ?, "
                 + COLUMN_PRODUCTS_QUANTITY + " = ?, "
                 + COLUMN_PRODUCTS_CATEGORY_ID + " = ?, "
-                + COLUMN_PRODUCTS_IMAGE + " = ? "
+                + COLUMN_PRODUCTS_IMAGE + " = ?, "
+                + COLUMN_PRODUCTS_ACTIVE + " = ? " // Update isDisabled field
                 + "WHERE " + COLUMN_PRODUCTS_ID + " = ?";
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -292,15 +275,30 @@ public class Datasource extends Product {
             statement.setInt(4, quantity);
             statement.setInt(5, category_id);
             statement.setString(6, imagePath);
-            statement.setInt(7, product_id);
+            statement.setBoolean(7, isDisabled); // Set isDisabled value
+            statement.setInt(8, product_id);
 
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
-            System.out.println("Query failed: " + e.getMessage());
+            System.out.println("Update failed: " + e.getMessage());
             return false;
         }
     }
+
+    public boolean updateProductStatus(int productId, boolean isDisabled) {
+        String updateQuery = "UPDATE " + TABLE_PRODUCTS + " SET " + COLUMN_PRODUCTS_ACTIVE + " = ? WHERE " + COLUMN_PRODUCTS_ID + " = ?";
+        try (PreparedStatement statement = conn.prepareStatement(updateQuery)) {
+            statement.setBoolean(1, isDisabled);
+            statement.setInt(2, productId);
+            int affectedRows = statement.executeUpdate();
+            return affectedRows == 1;
+        } catch (SQLException e) {
+            System.out.println("Status update failed: " + e.getMessage());
+            return false;
+        }
+    }
+
 
 
     public void decreaseStock(int product_id) {
@@ -350,6 +348,8 @@ public class Datasource extends Product {
             return null;
         }
     }
+
+
 
     public List<User> getAllUsers(int sortOrder) {
 

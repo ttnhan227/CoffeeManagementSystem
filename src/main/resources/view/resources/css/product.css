@@ -81,12 +81,29 @@
     -fx-padding: 8px 0 0 0;
 }
 
+/* Add new button styles */
+.button.warning {
+    -fx-background-color: #FFA500;  /* Orange color for warning */
+    -fx-text-fill: white;
+}
+
+.button.warning:hover {
+    -fx-background-color: derive(#FFA500, -10%);
+}
+
+/* Style for disabled product card */
+.product-card.disabled {
+    -fx-opacity: 0.5;
+}
+
+/* Modify the existing button styles */
 .button {
     -fx-padding: 8px 16px;
     -fx-background-radius: 4px;
     -fx-cursor: hand;
     -fx-font-family: "Segoe UI";
     -fx-font-size: 13px;
+    -fx-transition: all 0.2s ease-in-out;
 }
 
 .button.primary {
@@ -95,7 +112,7 @@
 }
 
 .button.primary:hover {
-    -fx-background-color: derive(-fx-coffee-primary, 10%);
+    -fx-background-color: derive(-fx-coffee-primary, -10%);
 }
 
 .button.danger {
@@ -114,6 +131,17 @@
     -fx-padding: 6px 12px;
     -fx-font-size: 12px;
 }
+
+/* Add styles for enable/disable states */
+.button.enable {
+    -fx-background-color: #4CAF50;  /* Green color for enable */
+    -fx-text-fill: white;
+}
+
+.button.enable:hover {
+    -fx-background-color: derive(#4CAF50, -10%);
+}
+
 .product-card {
     -fx-background-color: white;
     -fx-background-radius: 8px;
@@ -130,4 +158,10 @@
 /* Make sure buttons don't trigger the hover effect */
 .product-card .button:hover {
     -fx-translate-y: 0;
+}
+
+/* Style for unavailable product text */
+.product-name.unavailable {
+    -fx-strikethrough: true;
+    -fx-fill: #999999;
 }

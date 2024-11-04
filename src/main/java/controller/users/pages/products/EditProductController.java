@@ -115,6 +115,8 @@ public class EditProductController extends ProductsController {
 
             // If no new image is selected, retain the existing image path
             String finalImagePath = (newImagePath != null) ? newImagePath : getCurrentImagePath(productId);
+            boolean isEnabled = true; // Change this logic as per your requirements
+
 
             // Prepare and execute update task
             Task<Boolean> editProductTask = new Task<Boolean>() {
@@ -122,7 +124,7 @@ public class EditProductController extends ProductsController {
                 protected Boolean call() {
                     return Datasource.getInstance().updateOneProduct(
                             productId, productName, productDescription,
-                            productPrice, productQuantity, cat_id, finalImagePath);
+                            productPrice, productQuantity, cat_id, finalImagePath, isEnabled);
                 }
             };
 
