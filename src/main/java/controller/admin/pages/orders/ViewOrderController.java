@@ -1,6 +1,6 @@
 package controller.admin.pages.orders;
 
-import controller.admin.MainDashboardController;
+import controller.admin.MainDashboardController; // Ensure this imports the correct controller
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,12 +18,11 @@ import javafx.scene.text.Text;
 import model.*;
 
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class ViewOrderController implements Initializable {
-    public MainDashboardController mainDashboardController;
+    private MainDashboardController mainDashboardController; // Adjusted to use the correct dashboard controller
 
     @FXML
     public TextField orderIdField;
@@ -62,55 +61,53 @@ public class ViewOrderController implements Initializable {
 
     private ObservableList<Product> productList = FXCollections.observableArrayList();
     private ObservableList<OrderDetail> orderDetailsList;
+
     private Order order;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        loadTable();
+        loadTable(); // Load table columns on initialization
     }
 
+    // Method to set the dashboard controller
     public void setAdminMainDashboardController(MainDashboardController mainDashboardController) {
         this.mainDashboardController = mainDashboardController;
     }
 
     public void setOrder(Order order) {
         this.order = order;
-        orderIdField.setText(String.valueOf(order.getId()));
-        employeeField.setText(Datasource.getInstance().searchOneEmployeeById(order.getEmployeeID()).getFullname());
-
-        if (order.getCustomerID() == null) {
-            customerField.setText("");
-        } else {
-            customerField.setText(Datasource.getInstance().searchOneCustomerById(order.getCustomerID()).getName());
-        }
-
-        if (order.getTableID() == null) {
-            tableIdField.setText("Take Away");
-        } else {
-            tableIdField.setText(String.valueOf(order.getTableID()));
-            tableCapacity.setText(String.valueOf(Datasource.getInstance().getOneTable(order.getTableID()).getCapacity()));
-        }
-
-        if (order.getCouponID() == null) {
-            couponIdField.setText("");
-        } else {
-            couponIdField.setText(String.valueOf(order.getCouponID()));
-        }
-
-        totalText.setText(String.valueOf(order.getTotal()));
-        finalText.setText(String.valueOf(order.getFin()));
-        discountText.setText(String.valueOf(order.getDiscount()) + "%");
-
-        // Load order details and products
-        setOrderDetailsList(Datasource.getInstance().searchAllOrderDetailByOrderID(order.getId()));
-        loadProductList();
+        loadOrderDetails(); // Load order details when the order is set
     }
 
-    public void setOrderDetailsList(List<OrderDetail> list) {
+    public void setOrderDetailsList(List<OrderDetail> list){
         orderDetailsList = FXCollections.observableArrayList(list);
+        loadProductList(); // Load product list based on order details
+    }
+
+    private void loadOrderDetails() {
+        if (order != null) {
+            orderIdField.setText(String.valueOf(order.getId()));
+            employeeField.setText(Datasource.getInstance().searchOneEmployeeById(order.getEmployeeID()).getFullname());
+            customerField.setText(order.getCustomerID() != null
+                    ? Datasource.getInstance().searchOneCustomerById(order.getCustomerID()).getName()
+                    : "");
+            tableIdField.setText(order.getTableID() != null
+                    ? String.valueOf(order.getTableID())
+                    : "Take Away");
+            tableCapacity.setText(order.getTableID() != null
+                    ? String.valueOf(Datasource.getInstance().getOneTable(order.getTableID()).getCapacity())
+                    : "");
+            couponIdField.setText(order.getCouponID() != null
+                    ? String.valueOf(order.getCouponID())
+                    : "");
+            totalText.setText(String.valueOf(order.getTotal()));
+            finalText.setText(String.valueOf(order.getFin()));
+            discountText.setText(order.getDiscount() + "%");
+        }
     }
 
     public void loadProductList() {
+        productList.clear(); // Clear existing items before loading new
         for (OrderDetail detail : orderDetailsList) {
             Product product = Datasource.getInstance().searchOneProductById(detail.getProductID());
             productList.add(product);
@@ -122,34 +119,24 @@ public class ViewOrderController implements Initializable {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-
         categoryColumn.setCellValueFactory(cellData -> {
             Product product = cellData.getValue();
             String category = Datasource.getInstance().getCategoryName(product.getCategory_id());
             return new SimpleStringProperty(category);
         });
-
         quantityColumn.setCellValueFactory(cellData -> {
             int index = productTable.getItems().indexOf(cellData.getValue());
-            if (index >= 0 && index < orderDetailsList.size()) {  // Ensure index is within bounds
-                return new SimpleIntegerProperty(orderDetailsList.get(index).getQuantity()).asObject();
-            }
-            return new SimpleIntegerProperty(0).asObject();  // Default value if index out of bounds
+            return new SimpleIntegerProperty(orderDetailsList.get(index).getQuantity()).asObject();
         });
-
         totalColumn.setCellValueFactory(cellData -> {
             Product product = cellData.getValue();
             int index = productTable.getItems().indexOf(product);
-            if (index >= 0 && index < orderDetailsList.size()) {  // Ensure index is within bounds
-                return new SimpleDoubleProperty(orderDetailsList.get(index).getTotal()).asObject();
-            }
-            return new SimpleDoubleProperty(0.0).asObject();  // Default value if index out of bounds
+            return new SimpleDoubleProperty(orderDetailsList.get(index).getTotal()).asObject();
         });
     }
 
-
     @FXML
     private void toOrder() {
-        mainDashboardController.btnOrdersOnClick(new ActionEvent());
+        mainDashboardController.btnOrdersOnClick(new ActionEvent()); // Navigate back to orders
     }
 }

@@ -128,7 +128,7 @@ public class MainDashboardController implements Initializable {
     public void viewOrderDetail(ActionEvent actionEvent, Order order) throws IOException {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/orders/viewOrder.fxml");
         ViewOrderController controller = fxmlLoader.getController();
-        controller.setAdminMainDashboardController(this);
+        controller.setAdminMainDashboardController(this); // Correctly set the dashboard controller
         controller.setOrder(order);
 
         controller.orderIdField.setText(String.valueOf(order.getId()));
@@ -157,7 +157,7 @@ public class MainDashboardController implements Initializable {
         controller.discountText.setText(String.valueOf(order.getDiscount()) + "%");
     }
 
-    public void btnCouponOnClick(){
+    public void btnCouponOnClick() {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/coupon.fxml");
         CouponController controller = fxmlLoader.getController();
         controller.setMainDashboardController(this);
