@@ -207,10 +207,6 @@ public class Datasource extends Product {
                 " = " + TABLE_CATEGORIES + "." + COLUMN_CATEGORIES_ID
         );
     }
-
-
-
-
     public boolean deleteSingleProduct(int productId) {
         String sql = "DELETE FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_PRODUCTS_ID + " = ?";
 
@@ -224,7 +220,6 @@ public class Datasource extends Product {
             return false;
         }
     }
-
     public boolean insertNewProduct(String name, String description, double price,
                                     int quantity, int category_id, String imagePath, boolean isDisabled) {
         String sql = "INSERT INTO " + TABLE_PRODUCTS + " ("
@@ -236,7 +231,6 @@ public class Datasource extends Product {
                 + COLUMN_PRODUCTS_IMAGE + ", "
                 + COLUMN_PRODUCTS_ACTIVE + // Include the isDisabled column in insert
                 ") VALUES (?, ?, ?, ?, ?, ?, ?)";
-
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setString(1, name);
             statement.setString(2, description);
@@ -245,7 +239,6 @@ public class Datasource extends Product {
             statement.setInt(5, category_id);
             statement.setString(6, imagePath);
             statement.setBoolean(7, isDisabled); // Set isDisabled value
-
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -253,11 +246,9 @@ public class Datasource extends Product {
             return false;
         }
     }
-
     public boolean updateOneProduct(int product_id, String name, String description,
                                     double price, int quantity, int category_id,
                                     String imagePath, boolean isDisabled) {
-
         String sql = "UPDATE " + TABLE_PRODUCTS + " SET "
                 + COLUMN_PRODUCTS_NAME + " = ?, "
                 + COLUMN_PRODUCTS_DESCRIPTION + " = ?, "
@@ -267,7 +258,6 @@ public class Datasource extends Product {
                 + COLUMN_PRODUCTS_IMAGE + " = ?, "
                 + COLUMN_PRODUCTS_ACTIVE + " = ? " // Update isDisabled field
                 + "WHERE " + COLUMN_PRODUCTS_ID + " = ?";
-
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setString(1, name);
             statement.setString(2, description);
@@ -277,7 +267,6 @@ public class Datasource extends Product {
             statement.setString(6, imagePath);
             statement.setBoolean(7, isDisabled); // Set isDisabled value
             statement.setInt(8, product_id);
-
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -285,7 +274,6 @@ public class Datasource extends Product {
             return false;
         }
     }
-
     public boolean updateProductStatus(int productId, boolean isDisabled) {
         String updateQuery = "UPDATE " + TABLE_PRODUCTS + " SET " + COLUMN_PRODUCTS_ACTIVE + " = ? WHERE " + COLUMN_PRODUCTS_ID + " = ?";
         try (PreparedStatement statement = conn.prepareStatement(updateQuery)) {
@@ -298,21 +286,6 @@ public class Datasource extends Product {
             return false;
         }
     }
-
-
-
-    public void decreaseStock(int product_id) {
-
-        String sql = "UPDATE " + TABLE_PRODUCTS + " SET " + COLUMN_PRODUCTS_QUANTITY + " = " + COLUMN_PRODUCTS_QUANTITY + " - 1 WHERE " + COLUMN_PRODUCTS_ID + " = ?";
-
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setInt(1, product_id);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Query failed: " + e.getMessage());
-        }
-    }
-
     public List<Categories> getProductCategories(int sortOrder) {
         StringBuilder queryCategories = new StringBuilder("SELECT " +
                 TABLE_CATEGORIES + "." + COLUMN_CATEGORIES_ID + ", " +
@@ -320,7 +293,6 @@ public class Datasource extends Product {
                 TABLE_CATEGORIES + "." + COLUMN_CATEGORIES_DESCRIPTION +
                 " FROM " + TABLE_CATEGORIES
         );
-
         if (sortOrder != ORDER_BY_NONE) {
             queryCategories.append(" ORDER BY ");
             queryCategories.append(COLUMN_CATEGORIES_ID);
@@ -330,10 +302,8 @@ public class Datasource extends Product {
                 queryCategories.append(" ASC");
             }
         }
-
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery(queryCategories.toString())) {
-
             List<Categories> categories = new ArrayList<>();
             while (results.next()) {
                 Categories category = new Categories();
@@ -342,19 +312,13 @@ public class Datasource extends Product {
                 categories.add(category);
             }
             return categories;
-
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }
     }
-
-
-
     public List<User> getAllUsers(int sortOrder) {
-
         StringBuilder queryCustomers = queryUsers();
-
         if (sortOrder != ORDER_BY_NONE) {
             queryCustomers.append(" ORDER BY ");
             queryCustomers.append(COLUMN_USERS_FULLNAME);
@@ -379,14 +343,12 @@ public class Datasource extends Product {
                 users.add(user);
             }
             return users;
-
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }
     }
     public List<User> getOneUser(int customer_id) {
-
         StringBuilder queryCustomers = queryUsers();
         queryCustomers.append(" AND " + TABLE_USERS + "." + COLUMN_USERS_ID + " = ?");
         try (PreparedStatement statement = conn.prepareStatement(String.valueOf(queryCustomers))) {
@@ -404,16 +366,13 @@ public class Datasource extends Product {
                 users.add(user);
             }
             return users;
-
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }
     }
     public List<User> searchUsers(String searchString, int sortOrder) {
-
         StringBuilder queryCustomers = queryUsers();
-
         queryCustomers.append(" AND (" + TABLE_USERS + "." + COLUMN_USERS_FULLNAME + " LIKE ? OR " + TABLE_USERS + "." + COLUMN_USERS_USERNAME + " LIKE ?)");
 
         if (sortOrder != ORDER_BY_NONE) {
@@ -448,7 +407,6 @@ public class Datasource extends Product {
             return null;
         }
     }
-
     public boolean updateOneUser(int customer_id, String fullName, String username, String email, String status) {
         String sql = "UPDATE " + TABLE_USERS + " SET "
                 + COLUMN_USERS_FULLNAME + " = ?, "
@@ -461,8 +419,8 @@ public class Datasource extends Product {
             statement.setString(1, fullName);
             statement.setString(2, username);
             statement.setString(3, email);
-            statement.setString(4, status);  // Adjusted index for status
-            statement.setInt(5, customer_id); // Adjusted index for customer_id
+            statement.setString(4, status);
+            statement.setInt(5, customer_id);
 
             System.out.println("Updating User: " + customer_id + ", " + fullName + ", " + email + ", " + username + ", " + status);
             statement.executeUpdate();
@@ -472,10 +430,6 @@ public class Datasource extends Product {
             return false;
         }
     }
-
-
-
-
     private StringBuilder queryUsers() {
         return new StringBuilder("SELECT " +
                 TABLE_USERS + "." + COLUMN_USERS_ID + ", " +
@@ -488,7 +442,6 @@ public class Datasource extends Product {
                 " WHERE " + TABLE_USERS + "." + COLUMN_USERS_ADMIN + " = 0"
         );
     }
-
     public boolean deleteSingleUser(int customerId) {
         String sql = "DELETE FROM " + TABLE_USERS + " WHERE " + COLUMN_USERS_ID + " = ?";
 
@@ -515,7 +468,6 @@ public class Datasource extends Product {
             return false;
         }
     }
-
     public User getUserByEmail(String email) throws SQLException {
 
         PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM " + TABLE_USERS + " WHERE " + COLUMN_USERS_EMAIL + " = ?");
@@ -558,10 +510,8 @@ public class Datasource extends Product {
             user.setStatus(results.getString("status"));
 
         }
-
         return user;
     }
-
     public boolean insertNewUser(String fullName, String username, String email, String password, String salt) {
 
         String sql = "INSERT INTO " + TABLE_USERS + " ("
@@ -588,146 +538,6 @@ public class Datasource extends Product {
             return false;
         }
     }
-
-//    public List<Order> getAllOrders(int sortOrder) {
-//
-//        StringBuilder queryOrders = new StringBuilder("SELECT " +
-//                TABLE_ORDERS + "." + COLUMN_ORDERS_ID + ", " +
-//                TABLE_ORDERS + "." + COLUMN_ORDERS_PRODUCT_ID + ", " +
-//                TABLE_ORDERS + "." + COLUMN_ORDERS_USER_ID + ", " +
-//                TABLE_USERS + "." + COLUMN_USERS_FULLNAME + ", " +
-//                TABLE_ORDERS + "." + COLUMN_ORDERS_ORDER_DATE + ", " +
-//                TABLE_ORDERS + "." + COLUMN_ORDERS_ORDER_STATUS + ", " +
-//                TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_NAME + ", " +
-//                TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_PRICE +
-//                " FROM " + TABLE_ORDERS
-//        );
-//
-//        queryOrders.append("" +
-//                " LEFT JOIN " + TABLE_PRODUCTS +
-//                " ON " + TABLE_ORDERS + "." + COLUMN_ORDERS_PRODUCT_ID +
-//                " = " + TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_ID);
-//        queryOrders.append("" +
-//                " LEFT JOIN " + TABLE_USERS +
-//                " ON " + TABLE_ORDERS + "." + COLUMN_ORDERS_USER_ID +
-//                " = " + TABLE_USERS + "." + COLUMN_USERS_ID);
-//
-//        if (sortOrder != ORDER_BY_NONE) {
-//            queryOrders.append(" ORDER BY ");
-//            queryOrders.append(COLUMN_USERS_FULLNAME);
-//            if (sortOrder == ORDER_BY_DESC) {
-//                queryOrders.append(" DESC");
-//            } else {
-//                queryOrders.append(" ASC");
-//            }
-//        }
-//
-//        try (Statement statement = conn.createStatement();
-//             ResultSet results = statement.executeQuery(queryOrders.toString())) {
-//
-//            List<Order> orders = new ArrayList<>();
-//            while (results.next()) {
-//                Order order = new Order();
-//                order.setId(results.getInt(1));
-//                order.setProduct_id(results.getInt(2));
-//                order.setUser_id(results.getInt(3));
-//                order.setUser_full_name(results.getString(4));
-//                order.setOrder_date(results.getString(5));
-//                order.setOrder_status(results.getString(6));
-//                order.setProduct_name(results.getString(7));
-//                order.setOrder_price(results.getDouble(8));
-//                orders.add(order);
-//            }
-//            return orders;
-//
-//        } catch (SQLException e) {
-//            System.out.println("Query failed: " + e.getMessage());
-//            return null;
-//        }
-//    }
-
-//    public List<Order> getAllUserOrders(int sortOrder, int user_id) {
-//
-//        StringBuilder queryOrders = new StringBuilder("SELECT " +
-//                TABLE_ORDERS + "." + COLUMN_ORDERS_ID + ", " +
-//                TABLE_ORDERS + "." + COLUMN_ORDERS_PRODUCT_ID + ", " +
-//                TABLE_ORDERS + "." + COLUMN_ORDERS_USER_ID + ", " +
-//                TABLE_USERS + "." + COLUMN_USERS_FULLNAME + ", " +
-//                TABLE_ORDERS + "." + COLUMN_ORDERS_ORDER_DATE + ", " +
-//                TABLE_ORDERS + "." + COLUMN_ORDERS_ORDER_STATUS + ", " +
-//                TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_NAME + ", " +
-//                TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_PRICE +
-//                " FROM " + TABLE_ORDERS
-//        );
-//
-//        queryOrders.append("" +
-//                " LEFT JOIN " + TABLE_PRODUCTS +
-//                " ON " + TABLE_ORDERS + "." + COLUMN_ORDERS_PRODUCT_ID +
-//                " = " + TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_ID);
-//        queryOrders.append("" +
-//                " LEFT JOIN " + TABLE_USERS +
-//                " ON " + TABLE_ORDERS + "." + COLUMN_ORDERS_USER_ID +
-//                " = " + TABLE_USERS + "." + COLUMN_USERS_ID);
-//        queryOrders.append(" WHERE " + TABLE_ORDERS + "." + COLUMN_ORDERS_USER_ID + " = ").append(user_id);
-//
-//        if (sortOrder != ORDER_BY_NONE) {
-//            queryOrders.append(" ORDER BY ");
-//            queryOrders.append(COLUMN_USERS_FULLNAME);
-//            if (sortOrder == ORDER_BY_DESC) {
-//                queryOrders.append(" DESC");
-//            } else {
-//                queryOrders.append(" ASC");
-//            }
-//        }
-//
-//        try (Statement statement = conn.createStatement();
-//             ResultSet results = statement.executeQuery(queryOrders.toString())) {
-//
-//            List<Order> orders = new ArrayList<>();
-//            while (results.next()) {
-//                Order order = new Order();
-//                order.setId(results.getInt(1));
-//                order.setProduct_id(results.getInt(2));
-//                order.setUser_id(results.getInt(3));
-//                order.setUser_full_name(results.getString(4));
-//                order.setOrder_date(results.getString(5));
-//                order.setOrder_status(results.getString(6));
-//                order.setProduct_name(results.getString(7));
-//                order.setOrder_price(results.getDouble(8));
-//                orders.add(order);
-//            }
-//            return orders;
-//
-//        } catch (SQLException e) {
-//            System.out.println("Query failed: " + e.getMessage());
-//            return null;
-//        }
-//    }
-
-
-    public boolean insertNewOrder(int product_id, int user_id, String order_date, String order_status) {
-
-        String sql = "INSERT INTO " + TABLE_ORDERS + " ("
-                + COLUMN_ORDERS_PRODUCT_ID + ", "
-                + COLUMN_ORDERS_USER_ID + ", "
-                + COLUMN_ORDERS_ORDER_DATE + ", "
-                + COLUMN_ORDERS_ORDER_STATUS +
-                ") VALUES (?, ?, ?, ?)";
-
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setInt(1, product_id);
-            statement.setInt(2, user_id);
-            statement.setString(3, order_date);
-            statement.setString(4, order_status);
-
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.out.println("Query failed: " + e.getMessage());
-            return false;
-        }
-    }
-
     public Integer countAllProducts() {
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery("SELECT COUNT(*) FROM " + TABLE_PRODUCTS)) {
@@ -741,7 +551,6 @@ public class Datasource extends Product {
             return 0;
         }
     }
-
     public Integer countAllCustomers() {
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery("SELECT COUNT(*) FROM " + TABLE_USERS +
@@ -758,24 +567,6 @@ public class Datasource extends Product {
             return 0;
         }
     }
-
-    public Integer countUserOrders(int user_id) {
-
-        try (PreparedStatement statement = conn.prepareStatement(String.valueOf("SELECT COUNT(*) FROM " + TABLE_ORDERS + " WHERE " + COLUMN_ORDERS_USER_ID + "= ?"))) {
-            statement.setInt(1, user_id);
-            ResultSet results = statement.executeQuery();
-
-            if (results.next()) {
-                return results.getInt(1);
-            } else {
-                return 0;
-            }
-        } catch (SQLException e) {
-            System.out.println("Query failed: " + e.getMessage());
-            return 0;
-        }
-    }
-
     public List<Integer> getAllTableID(){
         String query = "SELECT id FROM \"table\"";
 
@@ -837,15 +628,12 @@ public class Datasource extends Product {
                 System.out.println("No product found with search name");
                 return null;
             }
-            //return product;
 
         }catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }
     }
-
-
     public Table getOneTable(int id){
         String query = "SELECT * FROM 'table' WHERE id = ?";
         try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {

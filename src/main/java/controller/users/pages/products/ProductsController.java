@@ -195,7 +195,7 @@ public class ProductsController {
         new Thread(getAllProductsTask).start();
     }
     private void addProductCard(Product product) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/admin/pages/products/product-card.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/users/pages/products/product-card.fxml"));
         VBox productCard = loader.load();
 
         // Set product data
@@ -207,6 +207,8 @@ public class ProductsController {
         Button editButton = (Button) productCard.lookup("#editButton");
         Button deleteButton = (Button) productCard.lookup("#deleteButton");
         Button toggleStatusButton = (Button) productCard.lookup("#toggleStatusButton");
+        productImage.setOnMouseClicked(event -> showProductDescription(product));
+
 
         // Update UI based on disabled state
         if (product.isDisabled()) {
@@ -317,6 +319,17 @@ public class ProductsController {
         });
 
         productsContainer.getChildren().add(productCard);
+    }
+    private void showProductDescription(Product product) {
+        // Create an alert to show the product description
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(product.getName() + " Description");
+        alert.setHeaderText(null);
+        alert.setContentText(product.getDescription());
+
+        // Add a button to close the dialog
+        alert.getButtonTypes().setAll(ButtonType.OK);
+        alert.showAndWait();
     }
     @FXML
     private void addActionButtonsToTable() {
