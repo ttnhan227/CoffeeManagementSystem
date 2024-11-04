@@ -186,7 +186,9 @@ public class NewOrderController implements Initializable {
         List<Product> list = Datasource.getInstance().getAllProducts(Datasource.ORDER_BY_NONE);
         List<String> nameList = new ArrayList<>();
         for(Product product: list){
-            nameList.add(product.getName());
+            if(!product.isDisabled()){
+                nameList.add(product.getName());
+            }
         }
         return nameList;
     }
