@@ -1,6 +1,7 @@
 package controller.admin;
 
 import controller.UserSessionController;
+import controller.admin.pages.CouponController;
 import controller.admin.pages.HomeController;
 import controller.admin.pages.users.UsersController;
 import controller.admin.pages.products.ProductsController;
@@ -154,5 +155,11 @@ public class MainDashboardController implements Initializable {
         controller.totalText.setText(String.valueOf(order.getTotal()));
         controller.finalText.setText(String.valueOf(order.getFin()));
         controller.discountText.setText(String.valueOf(order.getDiscount()) + "%");
+    }
+
+    public void btnCouponOnClick(){
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/coupon.fxml");
+        CouponController controller = fxmlLoader.getController();
+        controller.setMainDashboardController(this);
     }
 }

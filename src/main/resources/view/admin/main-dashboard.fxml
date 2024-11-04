@@ -32,7 +32,7 @@
                               <Button fx:id="btnOrders" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnOrdersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Orders" />
                               <Button fx:id="btnCustomers" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCustomersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Employee" />
                               <Button fx:id="btnSettings" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnSettingsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Settings" />
-                        <Button fx:id="btnCoupon" contentDisplay="TOP" layoutX="10.0" layoutY="265.0" mnemonicParsing="false" onAction="#btnSettingsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Coupon" />
+                        <Button fx:id="btnCoupon" contentDisplay="TOP" layoutX="10.0" layoutY="265.0" mnemonicParsing="false" onAction="#btnCouponOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Coupon" />
                      </children>
                   </VBox>
                     </AnchorPane>

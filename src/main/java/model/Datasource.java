@@ -1189,6 +1189,28 @@ public class Datasource extends Product {
         }
         return null;
     }
+
+    public boolean isExistCouponId(int id) throws SQLException{
+        String query = "SELECT COUNT(*) FROM coupon WHERE couponID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, id);
+            ResultSet resultSet = stmt.executeQuery();
+            resultSet.next();
+            return resultSet.getInt(1) > 0;
+        }
+    }
+
+    public void saveToDatabase(int id, String expiryDate, int discount) throws SQLException{
+        String sql = "INSERT INTO coupon (couponID, expiry, discount) VALUES (?, ?, ?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.setString(2, expiryDate);
+            stmt.setInt(3, discount);
+            stmt.executeUpdate();
+        }
+    }
 }
 
 
