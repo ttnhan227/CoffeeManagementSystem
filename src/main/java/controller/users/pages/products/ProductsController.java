@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 
 public class ProductsController {
 
+
     @FXML
     public TextField fieldProductsSearch;
     @FXML
@@ -77,8 +78,8 @@ public class ProductsController {
 
         return new TextFormatter<>(converter, 0.0, filter);
     }
+
     public static TextFormatter<Integer> formatIntField() {
-//        Pattern validEditingState = Pattern.compile("-?(0|[1-9]\\d*)");
         Pattern validEditingState = Pattern.compile("^[0-9]+$");
         UnaryOperator<TextFormatter.Change> filter = c -> {
             String text = c.getControlNewText();
@@ -106,6 +107,7 @@ public class ProductsController {
 
         return new TextFormatter<>(converter, 0, filter);
     }
+
     public static final Image DEFAULT_IMAGE = new Image(
             ProductsController.class.getResourceAsStream("/view/resources/img/coffee_pictures/placeholder.png"),
             250, 250, true, true
@@ -113,10 +115,8 @@ public class ProductsController {
 
     @FXML
     private void initialize() {
-        // Add this debug code
         System.out.println("Project Directory: " + System.getProperty("user.dir"));
 
-        // Print out the available resources
         try {
             URL resourceUrl = getClass().getResource("/view/resources/img/coffee_pictures/");
             if (resourceUrl != null) {
@@ -141,7 +141,6 @@ public class ProductsController {
     }
 
     private void setupImageColumn() {
-        // Find the image column by its text/title
         TableColumn<Product, ImageView> imageColumn = (TableColumn<Product, ImageView>) tableProductsPage.getColumns()
                 .stream()
                 .filter(col -> col.getText().equals("Image"))
@@ -149,10 +148,8 @@ public class ProductsController {
                 .orElse(null);
 
         if (imageColumn != null) {
-            // Clear the existing cell value factory
             imageColumn.setCellValueFactory(null);
 
-            // Set up a custom cell factory for the image column
             imageColumn.setCellFactory(col -> new TableCell<Product, ImageView>() {
                 @Override
                 protected void updateItem(ImageView item, boolean empty) {
@@ -171,6 +168,7 @@ public class ProductsController {
             });
         }
     }
+
     @FXML
     public void listProducts() {
         Task<ObservableList<Product>> getAllProductsTask = new Task<ObservableList<Product>>() {
@@ -194,24 +192,22 @@ public class ProductsController {
 
         new Thread(getAllProductsTask).start();
     }
+
     private void addProductCard(Product product) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/users/pages/products/product-card.fxml"));
         VBox productCard = loader.load();
 
-        // Get UI elements
         ImageView productImage = (ImageView) productCard.lookup("#productImage");
         Text productName = (Text) productCard.lookup("#productName");
         Text productCategory = (Text) productCard.lookup("#productCategory");
         Text productPrice = (Text) productCard.lookup("#productPrice");
         Text productStock = (Text) productCard.lookup("#productStock");
         Button editButton = (Button) productCard.lookup("#editButton");
-        Button deleteButton = (Button) productCard.lookup("#deleteButton");
         Button toggleStatusButton = (Button) productCard.lookup("#toggleStatusButton");
 
         productImage.setOnMouseClicked(event -> showProductDescription(product));
         updateProductCardStatus(product, productCard, productName, toggleStatusButton);
 
-        // Toggle status button action
         toggleStatusButton.setOnAction(event -> {
             product.setDisabled(!product.isDisabled());
             if (Datasource.getInstance().updateProductStatus(product.getId(), product.isDisabled())) {
@@ -221,7 +217,6 @@ public class ProductsController {
             }
         });
 
-        // Load image asynchronously
         Task<Image> loadImageTask = new Task<Image>() {
             @Override
             protected Image call() {
@@ -251,27 +246,13 @@ public class ProductsController {
         loadImageTask.setOnFailed(event -> productImage.setImage(DEFAULT_IMAGE));
         new Thread(loadImageTask).start();
 
-        // Set product information
         productName.setText(product.getName());
         productCategory.setText(product.getCategory_name());
         productPrice.setText(String.format("$%.2f", product.getPrice()));
         productStock.setText(String.format("Stock: %d", product.getQuantity()));
         productCard.setStyle(productCard.getStyle() + "; -fx-cursor: hand;");
 
-        // Set up button actions
         editButton.setOnAction(event -> btnEditProduct(product.getId()));
-        deleteButton.setOnAction(event -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                    "Are you sure you want to delete " + product.getName() + "?",
-                    ButtonType.OK, ButtonType.CANCEL);
-            alert.setTitle("Delete " + product.getName() + "?");
-
-            alert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK && Datasource.getInstance().deleteSingleProduct(product.getId())) {
-                    productsContainer.getChildren().remove(productCard);
-                }
-            });
-        });
 
         productsContainer.getChildren().add(productCard);
     }
@@ -293,25 +274,24 @@ public class ProductsController {
             toggleStatusButton.getStyleClass().add("warning");
         }
     }
+
     private void showProductDescription(Product product) {
-        // Create an alert to show the product description
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(product.getName() + " Description");
         alert.setHeaderText(null);
         alert.setContentText(product.getDescription());
 
-        // Add a button to close the dialog
         alert.getButtonTypes().setAll(ButtonType.OK);
         alert.showAndWait();
     }
+
     @FXML
     private void addActionButtonsToTable() {
-        if (colBtnEdit == null) { // Check if the column is already created
+        if (colBtnEdit == null) {
             colBtnEdit = new TableColumn<>("Actions");
 
             Callback<TableColumn<Product, Void>, TableCell<Product, Void>> cellFactory = param -> new TableCell<Product, Void>() {
                 private final Button editButton = new Button("Edit");
-                private final Button deleteButton = new Button("Delete");
                 private final HBox buttonsPane = new HBox();
 
                 {
@@ -321,23 +301,8 @@ public class ProductsController {
                         btnEditProduct(productData.getId());
                     });
 
-                    deleteButton.getStyleClass().addAll("button", "xs", "danger");
-                    deleteButton.setOnAction((ActionEvent event) -> {
-                        Product productData = getTableView().getItems().get(getIndex());
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setHeaderText("Are you sure you want to delete " + productData.getName() + "?");
-                        alert.setTitle("Delete " + productData.getName() + "?");
-                        Optional<ButtonType> deleteConfirmation = alert.showAndWait();
-
-                        if (deleteConfirmation.isPresent() && deleteConfirmation.get() == ButtonType.OK) {
-                            if (Datasource.getInstance().deleteSingleProduct(productData.getId())) {
-                                getTableView().getItems().remove(getIndex());
-                            }
-                        }
-                    });
-
                     buttonsPane.setSpacing(10);
-                    buttonsPane.getChildren().addAll(editButton, deleteButton);
+                    buttonsPane.getChildren().add(editButton);
                 }
 
                 @Override
@@ -351,6 +316,7 @@ public class ProductsController {
             tableProductsPage.getColumns().add(colBtnEdit);
         }
     }
+
     @FXML
     private void btnProductsSearchOnAction() {
         Task<ObservableList<Product>> searchProductsTask = new Task<ObservableList<Product>>() {
@@ -382,13 +348,11 @@ public class ProductsController {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/users/pages/products/add-product.fxml"));
             AnchorPane root = fxmlLoader.load();
 
-            // Try to load CSS
             URL cssUrl = getClass().getResource("/css/form.css");
             if (cssUrl != null) {
                 root.getStylesheets().add(cssUrl.toExternalForm());
             }
 
-            // Clear and add the new content
             productsContent.getChildren().clear();
             productsContent.getChildren().add(root);
 
@@ -396,23 +360,21 @@ public class ProductsController {
             e.printStackTrace();
         }
     }
+
     @FXML
     private void btnEditProduct(int product_id) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/users/pages/products/edit-product.fxml"));
             AnchorPane root = fxmlLoader.load();
 
-            // Try to load CSS
             URL cssUrl = getClass().getResource("/css/form.css");
             if (cssUrl != null) {
                 root.getStylesheets().add(cssUrl.toExternalForm());
             }
 
-            // Clear and add the new content
             productsContent.getChildren().clear();
             productsContent.getChildren().add(root);
 
-            // Get controller and fill fields
             EditProductController controller = fxmlLoader.getController();
             controller.fillEditingProductFields(product_id);
 
