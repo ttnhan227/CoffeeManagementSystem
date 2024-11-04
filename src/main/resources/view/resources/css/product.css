@@ -1,167 +1,187 @@
-/* Variables for consistent theming */
+/* Root variables for consistent theming */
+* {
+    -fx-coffee-primary: #6B4423;
+    -fx-text-primary: #2D3436;
+    -fx-text-secondary: #636E72;
+    -fx-danger: #E74C3C;
+    -fx-background-light: #F8F9FA;
+}
 
 /* Product Card Container */
 .product-card {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 2);
-    -fx-background-radius: 8px;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 12, 0, 0, 2);
+    -fx-background-radius: 12px;
     -fx-padding: 0;
-    -fx-pref-width: 280px;
+    -fx-pref-width: 300px;
     -fx-spacing: 0;
-    -fx-border-color: #E0E0E0;
-    -fx-border-radius: 8px;
+    -fx-border-color: rgba(0, 0, 0, 0.06);
+    -fx-border-radius: 12px;
     -fx-border-width: 1px;
 }
 
 .product-card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 15, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 18, 0, 0, 4);
     -fx-cursor: hand;
+    -fx-translate-y: -3px;
 }
 
 /* Image Container */
 .image-container {
-    -fx-background-color: #F8F8F8;
-    -fx-padding: 16px;
+    -fx-background-color: -fx-background-light;
+    -fx-padding: 20px;
     -fx-alignment: CENTER;
-    -fx-border-radius: 8px 8px 0 0;
+    -fx-border-radius: 12px 12px 0 0;
 }
 
 /* Product Information Section */
 .product-info {
-    -fx-padding: 16px;
-    -fx-spacing: 12px;
+    -fx-padding: 20px;
+    -fx-spacing: 16px;
+    -fx-background-color: white;
+    -fx-background-radius: 0 0 12px 12px;
 }
 
 /* Product Header */
 .product-header {
-    -fx-spacing: 4px;
+    -fx-spacing: 6px;
 }
 
 .product-name {
-    -fx-font-family: "Segoe UI Semibold";
-    -fx-font-size: 18px;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-fill: #2D3436;  /* Using direct color instead of variable */
+    -fx-smooth: always;
 }
 
 .product-category {
     -fx-font-family: "Segoe UI";
     -fx-font-size: 14px;
+    -fx-fill: #636E72;  /* Using direct color instead of variable */
+    -fx-opacity: 0.9;
 }
 
 /* Product Details */
 .product-details {
-    -fx-spacing: 16px;
-    -fx-padding: 8px 0;
+    -fx-spacing: 20px;
+    -fx-padding: 12px 0;
+    -fx-border-color: transparent transparent rgba(0, 0, 0, 0.08) transparent;
+    -fx-border-width: 0 0 1px 0;
 }
 
 .price-container, .stock-container {
-    -fx-spacing: 6px;
+    -fx-spacing: 8px;
     -fx-alignment: CENTER_LEFT;
 }
 
-.price-label, .stock-label {
+.price-container Text {
     -fx-font-family: "Segoe UI";
-    -fx-font-size: 14px;
-    -fx-fill: -fx-text-secondary;
+    -fx-font-size: 15px;
+    -fx-fill: #636E72;  /* Using direct color instead of variable */
 }
 
-.product-price {
-    -fx-font-family: "Segoe UI Bold";
-    -fx-font-size: 16px;
-    -fx-fill: -fx-coffee-primary;
+.stock-container Text {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 15px;
+    -fx-fill: #636E72;  /* Using direct color instead of variable */
 }
 
-.product-stock {
+.price-container Text:last-child {
     -fx-font-family: "Segoe UI";
-    -fx-font-size: 14px;
-    -fx-fill: -fx-text-primary;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-fill: #6B4423;  /* Using direct color instead of variable */
 }
 
 /* Action Buttons */
 .product-actions {
-    -fx-spacing: 8px;
+    -fx-spacing: 10px;
     -fx-padding: 8px 0 0 0;
 }
 
-/* Add new button styles */
-.button.warning {
-    -fx-background-color: #FFA500;  /* Orange color for warning */
-    -fx-text-fill: white;
-}
-
-.button.warning:hover {
-    -fx-background-color: derive(#FFA500, -10%);
-}
-
-/* Style for disabled product card */
-.product-card.disabled {
-    -fx-opacity: 0.5;
-}
-
-/* Modify the existing button styles */
 .button {
-    -fx-padding: 8px 16px;
-    -fx-background-radius: 4px;
+    -fx-padding: 10px 18px;
+    -fx-background-radius: 6px;
     -fx-cursor: hand;
     -fx-font-family: "Segoe UI";
     -fx-font-size: 13px;
-    -fx-transition: all 0.2s ease-in-out;
+    -fx-font-weight: bold;
 }
 
 .button.primary {
-    -fx-background-color: -fx-coffee-primary;
+    -fx-background-color: #6B4423;  /* Using direct color instead of variable */
     -fx-text-fill: white;
 }
 
 .button.primary:hover {
-    -fx-background-color: derive(-fx-coffee-primary, -10%);
+    -fx-background-color: derive(#6B4423, -10%);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 0);
+}
+
+.button.secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6B4423;  /* Using direct color instead of variable */
+    -fx-border-color: #6B4423;  /* Using direct color instead of variable */
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 6px;
+}
+
+.button.secondary:hover {
+    -fx-background-color: derive(#6B4423, 90%);
 }
 
 .button.danger {
     -fx-background-color: transparent;
-    -fx-text-fill: -fx-danger;
-    -fx-border-color: -fx-danger;
-    -fx-border-width: 1px;
-    -fx-border-radius: 4px;
+    -fx-text-fill: #E74C3C;  /* Using direct color instead of variable */
+    -fx-border-color: #E74C3C;  /* Using direct color instead of variable */
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 6px;
 }
 
 .button.danger:hover {
-    -fx-background-color: derive(-fx-danger, 90%);
+    -fx-background-color: derive(#E74C3C, 95%);
 }
 
 .button.small {
-    -fx-padding: 6px 12px;
+    -fx-padding: 8px 14px;
     -fx-font-size: 12px;
 }
 
-/* Add styles for enable/disable states */
-.button.enable {
-    -fx-background-color: #4CAF50;  /* Green color for enable */
-    -fx-text-fill: white;
+/* Status Styles */
+.product-card.disabled {
+    -fx-opacity: 0.7;
 }
 
-.button.enable:hover {
-    -fx-background-color: derive(#4CAF50, -10%);
-}
-
-.product-card {
-    -fx-background-color: white;
-    -fx-background-radius: 8px;
-    -fx-border-radius: 8px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 0);
-    -fx-transition: all 0.2s ease-in-out;
-}
-
-.product-card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 0);
-    -fx-translate-y: -2px;
-}
-
-/* Make sure buttons don't trigger the hover effect */
-.product-card .button:hover {
-    -fx-translate-y: 0;
-}
-
-/* Style for unavailable product text */
 .product-name.unavailable {
     -fx-strikethrough: true;
     -fx-fill: #999999;
+}
+
+/* Stock Status Indicators */
+.stock-container {
+    -fx-padding: 4px 8px;
+    -fx-background-radius: 4px;
+}
+
+.stock-container.in-stock {
+    -fx-background-color: rgba(46, 213, 115, 0.1);
+}
+
+.stock-container.low-stock {
+    -fx-background-color: rgba(255, 165, 0, 0.1);
+}
+
+.stock-container.out-of-stock {
+    -fx-background-color: rgba(231, 76, 60, 0.1);
+}
+
+/* Image Hover Effect */
+.image-container ImageView {
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+.product-card:hover .image-container ImageView {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
 }
