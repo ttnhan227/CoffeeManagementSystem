@@ -150,39 +150,49 @@ public class Datasource extends Product {
         }
         return null; // Return null if no product is found
     }
+    public List<Product> searchProducts(String searchString, int sortOrder, boolean includeDisabled) {
+        StringBuilder query = queryProducts();
 
-    public List<Product> searchProducts(String searchString, int sortOrder) {
-        StringBuilder queryProducts = queryProducts();
-        queryProducts.append(" WHERE (" + TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_NAME + " LIKE ? OR " + TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_DESCRIPTION + " LIKE ?)");
+        boolean hasSearchString = searchString != null && !searchString.trim().isEmpty();
 
-        if (sortOrder != ORDER_BY_NONE) {
-            queryProducts.append(" ORDER BY ");
-            queryProducts.append(COLUMN_PRODUCTS_NAME);
-            if (sortOrder == ORDER_BY_DESC) {
-                queryProducts.append(" DESC");
-            } else {
-                queryProducts.append(" ASC");
-            }
+        // Add WHERE clause only if there's a search string
+        if (hasSearchString) {
+            query.append(" WHERE (")
+                    .append(TABLE_PRODUCTS).append(".").append(COLUMN_PRODUCTS_NAME).append(" LIKE ? OR ")
+                    .append("category_name LIKE ?)");
         }
 
-        try (PreparedStatement statement = conn.prepareStatement(queryProducts.toString())) {
-            statement.setString(1, "%" + searchString + "%");
-            statement.setString(2, "%" + searchString + "%");
-            ResultSet results = statement.executeQuery();
+        // Apply sorting based on sortOrder
+        if (sortOrder != ORDER_BY_NONE) {
+            query.append(" ORDER BY ").append(COLUMN_PRODUCTS_NAME);
+            query.append(sortOrder == ORDER_BY_DESC ? " DESC" : " ASC");
+        }
 
+        try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
+            int paramIndex = 1;
+
+            // Set search parameters only if there’s a search string
+            if (hasSearchString) {
+                statement.setString(paramIndex++, "%" + searchString + "%"); // For product name
+                statement.setString(paramIndex++, "%" + searchString + "%"); // For category name
+            }
+
+            ResultSet results = statement.executeQuery();
             List<Product> products = new ArrayList<>();
+
             while (results.next()) {
                 Product product = new Product();
-                product.setId(results.getInt(1));
-                product.setName(results.getString(2));
-                product.setDescription(results.getString(3));
-                product.setPrice(results.getDouble(4));
-                product.setQuantity(results.getInt(5));
-                product.setCategory_name(results.getString(6));
-                // Add this line to set the image
-                product.setImage(results.getString(7));  // Get image path from column 7
+                product.setId(results.getInt(COLUMN_PRODUCTS_ID));
+                product.setName(results.getString(COLUMN_PRODUCTS_NAME));
+                product.setDescription(results.getString(COLUMN_PRODUCTS_DESCRIPTION));
+                product.setPrice(results.getDouble(COLUMN_PRODUCTS_PRICE));
+                product.setQuantity(results.getInt(COLUMN_PRODUCTS_QUANTITY));
+                product.setCategory_name(results.getString("category_name"));  // Category alias from query
+                product.setImage(results.getString(COLUMN_PRODUCTS_IMAGE));
+                product.setDisabled(results.getInt(COLUMN_PRODUCTS_ACTIVE) == 1);  // Set based on active status
                 products.add(product);
             }
+
             return products;
 
         } catch (SQLException e) {
@@ -190,6 +200,10 @@ public class Datasource extends Product {
             return null;
         }
     }
+
+
+
+
     private StringBuilder queryProducts() {
         return new StringBuilder("SELECT " +
                 TABLE_PRODUCTS + "." + COLUMN_PRODUCTS_ID + ", " +

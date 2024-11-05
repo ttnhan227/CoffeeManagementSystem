@@ -323,7 +323,11 @@ public class ProductsController {
             @Override
             protected ObservableList<Product> call() {
                 return FXCollections.observableArrayList(
-                        Datasource.getInstance().searchProducts(fieldProductsSearch.getText().toLowerCase(), Datasource.ORDER_BY_NONE));
+                        Datasource.getInstance().searchProducts(
+                                fieldProductsSearch.getText().toLowerCase(),
+                                Datasource.ORDER_BY_NONE,
+                                false // Set to true if you want to include disabled products
+                        ));
             }
         };
 
@@ -341,6 +345,8 @@ public class ProductsController {
 
         new Thread(searchProductsTask).start();
     }
+
+
 
     @FXML
     private void btnAddProductOnClick() {
