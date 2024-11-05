@@ -21,8 +21,6 @@ module app {
     opens controller.users.pages.products to javafx.fxml;
     opens controller.admin.pages.orders to javafx.fxml;
     opens controller.users.pages.orders to javafx.fxml;
-
-
 }
 
 
