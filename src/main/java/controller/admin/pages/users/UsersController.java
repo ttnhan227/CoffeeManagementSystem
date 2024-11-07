@@ -5,10 +5,12 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.User;
 import model.Datasource;
@@ -27,6 +29,8 @@ public class UsersController {
     private StackPane customersContent;
     @FXML
     private TableView<User> tableCustomersPage;
+    @FXML
+    private Button btnAddUser;
 
     @FXML
     public void listUsers() {
@@ -124,5 +128,26 @@ public class UsersController {
             e.printStackTrace();
         }
     }
+    @FXML
+    private void btnAddUserOnAction() {
+        try {
+            // Load the Create User form (FXML) into the existing layout
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/admin/pages/users/add-user.fxml"));
+            AnchorPane root = fxmlLoader.load();
+
+            // Clear current content and add the new "Create User" form
+            customersContent.getChildren().clear();
+            customersContent.getChildren().add(root);
+
+            // Get the controller and initialize if needed
+            CreateUserController createUserController = fxmlLoader.getController();
+            createUserController.initializeForm(); // Add a method in CreateUserController to initialize the form if needed
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 }

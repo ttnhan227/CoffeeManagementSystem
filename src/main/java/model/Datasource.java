@@ -528,6 +528,10 @@ public class Datasource extends Product {
         return user;
     }
     public boolean insertNewUser(String fullName, String username, String email, String password, String salt) {
+        if (conn == null) {
+            System.out.println("Connection is not established. Please open the connection first.");
+            return false;
+        }
 
         String sql = "INSERT INTO " + TABLE_USERS + " ("
                 + COLUMN_USERS_FULLNAME + ", "
@@ -543,8 +547,8 @@ public class Datasource extends Product {
             statement.setString(1, fullName);
             statement.setString(2, username);
             statement.setString(3, email);
-            statement.setString(4, password);
-            statement.setString(5, salt);
+            statement.setString(4, password);  // Hash the password before storing
+            statement.setString(5, salt);  // Store the salt
 
             statement.executeUpdate();
             return true;
