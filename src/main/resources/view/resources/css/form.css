@@ -1,43 +1,40 @@
-/* General styles for the root AnchorPane */
 .root {
-    -fx-background-color: #f9f9f9; /* Light background color */
-    -fx-padding: 20; /* Padding around the content */
+    -fx-background-color: rgba(249, 249, 249, 0.8);
+    -fx-padding: 20;
 }
 
-/* Styles for the BorderPane */
 .border-pane {
-    -fx-background-color: #ffffff; /* White background for the form */
-    -fx-padding: 15; /* Padding inside the BorderPane */
-    -fx-border-color: #e0e0e0; /* Light grey border */
-    -fx-border-width: 1; /* Thin border width */
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0.5, 0, 5);
 }
 
-/* Heading styles */
+.grid-pane {
+    -fx-padding: 20;
+}
+
 .heading-text {
-    -fx-font-size: 24px; /* Larger font size for the heading */
-    -fx-font-weight: bold; /* Bold text */
-    -fx-text-fill: #333333; /* Dark text color */
-    -fx-padding: 10; /* Padding around the heading */
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-padding: 20 0 10 0;
 }
 
-/* Label styles */
 .label {
-    -fx-font-size: 14px; /* Font size for labels */
-    -fx-text-fill: #555555; /* Dark grey text color */
-    -fx-padding: 5; /* Padding around the label */
+    -fx-font-size: 14px;
+    -fx-text-fill: #555;
+    -fx-padding: 5;
 }
 
-/* TextField styles */
 .text-field {
-    -fx-border-color: #cccccc; /* Light grey border for text fields */
-    -fx-border-radius: 4; /* Rounded corners */
-    -fx-padding: 10; /* Padding inside text fields */
-    -fx-background-color: #ffffff; /* White background */
+    -fx-border-color: #ccc;
+    -fx-border-radius: 4;
+    -fx-padding: 10;
+    -fx-background-color: white;
 }
-
-.text-field:focused {
-    -fx-border-color: #007bff; /* Blue border when focused */
-}
+.text-field:focused { -fx-border-color: #007bff; }
 
 /* TextArea styles */
 .text-area {
@@ -64,22 +61,28 @@
 
 /* Button styles */
 .button {
-    -fx-background-color: #007bff; /* Primary blue color */
-    -fx-text-fill: #ffffff; /* White text color */
-    -fx-font-size: 14px; /* Font size for buttons */
-    -fx-padding: 10 20; /* Padding around the button */
-    -fx-border-radius: 4; /* Rounded corners */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.0, 0, 1); /* Shadow effect */
+-fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-padding: 10 20;
+     -fx-border-radius: 5; /* Modern rounded corners */
+ -fx-background-radius: 5;  /* match background with border */
+
 }
 
 .button:hover {
-    -fx-background-color: #0056b3; /* Darker blue on hover */
+    -fx-background-color: #0056b3;  /* less strong  hover */
+
 }
+
+
+
 
 .button:pressed {
-    -fx-background-color: #004085; /* Even darker blue when pressed */
-}
 
+     -fx-background-color: #004085;
+
+
+}
 /* ImageView styles */
 .image-view-container {
     -fx-alignment: center; /* Center the image */
