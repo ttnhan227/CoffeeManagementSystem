@@ -25,8 +25,8 @@ public class CategoryController {
     @FXML
     public TableColumn<Categories, String> descriptionColumn; // Specify the type for type safety
 
-    private ObservableList<Categories> categoryList; // Store the categories in an observable list
-    private Datasource datasource; // Reference to the Datasource
+    private final ObservableList<Categories> categoryList; // Store the categories in an observable list
+    private final Datasource datasource; // Reference to the Datasource
 
     public CategoryController() {
         datasource = Datasource.getInstance(); // Get the instance of Datasource

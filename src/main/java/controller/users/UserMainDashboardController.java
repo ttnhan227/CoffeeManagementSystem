@@ -141,6 +141,6 @@ public class UserMainDashboardController implements Initializable {
         controller.loadProductList();
         controller.totalText.setText(String.valueOf(order.getTotal()));
         controller.finalText.setText(String.valueOf(order.getFin()));
-        controller.discountText.setText(String.valueOf(order.getDiscount()) + "%");
+        controller.discountText.setText(order.getDiscount() + "%");
     }
 }

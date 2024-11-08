@@ -150,7 +150,7 @@ public class ProductsController {
                     if (empty || getTableRow() == null || getTableRow().getItem() == null) {
                         setGraphic(null);
                     } else {
-                        Product product = (Product) getTableRow().getItem();
+                        Product product = getTableRow().getItem();
                         if (product.getImageView() != null) {
                             setGraphic(product.getImageView());
                         } else {

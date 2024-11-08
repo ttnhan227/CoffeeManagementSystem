@@ -372,7 +372,7 @@ public class Datasource extends Product {
             }
         }
 
-        System.out.println("Executing query: " + queryCustomers.toString()); // Debug print
+        System.out.println("Executing query: " + queryCustomers); // Debug print
 
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery(queryCustomers.toString())) {

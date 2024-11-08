@@ -142,24 +142,14 @@ public class UserOrdersController implements Initializable {
 
         searchComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
             searchField.setText("");
-            if(newValue.equals("All")){
-                searchField.setDisable(true);
-            }
-            else {
-                searchField.setDisable(false);
-            }
+            searchField.setDisable(newValue.equals("All"));
         });
         searchField.textProperty().addListener((obs, oldText, newText) -> {
             applyFilter(searchComboBox.getValue(), newText);
             if(newText == null){
                 applyFilter("All", newText);
             }
-            if(searchComboBox.getValue().equals("All")){
-                searchField.setDisable(true);
-            }
-            else {
-                searchField.setDisable(false);
-            }
+            searchField.setDisable(searchComboBox.getValue().equals("All"));
         });
         searchComboBox.setValue("All");
     }
@@ -207,10 +197,7 @@ public class UserOrdersController implements Initializable {
             case "By table":
                 filteredList.addAll(orderList.filtered(order -> {
                     if(order.getTableID() == null){
-                        if("take away".contains(search.toLowerCase())){
-                            return true;
-                        }
-                        return false;
+                        return "take away".contains(search.toLowerCase());
                     }
                     String table = String.valueOf(order.getTableID());
                     return table.contains(search);
@@ -219,10 +206,7 @@ public class UserOrdersController implements Initializable {
             case "By coupon id":
                 filteredList.addAll(orderList.filtered(order -> {
                     if(order.getCouponID() == null){
-                        if("no coupon".contains(search.toLowerCase())){
-                            return true;
-                        }
-                        return false;
+                        return "no coupon".contains(search.toLowerCase());
                     }
 
                     String id = String.valueOf(order.getCouponID());

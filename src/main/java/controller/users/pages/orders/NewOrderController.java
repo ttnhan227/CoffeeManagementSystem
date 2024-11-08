@@ -120,12 +120,8 @@ public class NewOrderController implements Initializable {
 
     @FXML
     private boolean checkCoupon(){
-        if(couponHBox.getChildren().contains(valid)){
-            couponHBox.getChildren().remove(valid);
-        }
-        if(couponHBox.getChildren().contains(invalid)){
-            couponHBox.getChildren().remove(invalid);
-        }
+        couponHBox.getChildren().remove(valid);
+        couponHBox.getChildren().remove(invalid);
         List<Coupon> list = Datasource.getInstance().getAllCoupon();
         String cf = couponField.getText();
         for(Coupon coupon: list){
@@ -161,12 +157,8 @@ public class NewOrderController implements Initializable {
 
     @FXML
     private boolean resetCoupon(){
-        if(couponHBox.getChildren().contains(valid)){
-            couponHBox.getChildren().remove(valid);
-        }
-        if(couponHBox.getChildren().contains(invalid)){
-            couponHBox.getChildren().remove(invalid);
-        }
+        couponHBox.getChildren().remove(valid);
+        couponHBox.getChildren().remove(invalid);
         couponField.setText("");
         couponField.setEditable(true);
         coupons.clear();
@@ -195,12 +187,8 @@ public class NewOrderController implements Initializable {
 
     private void couponLoader(){
         couponField.textProperty().addListener(((observableValue, oldValue, newValue) ->{
-            if(couponHBox.getChildren().contains(valid)){
-                couponHBox.getChildren().remove(valid);
-            }
-            if(couponHBox.getChildren().contains(invalid)){
-                couponHBox.getChildren().remove(invalid);
-            }
+            couponHBox.getChildren().remove(valid);
+            couponHBox.getChildren().remove(invalid);
         } ));
     }
 
@@ -210,9 +198,7 @@ public class NewOrderController implements Initializable {
         suggestionList.prefWidthProperty().bind(searchField.widthProperty()); // Bind width to searchField
         //suggestionList.setItems(suggestions);
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(searchHBox.getChildren().contains(invalid)){
-                searchHBox.getChildren().remove(invalid);
-            }
+            searchHBox.getChildren().remove(invalid);
             if (newValue.isEmpty()) {
                 suggestionList.setVisible(false);
             } else {
@@ -468,7 +454,7 @@ public class NewOrderController implements Initializable {
                     finalText.setText(String.valueOf(formattedString));
 
                     //formattedString = format.format(discount);
-                    discountText.setText(String.valueOf(discount * 100) + "%");
+                    discountText.setText(discount * 100 + "%");
                 });
             }
         };
