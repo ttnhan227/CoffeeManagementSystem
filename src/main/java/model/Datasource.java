@@ -170,8 +170,11 @@ public class Datasource extends Product {
                     .append("category_name LIKE ?)");
         }
 
-        // Apply sorting based on sortOrder
-        if (sortOrder != ORDER_BY_NONE) {
+        // If no search string is provided, sort by id in descending order
+        if (!hasSearchString) {
+            query.append(" ORDER BY ").append(COLUMN_PRODUCTS_ID).append(" DESC");
+        } else if (sortOrder != ORDER_BY_NONE) {
+            // Apply sorting based on the sortOrder
             query.append(" ORDER BY ").append(COLUMN_PRODUCTS_NAME);
             query.append(sortOrder == ORDER_BY_DESC ? " DESC" : " ASC");
         }
@@ -208,6 +211,7 @@ public class Datasource extends Product {
             return null;
         }
     }
+
 
 
 
