@@ -28,7 +28,7 @@ public class EditUserController {
     @FXML
     private void initialize() {
         // Populate the status combo box with predefined statuses
-        fieldEditCustomerStatus.setItems(FXCollections.observableArrayList("Active", "Inactive", "Select"));
+        fieldEditCustomerStatus.setItems(FXCollections.observableArrayList("Active", "Inactive", "Banned"));
     }
 
     @FXML
