@@ -414,18 +414,42 @@ public class Datasource extends Product {
     public List<User> getOneUser(int customer_id) {
         StringBuilder queryCustomers = queryUsers();
         queryCustomers.append(" AND " + TABLE_USERS + "." + COLUMN_USERS_ID + " = ?");
-        try (PreparedStatement statement = conn.prepareStatement(String.valueOf(queryCustomers))) {
+        try (PreparedStatement statement = conn.prepareStatement(queryCustomers.toString())) {
             statement.setInt(1, customer_id);
             ResultSet results = statement.executeQuery();
             List<User> users = new ArrayList<>();
+
             while (results.next()) {
                 User user = new User();
-                user.setId(results.getInt(1));
-                user.setFullname(results.getString(2));
-                user.setEmail(results.getString(3));
-                user.setUsername(results.getString(4));
-                user.setOrders(results.getInt(5));
-                user.setStatus(results.getString(6));
+                user.setId(results.getInt(COLUMN_USERS_ID));
+                user.setFullname(results.getString(COLUMN_USERS_FULLNAME));
+                user.setEmail(results.getString(COLUMN_USERS_EMAIL));
+                user.setUsername(results.getString(COLUMN_USERS_USERNAME));
+                user.setOrders(results.getInt(5));  // Adjust index if necessary
+                user.setStatus(results.getString(COLUMN_USERS_STATUS));
+
+                // Safely handle potentially null date
+                Date dob = results.getDate(COLUMN_USERS_DOB);
+                if (!results.wasNull()) {
+                    user.setDateOfBirth(dob);
+                }
+
+                // Safely handle potentially null phone number
+                String phone = results.getString(COLUMN_USERS_PHONE);
+                if (!results.wasNull()) {
+                    user.setPhoneNumber(phone);
+                }
+
+                // Safely handle potentially null gender
+                String genderStr = results.getString(COLUMN_USERS_GENDER);
+                if (!results.wasNull()) {
+                    try {
+                        user.setGender(User.Gender.valueOf(genderStr));
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Invalid gender value in database: " + genderStr);
+                    }
+                }
+
                 users.add(user);
             }
             return users;
@@ -435,12 +459,16 @@ public class Datasource extends Product {
         }
     }
 
-    public boolean updateOneUser(int customer_id, String fullName, String username, String email, String status) {
+    public boolean updateOneUser(int customer_id, String fullName, String username, String email,
+                                 String status, Date dateOfBirth, String phoneNumber, User.Gender gender) {
         String sql = "UPDATE " + TABLE_USERS + " SET "
                 + COLUMN_USERS_FULLNAME + " = ?, "
                 + COLUMN_USERS_USERNAME + " = ?, "
                 + COLUMN_USERS_EMAIL + " = ?, "
-                + COLUMN_USERS_STATUS + " = ? "
+                + COLUMN_USERS_STATUS + " = ?, "
+                + COLUMN_USERS_DOB + " = ?, "
+                + COLUMN_USERS_PHONE + " = ?, "
+                + COLUMN_USERS_GENDER + " = ? "
                 + "WHERE " + COLUMN_USERS_ID + " = ? AND " + COLUMN_USERS_ADMIN + " = 0";
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -448,9 +476,13 @@ public class Datasource extends Product {
             statement.setString(2, username);
             statement.setString(3, email);
             statement.setString(4, status);
-            statement.setInt(5, customer_id);
+            statement.setDate(5, new java.sql.Date(dateOfBirth.getTime()));
+            statement.setString(6, phoneNumber);
+            statement.setString(7, gender.name());  // Convert enum to string
+            statement.setInt(8, customer_id);
 
-            System.out.println("Updating User: " + customer_id + ", " + fullName + ", " + email + ", " + username + ", " + status);
+            System.out.println("Updating User: " + customer_id + ", " + fullName + ", " + email +
+                    ", " + username + ", " + status + ", " + dateOfBirth + ", " + phoneNumber + ", " + gender);
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
