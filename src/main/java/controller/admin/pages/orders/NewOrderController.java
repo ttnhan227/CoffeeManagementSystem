@@ -94,15 +94,15 @@ public class NewOrderController implements Initializable {
     }
 
     private void userNameAndDateLoader(){
+        order_table = null;
+        customer = null;
+        tempProduct = null;
         String username = UserSessionController.getUserFullName();
         eName.setText(username);
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String formatted_date = today.format(formatter);
         dateField.setText(formatted_date);
-
-        order_table = null;
-        customer = null;
     }
 
     private void tableComboBoxLoader(){
@@ -257,7 +257,6 @@ public class NewOrderController implements Initializable {
             productHBox.getChildren().remove(noStock);
         }
         String searchName = searchField.getText();
-        //Product product = new Product();
         tempProduct = Datasource.getInstance().searchOneProductByName(searchName);
         if(tempProduct != null && !tempProduct.isDisabled()){
             if(tempProduct.getQuantity() == 0){
@@ -266,40 +265,44 @@ public class NewOrderController implements Initializable {
                 searchHBox.getChildren().add(invalid);
                 return;
             }
+            quantitySpinner.setDisable(false); // Add this line
             idField.setText(String.valueOf(tempProduct.getId()));
             productNameField.setText(tempProduct.getName());
             SpinnerValueFactory<Integer> spinnerValue = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, tempProduct.getQuantity(), 1);
             quantitySpinner.setValueFactory(spinnerValue);
-            //return;
+            searchField.setText(""); // Add this line
         }
         else if(tempProduct == null || tempProduct.isDisabled()){
             invalid.setText("No product found or product is disabled");
             invalid.setFill(Color.RED);
             searchHBox.getChildren().add(invalid);
-            //return;
         }
     }
 
     private void productDetailLoader(){
+        if(tempProduct == null){ // Add this initial check
+            SpinnerValueFactory<Integer> spinnerValue = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,999,0);
+            quantitySpinner.setValueFactory(spinnerValue);
+            totalField.setText("0");
+            quantitySpinner.setDisable(true);
+        }
+
         quantitySpinner.valueProperty().addListener(new ChangeListener<Integer>() {
             @Override
             public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
                 if(tempProduct == null){
-                    SpinnerValueFactory<Integer> spinnerValue = new SpinnerValueFactory.ListSpinnerValueFactory<>(
-                            FXCollections.observableArrayList(0));
+                    SpinnerValueFactory<Integer> spinnerValue = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,999,0);
                     quantitySpinner.setValueFactory(spinnerValue);
                     totalField.setText("0");
+                    quantitySpinner.setDisable(true);
                 }
                 else{
                     double total = newValue * tempProduct.getPrice();
                     DecimalFormat formattedTotal = new DecimalFormat("#.##");
                     String formattedValue = formattedTotal.format(total);
                     totalField.setText(formattedValue);
+                    quantitySpinner.setDisable(false);
                 }
-//                if(productHBox.getChildren().contains(invalid) || productHBox.getChildren().contains(noStock)){
-//                    productHBox.getChildren().remove(invalid);
-//                    productHBox.getChildren().remove(noStock);
-//                }
             }
         });
     }
@@ -375,7 +378,14 @@ public class NewOrderController implements Initializable {
                 editButton.setOnAction(e -> {
                     Product product = getTableView().getItems().get(getIndex());
                     System.out.println("Edit: " + product.getName());
-                    // Add your edit logic here
+                    searchField.setText(product.getName());
+                    onClickSearch();
+                    Platform.runLater(() -> {
+                        quantitySpinner.getValueFactory().setValue(quantities.get(getIndex()));
+                        suggestionList.setVisible(false);
+                        productList.remove(getIndex());
+                        quantities.remove(getIndex());
+                    });
                 });
 
                 // Set the action for the Delete button
@@ -402,8 +412,8 @@ public class NewOrderController implements Initializable {
                 }
             }
         });
-        actionColumn.setMinWidth(100);
-        actionColumn.setPrefWidth(150);
+        actionColumn.setMinWidth(200);  // Changed from 100
+        actionColumn.setPrefWidth(300); // Changed from 150
         actionColumn.setMaxWidth(5000);
         orderDetailView.getColumns().add(actionColumn);
     }
