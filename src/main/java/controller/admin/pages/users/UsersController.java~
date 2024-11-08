@@ -72,7 +72,7 @@ public class UsersController {
         };
 
         getAllCustomersTask.setOnSucceeded(e -> {
-            System.out.println("Task succeeded, updating table..."); // Debug adprint
+            System.out.println("Task succeeded, updating table..."); // Debug print
             tableCustomersPage.setItems(getAllCustomersTask.getValue());
             addActionButtonsToTable();
         });

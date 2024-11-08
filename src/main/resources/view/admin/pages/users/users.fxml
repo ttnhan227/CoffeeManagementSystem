@@ -51,6 +51,21 @@
                                 <PropertyValueFactory property="username"/>
                             </cellValueFactory>
                         </TableColumn>
+                        <TableColumn fx:id="dateColumn" prefWidth="75.0" text="Date of Birth">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="dateOfBirth"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn prefWidth="75.0" text="Gender">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="gender"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn prefWidth="75.0" text="Phone">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="phoneNumber"/>
+                            </cellValueFactory>
+                        </TableColumn>
                         <TableColumn prefWidth="125.0" text="Status">
                             <cellValueFactory>
                                 <PropertyValueFactory property="status"/>
@@ -72,5 +87,4 @@
             </bottom>
         </BorderPane>
     </StackPane>
-
 </AnchorPane>

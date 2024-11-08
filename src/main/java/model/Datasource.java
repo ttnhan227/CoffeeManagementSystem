@@ -48,6 +48,9 @@ public class Datasource extends Product {
     public static final String COLUMN_USERS_SALT = "salt";
     public static final String COLUMN_USERS_ADMIN = "admin";
     public static final String COLUMN_USERS_STATUS = "status";
+    public static final String COLUMN_USERS_DOB = "date_of_birth";
+    public static final String COLUMN_USERS_GENDER = "gender";
+    public static final String COLUMN_USERS_PHONE = "phone_number";
 
     public static final int ORDER_BY_NONE = 1;
     public static final int ORDER_BY_ASC = 2;
@@ -332,6 +335,22 @@ public class Datasource extends Product {
             return null;
         }
     }
+    private StringBuilder queryUsers() {
+        return new StringBuilder("SELECT " +
+                TABLE_USERS + "." + COLUMN_USERS_ID + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_FULLNAME + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_EMAIL + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_USERNAME + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_DOB + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_GENDER + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_PHONE + ", " +
+                " (SELECT COUNT(*) FROM " + TABLE_ORDERS + " WHERE " + TABLE_ORDERS + "." + COLUMN_ORDERS_USER_ID + " = " + TABLE_USERS + "." + COLUMN_USERS_ID + ") AS orders" + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_STATUS +
+                " FROM " + TABLE_USERS +
+                " WHERE " + TABLE_USERS + "." + COLUMN_USERS_ADMIN + " = 0"
+        );
+    }
+
     public List<User> getAllUsers(int sortOrder) {
         StringBuilder queryCustomers = queryUsers();
         if (sortOrder != ORDER_BY_NONE) {
@@ -343,24 +362,53 @@ public class Datasource extends Product {
                 queryCustomers.append(" ASC");
             }
         }
+
+        System.out.println("Executing query: " + queryCustomers.toString()); // Debug print
+
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery(queryCustomers.toString())) {
 
             List<User> users = new ArrayList<>();
             while (results.next()) {
-                User user = new User();
-                user.setId(results.getInt(1));
-                user.setFullname(results.getString(2));
-                user.setEmail(results.getString(3));
-                user.setUsername(results.getString(4));
-                user.setOrders(results.getInt(5));
-                user.setStatus(results.getString(6));
-                users.add(user);
+                try {
+                    User user = new User();
+                    user.setId(results.getInt(1));
+                    user.setFullname(results.getString(2));
+                    user.setEmail(results.getString(3));
+                    user.setUsername(results.getString(4));
+
+                    // Add null checks for new fields
+                    Date dob = results.getDate(5);
+                    if (!results.wasNull()) {
+                        user.setDateOfBirth(dob);
+                    }
+
+                    String genderStr = results.getString(6);
+                    if (genderStr != null && !genderStr.isEmpty()) {
+                        try {
+                            user.setGender(User.Gender.valueOf(genderStr.toUpperCase()));
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Invalid gender value in database: " + genderStr); // Debug print
+                        }
+                    }
+
+                    user.setPhoneNumber(results.getString(7));
+                    user.setOrders(results.getInt(8));
+                    user.setStatus(results.getString(9));
+
+
+                    users.add(user);
+                    System.out.println("Loaded user: " + user.getFullname()); // Debug print
+                } catch (SQLException e) {
+                    System.out.println("Error processing row: " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
             return users;
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
-            return null;
+            e.printStackTrace();
+            return new ArrayList<>(); // Return empty list instead of null
         }
     }
     public List<User> getOneUser(int customer_id) {
@@ -410,18 +458,7 @@ public class Datasource extends Product {
             return false;
         }
     }
-    private StringBuilder queryUsers() {
-        return new StringBuilder("SELECT " +
-                TABLE_USERS + "." + COLUMN_USERS_ID + ", " +
-                TABLE_USERS + "." + COLUMN_USERS_FULLNAME + ", " +
-                TABLE_USERS + "." + COLUMN_USERS_EMAIL + ", " +
-                TABLE_USERS + "." + COLUMN_USERS_USERNAME + ", " +
-                " (SELECT COUNT(*) FROM " + TABLE_ORDERS + " WHERE " + TABLE_ORDERS + "." + COLUMN_ORDERS_USER_ID + " = " + TABLE_USERS + "." + COLUMN_USERS_ID + ") AS orders" + ", " +
-                TABLE_USERS + "." + COLUMN_USERS_STATUS +
-                " FROM " + TABLE_USERS +
-                " WHERE " + TABLE_USERS + "." + COLUMN_USERS_ADMIN + " = 0"
-        );
-    }
+
     public List<User> searchUsers(String searchString, int sortOrder) {
         StringBuilder queryCustomers = queryUsers();
         queryCustomers.append(" AND (" + TABLE_USERS + "." + COLUMN_USERS_FULLNAME + " LIKE ? OR " + TABLE_USERS + "." + COLUMN_USERS_USERNAME + " LIKE ?)");

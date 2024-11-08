@@ -15,7 +15,7 @@ public class User {
     private int orders;
     private Date dateOfBirth;
     private String phoneNumber;
-    private Gender gender; // Enum for gender
+    private Gender gender;// Enum for
 
     // Enum to restrict gender to valid values
     public enum Gender {
