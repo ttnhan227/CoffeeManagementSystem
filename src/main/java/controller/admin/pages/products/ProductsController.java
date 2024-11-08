@@ -167,16 +167,17 @@ public class ProductsController {
         Task<ObservableList<Product>> getAllProductsTask = new Task<ObservableList<Product>>() {
             @Override
             protected ObservableList<Product> call() {
-                return FXCollections.observableArrayList(Datasource.getInstance().getAllProducts(Datasource.ORDER_BY_NONE));
+                return FXCollections.observableArrayList(Datasource.getInstance().getAllProducts(Datasource.ORDER_BY_CREATION_DATE_DESC)); // Order by newest first
             }
         };
 
         getAllProductsTask.setOnSucceeded(e -> {
             productsContainer.getChildren().clear();
             ObservableList<Product> products = getAllProductsTask.getValue();
-            for (Product product : products) {
+            // Add products in reverse order to show newest first
+            for (int i = products.size() - 1; i >= 0; i--) {
                 try {
-                    addProductCard(product);
+                    addProductCard(products.get(i));
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }

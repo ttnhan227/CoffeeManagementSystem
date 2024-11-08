@@ -55,6 +55,7 @@ public class Datasource extends Product {
     public static final int ORDER_BY_NONE = 1;
     public static final int ORDER_BY_ASC = 2;
     public static final int ORDER_BY_DESC = 3;
+    public static final int ORDER_BY_CREATION_DATE_DESC = 1;
     private static final Datasource instance = new Datasource();
     private Connection conn;
 
@@ -85,13 +86,17 @@ public class Datasource extends Product {
     public List<Product> getAllProducts(int sortOrder) {
         StringBuilder queryProducts = queryProducts();
 
+
         if (sortOrder != ORDER_BY_NONE) {
             queryProducts.append(" ORDER BY ");
-            queryProducts.append(COLUMN_PRODUCTS_NAME);
-            if (sortOrder == ORDER_BY_DESC) {
-                queryProducts.append(" DESC");
-            } else {
-                queryProducts.append(" ASC");
+            switch (sortOrder) {
+                // Sort by ID in descending order
+                case ORDER_BY_DESC:
+                    queryProducts.append(COLUMN_PRODUCTS_NAME + " DESC");
+                    break;
+                case ORDER_BY_ASC:
+                    queryProducts.append(COLUMN_PRODUCTS_NAME + " ASC");
+                    break;
             }
         }
 
