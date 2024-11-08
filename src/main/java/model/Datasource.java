@@ -410,6 +410,18 @@ public class Datasource extends Product {
             return false;
         }
     }
+    private StringBuilder queryUsers() {
+        return new StringBuilder("SELECT " +
+                TABLE_USERS + "." + COLUMN_USERS_ID + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_FULLNAME + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_EMAIL + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_USERNAME + ", " +
+                " (SELECT COUNT(*) FROM " + TABLE_ORDERS + " WHERE " + TABLE_ORDERS + "." + COLUMN_ORDERS_USER_ID + " = " + TABLE_USERS + "." + COLUMN_USERS_ID + ") AS orders" + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_STATUS +
+                " FROM " + TABLE_USERS +
+                " WHERE " + TABLE_USERS + "." + COLUMN_USERS_ADMIN + " = 0"
+        );
+    }
     public List<User> searchUsers(String searchString, int sortOrder) {
         StringBuilder queryCustomers = queryUsers();
         queryCustomers.append(" AND (" + TABLE_USERS + "." + COLUMN_USERS_FULLNAME + " LIKE ? OR " + TABLE_USERS + "." + COLUMN_USERS_USERNAME + " LIKE ?)");
@@ -445,18 +457,6 @@ public class Datasource extends Product {
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }
-    }
-    private StringBuilder queryUsers() {
-        return new StringBuilder("SELECT " +
-                TABLE_USERS + "." + COLUMN_USERS_ID + ", " +
-                TABLE_USERS + "." + COLUMN_USERS_FULLNAME + ", " +
-                TABLE_USERS + "." + COLUMN_USERS_EMAIL + ", " +
-                TABLE_USERS + "." + COLUMN_USERS_USERNAME + ", " +
-                " (SELECT COUNT(*) FROM " + TABLE_ORDERS + " WHERE " + TABLE_ORDERS + "." + COLUMN_ORDERS_USER_ID + " = " + TABLE_USERS + "." + COLUMN_USERS_ID + ") AS orders" + ", " +
-                TABLE_USERS + "." + COLUMN_USERS_STATUS +
-                " FROM " + TABLE_USERS +
-                " WHERE " + TABLE_USERS + "." + COLUMN_USERS_ADMIN + " = 0"
-        );
     }
     public boolean deleteSingleUser(int customerId) {
         String sql = "DELETE FROM " + TABLE_USERS + " WHERE " + COLUMN_USERS_ID + " = ?";
