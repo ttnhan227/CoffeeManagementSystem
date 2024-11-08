@@ -12,57 +12,63 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1280.0" styleClass="root" stylesheets="@../../../resources/css/form.css"
+<AnchorPane prefHeight="800.0" prefWidth="1280.0" styleClass="root" stylesheets="@../../../resources/css/form.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.users.pages.products.EditProductController">
 
-            xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.users.pages.products.EditProductController">
     <children>
-        <BorderPane layoutX="14.0" layoutY="14.0" styleClass="border-pane">
-            <center>
-                <GridPane fx:id="formEditProductView" alignment="CENTER_RIGHT" prefHeight="332.0" prefWidth="712.0" styleClass="grid-pane">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="350.0" minWidth="10.0" prefWidth="148.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="603.0" minWidth="10.0" prefWidth="279.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="603.0" minWidth="10.0" prefWidth="140.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="603.0" minWidth="10.0" prefWidth="146.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="603.0" minWidth="10.0" prefWidth="215.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+        <VBox alignment="CENTER" spacing="20" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+            <Text fx:id="viewProductName" styleClass="heading-text" text="Edit product" />
 
-                    <Label styleClass="label" text="Product Name" />
-                    <TextField fx:id="fieldEditProductId" visible="false" GridPane.columnIndex="1" />
-                    <TextField fx:id="fieldEditProductName" promptText="product name" GridPane.columnIndex="1" />
+            <BorderPane styleClass="border-pane" VBox.vgrow="ALWAYS">
+                <center>
+                    <GridPane fx:id="formEditProductView" alignment="CENTER" hgap="10" styleClass="grid-pane" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" />
+                            <ColumnConstraints hgrow="SOMETIMES" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints vgrow="SOMETIMES" />
+                            <RowConstraints vgrow="SOMETIMES" />
+                            <RowConstraints vgrow="SOMETIMES" />
+                            <RowConstraints vgrow="SOMETIMES" />
+                            <RowConstraints vgrow="SOMETIMES" />
+                            <RowConstraints vgrow="SOMETIMES" />
+                            <RowConstraints vgrow="SOMETIMES" />
+                            <RowConstraints />
+                        </rowConstraints>
 
-                    <Label styleClass="label" text="Product Price" GridPane.columnIndex="3" />
-                    <TextField fx:id="fieldEditProductPrice" promptText="0.0" GridPane.columnIndex="4" />
+                        <Label styleClass="label" text="Product Name" />
+                        <TextField fx:id="fieldEditProductName" promptText="product name" styleClass="text-field" GridPane.columnIndex="1" />
 
-                    <Label styleClass="label" text="Product Stock" GridPane.rowIndex="1" />
-                    <TextField fx:id="fieldEditProductQuantity" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label styleClass="label" text="Product Price" GridPane.rowIndex="1" />
+                        <TextField fx:id="fieldEditProductPrice" promptText="0.0" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                    <Label styleClass="label" text="Product Category" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                    <ComboBox fx:id="fieldEditProductCategoryId" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                        <TextField fx:id="fieldEditProductId" visible="false" />
 
-                    <Label styleClass="label" text="Description" GridPane.rowIndex="2" />
-                    <TextArea fx:id="fieldEditProductDescription" prefHeight="200.0" prefWidth="522.0" promptText="product description" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label styleClass="label" text="Product Stock" GridPane.rowIndex="2" />
+                        <TextField fx:id="fieldEditProductQuantity" promptText="0" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-                    <Text fx:id="viewProductResponse" strokeType="OUTSIDE" strokeWidth="0.0" text="Product updated!" visible="false" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <Label styleClass="label" text="Product Category" GridPane.rowIndex="3" />
+                        <ComboBox fx:id="fieldEditProductCategoryId" styleClass="combo-box" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                    <HBox spacing="10" styleClass="image-view-container" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label styleClass="label" text="Description" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+                        <TextArea fx:id="fieldEditProductDescription" prefHeight="200.0" prefWidth="522.0" promptText="product description" styleClass="text-area" GridPane.columnSpan="2" GridPane.rowIndex="5" />
 
-                    <Button mnemonicParsing="false" onAction="#btnEditProductOnAction" styleClass="button, primary" text="Edit Product" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
-                </GridPane>
-            </center>
-            <top>
-                <Text fx:id="viewProductName" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="heading-text" text="Edit product" BorderPane.alignment="CENTER_LEFT" />
-            </top>
-        </BorderPane>
-        <ImageView fx:id="productImageView" fitHeight="200" fitWidth="200" layoutX="224.0" layoutY="456.0" preserveRatio="true" />
-        <Button fx:id="selectImageButton" layoutX="153.0" layoutY="558.0" onAction="#selectImage" text="Select Image" />
+                        <HBox alignment="CENTER_LEFT" spacing="20" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="6">  <!-- Align left and span 2 columns -->
+                            <VBox alignment="CENTER" spacing="10" styleClass="image-view-container">
+                                <ImageView fx:id="productImageView" fitHeight="249.0" fitWidth="235.0" preserveRatio="true" />
+                            </VBox>
+                            <Button fx:id="selectImageButton" onAction="#selectImage" styleClass="button" text="Select Image" />
+                        </HBox>
+
+                        <Button mnemonicParsing="false" onAction="#btnEditProductOnAction" styleClass="button primary" text="Edit Product" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="7" /> <!-- Bottom right -->
+                        <Text fx:id="viewProductResponse" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="message-text" text="Product updated!" visible="false" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+
+                    </GridPane>
+                </center>
+            </BorderPane>
+        </VBox>
     </children>
 </AnchorPane>
