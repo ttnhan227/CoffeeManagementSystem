@@ -52,7 +52,7 @@ public class CreateUserController {
 
         // Use the UserModel to insert the new user into the database
         Datasource userModel = Datasource.getInstance();  // Singleton pattern to get the instance
-        boolean success = userModel.insertNewUser(fullName, username, email, securePassword, salt);
+        boolean success = userModel.insertNewUserForm(fullName, username, email, securePassword, salt);
 
         if (success) {
             viewCreateUserResponse.setText("User created successfully!");

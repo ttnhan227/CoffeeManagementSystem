@@ -627,6 +627,36 @@ public class Datasource extends Product {
             return false;
         }
     }
+    public boolean insertNewUserForm(String fullName, String username, String email, String password, String salt) {
+        if (conn == null) {
+            System.out.println("Connection is not established. Please open the connection first.");
+            return false;
+        }
+
+        String sql = "INSERT INTO " + TABLE_USERS + " ("
+                + COLUMN_USERS_FULLNAME + ", "
+                + COLUMN_USERS_USERNAME + ", "
+                + COLUMN_USERS_EMAIL + ", "
+                + COLUMN_USERS_PASSWORD + ", "
+                + COLUMN_USERS_SALT + ", "
+                + COLUMN_USERS_ADMIN + ", "
+                + COLUMN_USERS_STATUS +
+                ") VALUES (?, ?, ?, ?, ?, 0, 'enabled')";
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, fullName);
+            statement.setString(2, username);
+            statement.setString(3, email);
+            statement.setString(4, password);  // Hash the password before storing
+            statement.setString(5, salt);  // Store the salt
+
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return false;
+        }
+    }
     public Integer countAllProducts() {
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery("SELECT COUNT(*) FROM " + TABLE_PRODUCTS)) {
