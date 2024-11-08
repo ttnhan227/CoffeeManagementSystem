@@ -8,6 +8,7 @@ import controller.admin.pages.products.ProductsController;
 import controller.admin.pages.orders.NewOrderController;
 import controller.admin.pages.orders.ViewOrderController;
 import controller.admin.pages.orders.UserOrdersController;
+import javafx.animation.ScaleTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.Order;
 import model.Datasource;
 
@@ -107,10 +109,32 @@ public class MainDashboardController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         lblUsrName.setText(UserSessionController.getUserFullName());
 
+        // Apply scale transition on buttons for hover effect
+        applyScaleEffect(btnHome);
+        applyScaleEffect(btnProducts);
+        applyScaleEffect(btnCustomers);
+        applyScaleEffect(btnOrders);
+        applyScaleEffect(btnSettings);
+        applyScaleEffect(lblLogOut);
+        applyScaleEffect(btnNewOrder);
+
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/home/home.fxml");
         HomeController homeController = fxmlLoader.getController();
         homeController.getDashboardProdCount();
         homeController.getDashboardCostCount();
+    }
+
+    private void applyScaleEffect(Button button) {
+        ScaleTransition scaleIn = new ScaleTransition(Duration.millis(200), button);
+        scaleIn.setToX(1.1); // Slightly enlarge the button
+        scaleIn.setToY(1.1);
+
+        ScaleTransition scaleOut = new ScaleTransition(Duration.millis(200), button);
+        scaleOut.setToX(1); // Reset the button to normal size
+        scaleOut.setToY(1);
+
+        button.setOnMouseEntered(event -> scaleIn.play());
+        button.setOnMouseExited(event -> scaleOut.play());
     }
 
     public void btnOrdersOnClick(ActionEvent actionEvent) {
