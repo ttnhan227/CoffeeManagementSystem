@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -31,64 +32,24 @@ public class UsersController {
     private StackPane customersContent;
     @FXML
     private TableView<User> tableCustomersPage;
+    @FXML
+    private TableColumn<User, Void> actionsColumn; // Remove this since it's now handled programmatically
 
     @FXML
     public void initialize() {
-        // Get the date column
         tableCustomersPage.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<User, Date> dateColumn = (TableColumn<User, Date>) tableCustomersPage.getColumns().get(3);
+        // Dynamically create the "Status" column and add it first
+        TableColumn<User, String> statusColumn = new TableColumn<>("Status");
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        statusColumn.setPrefWidth(100);
+        tableCustomersPage.getColumns().add(statusColumn);
 
-        // Set a custom cell factory to format the date
-        dateColumn.setCellFactory(column -> new TableCell<User, Date>() {
-            private final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        // Dynamically create the "Actions" column and add it after the "Status" column
+        TableColumn<User, Void> actionsColumn = new TableColumn<>("Actions");
+        actionsColumn.setPrefWidth(150);  // Set the width of the "Actions" column
 
-            @Override
-            protected void updateItem(Date item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(format.format(item));
-                }
-            }
-        });
-
-    }
-    @FXML
-    public void listUsers() {
-        Task<ObservableList<User>> getAllCustomersTask = new Task<ObservableList<User>>() {
-            @Override
-            protected ObservableList<User> call() {
-                System.out.println("Fetching users from database..."); // Debug print
-                ObservableList<User> users = FXCollections.observableArrayList(
-                        Datasource.getInstance().getAllUsers(Datasource.ORDER_BY_NONE)
-                );
-                System.out.println("Found " + users.size() + " users"); // Debug print
-                return users;
-            }
-        };
-
-        getAllCustomersTask.setOnSucceeded(e -> {
-            System.out.println("Task succeeded, updating table..."); // Debug adprint
-            tableCustomersPage.setItems(getAllCustomersTask.getValue());
-            addActionButtonsToTable();
-        });
-
-        getAllCustomersTask.setOnFailed(e -> {
-            System.out.println("Task failed: " + getAllCustomersTask.getException()); // Debug print
-            getAllCustomersTask.getException().printStackTrace();
-        });
-
-        new Thread(getAllCustomersTask).start();
-    }
-
-
-    @FXML
-    private void addActionButtonsToTable() {
-        TableColumn<User, Void> colBtnEdit = new TableColumn<>("Actions");
-
-        Callback<TableColumn<User, Void>, TableCell<User, Void>> cellFactory = new Callback<TableColumn<User, Void>, TableCell<User, Void>>() {
+        actionsColumn.setCellFactory(new Callback<TableColumn<User, Void>, TableCell<User, Void>>() {
             @Override
             public TableCell<User, Void> call(final TableColumn<User, Void> param) {
                 return new TableCell<User, Void>() {
@@ -101,6 +62,7 @@ public class UsersController {
                         editButton.getStyleClass().addAll("button", "xs", "primary");
                         deleteButton.getStyleClass().addAll("button", "xs", "danger");
 
+                        // Event handlers for buttons
                         editButton.setOnAction(event -> {
                             User userData = getTableView().getItems().get(getIndex());
                             btnEditUser(userData.getId());
@@ -119,15 +81,59 @@ public class UsersController {
                     }
                 };
             }
+        });
+
+        // Add the "Actions" column after the "Status" column
+        tableCustomersPage.getColumns().add(actionsColumn);
+
+        // Date column formatting
+        TableColumn<User, Date> dateColumn = (TableColumn<User, Date>) tableCustomersPage.getColumns().get(3);
+        dateColumn.setCellFactory(column -> new TableCell<User, Date>() {
+            private final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+            @Override
+            protected void updateItem(Date item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(format.format(item));
+                }
+            }
+        });
+    }
+
+
+    @FXML
+    public void listUsers() {
+        Task<ObservableList<User>> getAllCustomersTask = new Task<ObservableList<User>>() {
+            @Override
+            protected ObservableList<User> call() {
+                System.out.println("Fetching users from database...");
+                ObservableList<User> users = FXCollections.observableArrayList(
+                        Datasource.getInstance().getAllUsers(Datasource.ORDER_BY_NONE)
+                );
+                System.out.println("Found " + users.size() + " users");
+                return users;
+            }
         };
 
-        colBtnEdit.setCellFactory(cellFactory);
-        tableCustomersPage.getColumns().add(colBtnEdit);
+        getAllCustomersTask.setOnSucceeded(e -> {
+            System.out.println("Task succeeded, updating table...");
+            tableCustomersPage.setItems(getAllCustomersTask.getValue());
+        });
+
+        getAllCustomersTask.setOnFailed(e -> {
+            System.out.println("Task failed: " + getAllCustomersTask.getException());
+            getAllCustomersTask.getException().printStackTrace();
+        });
+
+        new Thread(getAllCustomersTask).start();
     }
 
     private void deleteUser(User userData) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Are you sure that you want to delete " + userData.getFullname() + "?");
+        alert.setHeaderText("Are you sure you want to delete " + userData.getFullname() + "?");
         alert.setTitle("Delete " + userData.getFullname() + "?");
         Optional<ButtonType> deleteConfirmation = alert.showAndWait();
 
@@ -161,31 +167,25 @@ public class UsersController {
             customersContent.getChildren().add(root);
 
             EditUserController editController = fxmlLoader.getController();
-            editController.fillEditingCustomerFields(customerId); // Call the method to load customer data
+            editController.fillEditingCustomerFields(customerId);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     @FXML
     private void btnAddUserOnAction() {
         try {
-            // Load the Create User form (FXML) into the existing layout
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/admin/pages/users/add-user.fxml"));
             AnchorPane root = fxmlLoader.load();
 
-            // Clear current content and add the new "Create User" form
             customersContent.getChildren().clear();
             customersContent.getChildren().add(root);
 
-            // Get the controller and initialize if needed
             CreateUserController createUserController = fxmlLoader.getController();
-            createUserController.initializeForm(); // Add a method in CreateUserController to initialize the form if needed
-
+            createUserController.initializeForm();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
-
 }
