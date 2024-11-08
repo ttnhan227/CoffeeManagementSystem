@@ -31,8 +31,6 @@ public class UsersController {
     private StackPane customersContent;
     @FXML
     private TableView<User> tableCustomersPage;
-    @FXML
-    private Button btnAddUser;
 
     @FXML
     public void initialize() {
