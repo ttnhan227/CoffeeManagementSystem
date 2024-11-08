@@ -386,6 +386,30 @@ public class Datasource extends Product {
             return null;
         }
     }
+
+    public boolean updateOneUser(int customer_id, String fullName, String username, String email, String status) {
+        String sql = "UPDATE " + TABLE_USERS + " SET "
+                + COLUMN_USERS_FULLNAME + " = ?, "
+                + COLUMN_USERS_USERNAME + " = ?, "
+                + COLUMN_USERS_EMAIL + " = ?, "
+                + COLUMN_USERS_STATUS + " = ? "
+                + "WHERE " + COLUMN_USERS_ID + " = ? AND " + COLUMN_USERS_ADMIN + " = 0";
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, fullName);
+            statement.setString(2, username);
+            statement.setString(3, email);
+            statement.setString(4, status);
+            statement.setInt(5, customer_id);
+
+            System.out.println("Updating User: " + customer_id + ", " + fullName + ", " + email + ", " + username + ", " + status);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return false;
+        }
+    }
     public List<User> searchUsers(String searchString, int sortOrder) {
         StringBuilder queryCustomers = queryUsers();
         queryCustomers.append(" AND (" + TABLE_USERS + "." + COLUMN_USERS_FULLNAME + " LIKE ? OR " + TABLE_USERS + "." + COLUMN_USERS_USERNAME + " LIKE ?)");
@@ -420,29 +444,6 @@ public class Datasource extends Product {
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return null;
-        }
-    }
-    public boolean updateOneUser(int customer_id, String fullName, String username, String email, String status) {
-        String sql = "UPDATE " + TABLE_USERS + " SET "
-                + COLUMN_USERS_FULLNAME + " = ?, "
-                + COLUMN_USERS_USERNAME + " = ?, "
-                + COLUMN_USERS_EMAIL + " = ?, "
-                + COLUMN_USERS_STATUS + " = ? "
-                + "WHERE " + COLUMN_USERS_ID + " = ? AND " + COLUMN_USERS_ADMIN + " = 0";
-
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setString(1, fullName);
-            statement.setString(2, username);
-            statement.setString(3, email);
-            statement.setString(4, status);
-            statement.setInt(5, customer_id);
-
-            System.out.println("Updating User: " + customer_id + ", " + fullName + ", " + email + ", " + username + ", " + status);
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.out.println("Query failed: " + e.getMessage());
-            return false;
         }
     }
     private StringBuilder queryUsers() {
