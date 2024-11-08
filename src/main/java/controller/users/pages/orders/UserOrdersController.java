@@ -10,8 +10,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import model.Customer;
 import model.Datasource;
 import model.Order;
+import model.User;
 
 import java.io.IOException;
 import java.net.URL;
@@ -39,29 +41,42 @@ public class UserOrdersController implements Initializable {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         paidColumn.setCellValueFactory(new PropertyValueFactory<>("fin"));
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("order_date"));
-
         couponColumn.setCellValueFactory(new PropertyValueFactory<>("discount"));
         tableColumn.setCellValueFactory(new PropertyValueFactory<>("tableID"));
+
         employeeColumn.setCellValueFactory(cellData -> {
             int index = tableOrdersPage.getItems().indexOf(cellData.getValue());
             Integer emid = filteredList.get(index).getEmployeeID();
-            return new SimpleStringProperty(Datasource.getInstance().searchOneEmployeeById(emid).getFullname());
+            if (emid != null) {
+                // Fetch the employee and check for null
+                User employee = Datasource.getInstance().searchOneEmployeeById(emid);
+                if (employee != null) {
+                    return new SimpleStringProperty(employee.getFullname());
+                }
+            }
+            // Return an empty string or a default message if the employee is not found
+            return new SimpleStringProperty("Unknown Employee");
         });
+
         customerColumn.setCellValueFactory(cellData -> {
             int index = tableOrdersPage.getItems().indexOf(cellData.getValue());
             Integer cusid = filteredList.get(index).getCustomerID();
-            if(cusid == null){
-                return null;
+            if (cusid == null) {
+                return new SimpleStringProperty(""); // Default value when the customer ID is null
+            } else {
+                Customer customer = Datasource.getInstance().searchOneCustomerById(cusid);
+                if (customer != null) {
+                    return new SimpleStringProperty(customer.getName());
+                } else {
+                    return new SimpleStringProperty(""); // Return an empty string or default if customer is not found
+                }
             }
-            else{
-                return new SimpleStringProperty(Datasource.getInstance().searchOneCustomerById(cusid).getName());
-            }
-
         });
+
         addActionButton();
-        //filteredList = FXCollections.observableArrayList(orderList);
         tableOrdersPage.setItems(filteredList);
     }
+
 
     @FXML
     private void addActionButton(){
