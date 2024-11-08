@@ -52,7 +52,7 @@
 
             <!-- Center Section (Table View) -->
             <center>
-                <TableView fx:id="tableCustomersPage" editable="true" prefHeight="500.0" prefWidth="1220.0">
+                <TableView fx:id="tableCustomersPage" editable="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <columns>
                         <TableColumn prefWidth="150.0" text="Name/Surname">
                             <cellValueFactory>
@@ -93,7 +93,7 @@
 
             <!-- Bottom Section (Pagination or Other Controls) -->
             <bottom>
-                <HBox alignment="CENTER_LEFT" spacing="10.0" BorderPane.alignment="CENTER_LEFT" AnchorPane.leftAnchor="0.0" AnchorPane.bottomAnchor="10.0">
+                <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" BorderPane.alignment="CENTER">
                     <!-- Pagination or any other controls can be added here -->
                 </HBox>
             </bottom>
