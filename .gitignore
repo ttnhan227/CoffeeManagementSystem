@@ -2,7 +2,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-src\main\java\app\db\store_manager.sqlite
+src/main/java/app/db/store_manager.sqlite
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
