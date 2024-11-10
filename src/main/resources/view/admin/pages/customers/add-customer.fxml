@@ -18,13 +18,15 @@
     <Label layoutX="23.0" layoutY="64.0" text="Full Name:" />
     <TextField fx:id="fieldCreateCustomerName" layoutX="150.0" layoutY="60.0" prefWidth="400.0" />
 
-    <Label layoutX="20.0" layoutY="104.0" text="Email:" />
-    <TextField fx:id="fieldCreateCustomerEmail" layoutX="150.0" layoutY="100.0" prefWidth="400.0" />
+    <Label layoutX="20.0" layoutY="104.0" text="Address:" />
+    <TextField fx:id="fieldCreateCustomerAddress" layoutX="150.0" layoutY="100.0" prefWidth="400.0" />
 
-    <Label layoutX="20.0" layoutY="147.0" text="Phone Number:" />
-    <TextField fx:id="fieldCreateCustomerPhone" layoutX="150.0" layoutY="143.0" prefWidth="400.0" />
+    <Label layoutX="20.0" layoutY="147.0" text="Contact:" />
+    <TextField fx:id="fieldCreateCustomerContact" layoutX="150.0" layoutY="143.0" prefWidth="400.0" />
 
     <Button layoutX="150.0" layoutY="189.0" onAction="#btnCreateCustomerOnAction" text="Create customer" />
     <Text fx:id="viewCreateCustomerResponse" fill="red" layoutX="150.0" layoutY="440.0" visible="false" />
+
+
 
 </AnchorPane>

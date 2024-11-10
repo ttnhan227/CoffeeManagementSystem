@@ -6,8 +6,8 @@ import javafx.scene.text.Text;
 
 public class AddCustomerController {
     public Text viewCreateCustomerResponse;
-    public TextField fieldCreateCustomerPhone;
-    public TextField fieldCreateCustomerEmail;
+    public TextField fieldCreateCustomerContact;
+    public TextField fieldCreateCustomerAddress;
     public TextField fieldCreateCustomerName;
 
     public void btnCreateCustomerOnAction(ActionEvent actionEvent) {
