@@ -3,6 +3,7 @@ package controller.admin;
 import controller.UserSessionController;
 import controller.admin.pages.CouponController;
 import controller.admin.pages.HomeController;
+import controller.admin.pages.customers.CustomerController;
 import controller.admin.pages.users.UsersController;
 import controller.admin.pages.products.ProductsController;
 import controller.admin.pages.orders.NewOrderController;
@@ -51,6 +52,10 @@ public class MainDashboardController implements Initializable {
     @FXML
     private Label lblUsrName;
     public Button btnNewOrder;
+    @FXML
+    public Button btnCustomer;
+
+
 
     public void btnHomeOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/home/home.fxml");
@@ -58,6 +63,7 @@ public class MainDashboardController implements Initializable {
         homeController.getDashboardProdCount();
         homeController.getDashboardCostCount();
     }
+
 
     public void btnProductsOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/products/products.fxml");
@@ -77,7 +83,7 @@ public class MainDashboardController implements Initializable {
 
     public void btnLogOutOnClick(ActionEvent actionEvent) throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Are you sure that you want to log out?");
+        alert.setHeaderText("Are you sure that you want tbtnProductso log out?");
         alert.setTitle("Log Out?");
         Optional<ButtonType> result = alert.showAndWait();
 
@@ -90,6 +96,11 @@ public class MainDashboardController implements Initializable {
             dialogStage.show();
         }
     }
+    public void btnCustomerOnClick(ActionEvent actionEvent) {
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/customers/customers.fxml");
+        CustomerController controller = fxmlLoader.getController();
+    }
+
 
     private FXMLLoader loadFxmlPage(String view_path) {
         FXMLLoader fxmlLoader = new FXMLLoader();
@@ -117,6 +128,7 @@ public class MainDashboardController implements Initializable {
         applyScaleEffect(btnSettings);
         applyScaleEffect(lblLogOut);
         applyScaleEffect(btnNewOrder);
+        applyScaleEffect(btnCustomer);
 
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/home/home.fxml");
         HomeController homeController = fxmlLoader.getController();

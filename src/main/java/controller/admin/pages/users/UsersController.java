@@ -5,13 +5,11 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.User;
 import model.Datasource;
@@ -27,23 +25,23 @@ import java.util.Optional;
 public class UsersController {
 
     @FXML
-    public TextField fieldCustomersSearch;
+    public TextField fieldUsersSearch;
     @FXML
-    private StackPane customersContent;
+    private StackPane usersContent;
     @FXML
-    private TableView<User> tableCustomersPage;
+    private TableView<User> tableUsersPage;
     @FXML
     private TableColumn<User, Void> actionsColumn; // Remove this since it's now handled programmatically
 
     @FXML
     public void initialize() {
-        tableCustomersPage.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableUsersPage.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         // Dynamically create the "Status" column and add it first
         TableColumn<User, String> statusColumn = new TableColumn<>("Status");
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         statusColumn.setPrefWidth(100);
-        tableCustomersPage.getColumns().add(statusColumn);
+        tableUsersPage.getColumns().add(statusColumn);
 
         // Dynamically create the "Actions" column and add it after the "Status" column
         TableColumn<User, Void> actionsColumn = new TableColumn<>("Actions");
@@ -84,10 +82,10 @@ public class UsersController {
         });
 
         // Add the "Actions" column after the "Status" column
-        tableCustomersPage.getColumns().add(actionsColumn);
+        tableUsersPage.getColumns().add(actionsColumn);
 
         // Date column formatting
-        TableColumn<User, Date> dateColumn = (TableColumn<User, Date>) tableCustomersPage.getColumns().get(3);
+        TableColumn<User, Date> dateColumn = (TableColumn<User, Date>) tableUsersPage.getColumns().get(3);
         dateColumn.setCellFactory(column -> new TableCell<User, Date>() {
             private final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -120,7 +118,7 @@ public class UsersController {
 
         getAllCustomersTask.setOnSucceeded(e -> {
             System.out.println("Task succeeded, updating table...");
-            tableCustomersPage.setItems(getAllCustomersTask.getValue());
+            tableUsersPage.setItems(getAllCustomersTask.getValue());
         });
 
         getAllCustomersTask.setOnFailed(e -> {
@@ -139,7 +137,7 @@ public class UsersController {
 
         if (deleteConfirmation.isPresent() && deleteConfirmation.get() == ButtonType.OK) {
             if (Datasource.getInstance().deleteSingleUser(userData.getId())) {
-                tableCustomersPage.getItems().remove(userData);
+                tableUsersPage.getItems().remove(userData);
             }
         }
     }
@@ -150,11 +148,11 @@ public class UsersController {
             @Override
             protected ObservableList<User> call() {
                 return FXCollections.observableArrayList(
-                        Datasource.getInstance().searchUsers(fieldCustomersSearch.getText().toLowerCase(), Datasource.ORDER_BY_NONE));
+                        Datasource.getInstance().searchUsers(fieldUsersSearch.getText().toLowerCase(), Datasource.ORDER_BY_NONE));
             }
         };
 
-        tableCustomersPage.itemsProperty().bind(searchCustomersTask.valueProperty());
+        tableUsersPage.itemsProperty().bind(searchCustomersTask.valueProperty());
         new Thread(searchCustomersTask).start();
     }
 
@@ -163,8 +161,8 @@ public class UsersController {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/admin/pages/users/edit-user.fxml"));
             AnchorPane root = fxmlLoader.load();
-            customersContent.getChildren().clear();
-            customersContent.getChildren().add(root);
+            usersContent.getChildren().clear();
+            usersContent.getChildren().add(root);
 
             EditUserController editController = fxmlLoader.getController();
             editController.fillEditingCustomerFields(customerId);
@@ -179,8 +177,8 @@ public class UsersController {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/admin/pages/users/add-user.fxml"));
             AnchorPane root = fxmlLoader.load();
 
-            customersContent.getChildren().clear();
-            customersContent.getChildren().add(root);
+            usersContent.getChildren().clear();
+            usersContent.getChildren().add(root);
 
             CreateUserController createUserController = fxmlLoader.getController();
             createUserController.initializeForm();

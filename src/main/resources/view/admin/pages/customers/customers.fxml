@@ -8,8 +8,8 @@
 <?import javafx.util.Callback?>
 
 <?import javafx.scene.effect.Reflection?>
-<AnchorPane prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.admin.pages.users.UsersController">
-    <StackPane fx:id="usersContent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+<AnchorPane prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.admin.pages.customers.CustomerController">
+    <StackPane fx:id="customersContent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <BorderPane prefHeight="521.0" prefWidth="743.0">
             <padding>
                 <Insets left="20.0" right="20.0"/>
@@ -21,7 +21,7 @@
                     <padding>
                         <Insets bottom="20.0" top="20.0" />
                     </padding>
-                    <Text fontSmoothingType="LCD" styleClass="page-title" text="Users">
+                    <Text fontSmoothingType="LCD" styleClass="page-title" text="Customers">
                         <font>
                             <Font name="SansSerif Bold Italic" size="43.0" />
                         </font>
@@ -39,12 +39,12 @@
                         </rowConstraints>
                         <!-- Search Field -->
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                            <TextField fx:id="fieldUsersSearch" layoutX="1.0" layoutY="2.0" prefHeight="25.0" prefWidth="291.0" promptText="Search user..." styleClass="search-field" />
-                            <Button layoutX="300.0" layoutY="2.0" mnemonicParsing="false" onAction="#btnUsersSearchOnAction" prefHeight="26.0" styleClass="button,info,sm" text="Search" />
+                            <TextField fx:id="fieldCustomersSearch" layoutX="1.0" layoutY="2.0" prefHeight="25.0" prefWidth="291.0" promptText="Search customers..." styleClass="search-field" />
+                            <Button layoutX="300.0" layoutY="2.0" mnemonicParsing="false" onAction="#btnCustomerSearchOnAction" prefHeight="26.0" styleClass="button,info,sm" text="Search" />
                         </AnchorPane>
                         <!-- Action Buttons -->
                         <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.columnIndex="1">
-                            <Button mnemonicParsing="false" onAction="#btnAddUserOnAction" prefHeight="26.0" styleClass="button,success,sm" text="Add New User" />
+                            <Button mnemonicParsing="false" onAction="#btnAddCustomerOnAction" prefHeight="26.0" styleClass="button,success,sm" text="Add New Customer" />
                         </HBox>
                     </GridPane>
                 </VBox>
@@ -52,7 +52,7 @@
 
             <!-- Center Section (Table View) -->
             <center>
-                <TableView fx:id="tableUsersPage" editable="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <TableView fx:id="tableCustomersPage" editable="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <columns>
                         <TableColumn prefWidth="150.0" text="Name/Surname">
                             <cellValueFactory>
@@ -64,21 +64,7 @@
                                 <PropertyValueFactory property="email"/>
                             </cellValueFactory>
                         </TableColumn>
-                        <TableColumn prefWidth="150.0" text="Username">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="username"/>
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn fx:id="dateColumn" prefWidth="150.0" text="Date of Birth">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="dateOfBirth"/>
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn prefWidth="100.0" text="Gender">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="gender"/>
-                            </cellValueFactory>
-                        </TableColumn>
+
                         <TableColumn prefWidth="125.0" text="Phone">
                             <cellValueFactory>
                                 <PropertyValueFactory property="phoneNumber"/>
