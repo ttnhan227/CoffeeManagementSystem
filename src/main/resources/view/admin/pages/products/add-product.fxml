@@ -16,14 +16,14 @@
 
 <AnchorPane prefHeight="800.0" prefWidth="1280.0" styleClass="root" stylesheets="@../../../resources/css/form.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.admin.pages.products.AddProductController">
     <children>
-        <VBox alignment="CENTER" spacing="30" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
+        <VBox alignment="CENTER" spacing="40" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
             <!-- Title -->
             <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="heading-text" text="Add New Product" />
 
             <!-- Form Area -->
             <BorderPane styleClass="border-pane" VBox.vgrow="ALWAYS">
                 <center>
-                    <GridPane styleClass="grid-pane" alignment="CENTER" hgap="20" vgap="20">
+                    <GridPane styleClass="grid-pane" alignment="CENTER" hgap="30" vgap="25">
                         <columnConstraints>
                             <ColumnConstraints hgrow="ALWAYS" minWidth="100" />
                             <ColumnConstraints hgrow="ALWAYS" minWidth="200" />
