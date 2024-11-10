@@ -37,3 +37,4 @@ build/
 repomix-output.txt
 repomix-output.txt
 src/main/java/app/db/store_manager.sqlite
+*.sqlite
