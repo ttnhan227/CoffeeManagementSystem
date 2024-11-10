@@ -1280,6 +1280,26 @@ public class Datasource extends Product {
             return false;
         }
     }
+
+    public Customer getLastInsertedCustomer() {
+        String query = "SELECT * FROM customer WHERE id = last_insert_rowid()";
+        try (Statement statement = conn.createStatement();
+             ResultSet results = statement.executeQuery(query)) {
+            if (results.next()) {
+                Customer customer = new Customer();
+                customer.setId(results.getInt("id"));
+                customer.setName(results.getString("name"));
+                customer.setAddress(results.getString("address"));
+                customer.setContact_info(results.getString("contact"));
+                customer.setPoints(results.getInt("points"));
+                customer.setType(results.getInt("type"));
+                return customer;
+            }
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+        }
+        return null;
+    }
 }
 
 

@@ -61,12 +61,12 @@
                               <Insets right="5.0" />
                            </HBox.margin>
                         </Text>
-                        <TextField fx:id="customerNameField" editable="false">
+                        <TextField fx:id="customerNameField">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
                         </TextField>
-                        <Button mnemonicParsing="false" text="Add new customer">
+                        <Button mnemonicParsing="false" onAction="#handleAddNewCustomer" text="Add new customer">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>

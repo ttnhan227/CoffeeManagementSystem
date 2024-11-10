@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.users.pages.customers.EditCustomerController"
+            prefHeight="600.0" prefWidth="600.0">
+
+    <Text text="Edit Customer" layoutX="20.0" layoutY="20.0">
+        <font>
+            <Font name="Arial" size="20.0" />
+        </font>
+    </Text>
+
+    <Label text="Full Name:" layoutX="20.0" layoutY="60.0"/>
+    <TextField fx:id="fieldEditCustomerName" layoutX="150.0" layoutY="60.0" prefWidth="400.0"/>
+
+    <Label text="Address:" layoutX="20.0" layoutY="100.0"/>
+    <TextField fx:id="fieldEditCustomerAddress" layoutX="150.0" layoutY="100.0" prefWidth="400.0"/>
+
+    <Label text="Contact:" layoutX="20.0" layoutY="140.0"/>
+    <TextField fx:id="fieldEditCustomerContact" layoutX="150.0" layoutY="140.0" prefWidth="400.0"/>
+
+    <Label text="Points:" layoutX="20.0" layoutY="180.0"/>
+    <TextField fx:id="fieldEditCustomerPoints" layoutX="150.0" layoutY="180.0" prefWidth="400.0" disable="true"/>
+
+    <Button text="Save" layoutX="150.0" layoutY="240.0" onAction="#btnEditCustomerOnAction"/>
+    <Text fx:id="editCustomerResponse" layoutX="150.0" layoutY="280.0" fill="red" visible="false"/>
+
+    <TextField fx:id="fieldEditCustomerId" visible="false"/>
+</AnchorPane>

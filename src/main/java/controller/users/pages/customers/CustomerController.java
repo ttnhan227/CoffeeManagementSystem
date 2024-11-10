@@ -1,4 +1,4 @@
-package controller.admin.pages.customers;
+package controller.users.pages.customers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Callback;
@@ -115,7 +114,7 @@ public class CustomerController {
     @FXML
     private void btnEditCustomer(int customerId) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/admin/pages/customers/edit-customer.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/users/pages/customers/edit-customer.fxml"));
             Parent root = fxmlLoader.load();
             customersContent.getChildren().clear();
             customersContent.getChildren().add(root);
@@ -127,5 +126,5 @@ public class CustomerController {
         }
     }
 
-
+  
 }

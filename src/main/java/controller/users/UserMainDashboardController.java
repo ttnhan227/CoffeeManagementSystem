@@ -1,6 +1,7 @@
 package controller.users;
 
 import controller.UserSessionController;
+import controller.users.pages.customers.CustomerController;
 import controller.users.pages.*;
 import controller.users.pages.orders.NewOrderController;
 import controller.users.pages.orders.UserOrdersController;
@@ -40,6 +41,9 @@ public class UserMainDashboardController implements Initializable {
     private StackPane dashContent;
     @FXML
     private Label lblUsrName;
+    @FXML
+    public Button btnCustomer;
+
 
     // On Click methods for buttons
     public void btnHomeOnClick(ActionEvent actionEvent) {
@@ -84,6 +88,10 @@ public class UserMainDashboardController implements Initializable {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/orders/newOrder.fxml");
         NewOrderController controller = fxmlLoader.getController();
         controller.setMainDashboardController(this);
+    }
+    public void btnCustomerOnClick(ActionEvent actionEvent) {
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/customers/customers.fxml");
+        CustomerController controller = fxmlLoader.getController();
     }
 
     private FXMLLoader loadFxmlPage(String view_path) {

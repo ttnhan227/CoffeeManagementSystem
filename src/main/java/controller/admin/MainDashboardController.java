@@ -47,6 +47,7 @@ public class MainDashboardController implements Initializable {
     public Button lblLogOut;
     @FXML
     public AnchorPane dashHead;
+    public Button btnCoupon;
     @FXML
     private StackPane dashContent;
     @FXML
