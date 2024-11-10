@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
@@ -21,25 +22,28 @@ import java.util.Date;
 import java.util.Optional;
 
 public class CustomerController {
+    @FXML
+    private StackPane customersContent;
     public TextField fieldCustomersSearch;
     public TableView tableCustomersPage;
 
     public void btnCustomerSearchOnAction(ActionEvent actionEvent) {
     }
 
-
-
-    @FXML
-    private void btnAddCustomerOnAction() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/admin/pages/customers/add-customer.fxml"));
-            AnchorPane root = fxmlLoader.load();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void btnCustomerSearchOnAction(javafx.event.ActionEvent actionEvent) {
     }
 
-    public void btnCustomerSearchOnAction(javafx.event.ActionEvent actionEvent) {
+    @FXML
+    private void btnAddCustomerOnAction(javafx.event.ActionEvent actionEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/admin/pages/customers/add-customer.fxml"));
+            Parent addCustomerPage = loader.load();
+            // Assuming customersContent is the StackPane in your FXML
+            customersContent.getChildren().clear();
+            customersContent.getChildren().add(addCustomerPage);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the error appropriately
+        }
     }
 }
