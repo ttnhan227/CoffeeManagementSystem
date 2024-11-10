@@ -37,7 +37,7 @@ public class MainDashboardController implements Initializable {
     @FXML
     public Button btnProducts;
     @FXML
-    public Button btnCustomers;
+    public Button btnUsers;
     @FXML
     public Button btnOrders;
     @FXML
@@ -112,7 +112,7 @@ public class MainDashboardController implements Initializable {
         // Apply scale transition on buttons for hover effect
         applyScaleEffect(btnHome);
         applyScaleEffect(btnProducts);
-        applyScaleEffect(btnCustomers);
+        applyScaleEffect(btnUsers);
         applyScaleEffect(btnOrders);
         applyScaleEffect(btnSettings);
         applyScaleEffect(lblLogOut);
