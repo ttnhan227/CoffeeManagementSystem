@@ -1,5 +1,9 @@
 package controller.users.pages.orders;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import controller.users.UserMainDashboardController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -7,17 +11,20 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import model.Customer;
 import model.Datasource;
 import model.Order;
 import model.User;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class UserOrdersController implements Initializable {
     public TableView<Order> tableOrdersPage;
@@ -83,10 +90,11 @@ public class UserOrdersController implements Initializable {
         TableColumn<Order, Void> actionColumn = new TableColumn<>("Action");
         actionColumn.setCellFactory(col -> new TableCell<Order, Void>() {
             private final Button viewButton = new Button("View");
-            //private final Button deleteButton = new Button("Delete");
+            private final Button deleteButton = new Button("Delete");
+            private final HBox hbox = new HBox(5); // 5 is spacing between buttons
 
             {
-                // Set the action for the Edit button
+                // Set the action for the View button
                 viewButton.setOnAction(e -> {
                     try {
                         mainDashboardController.viewOrderDetail(new ActionEvent(), getTableRow().getItem());
@@ -95,18 +103,39 @@ public class UserOrdersController implements Initializable {
                     }
                 });
 
+                // Set the action for the Delete button
+                deleteButton.setOnAction(e -> {
+                    Order order = getTableRow().getItem();
+                    if (order != null) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Delete Order");
+                        alert.setHeaderText("Delete Order #" + order.getId());
+                        alert.setContentText("Are you sure you want to delete this order?");
+
+                        alert.showAndWait().ifPresent(response -> {
+                            if (response == ButtonType.OK) {
+                                if (Datasource.getInstance().deleteOrder(order.getId())) {
+                                    orderList.remove(order);
+                                    filteredList.remove(order);
+                                } else {
+                                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                                    errorAlert.setTitle("Error");
+                                    errorAlert.setHeaderText("Delete Failed");
+                                    errorAlert.setContentText("Failed to delete the order.");
+                                    errorAlert.show();
+                                }
+                            }
+                        });
+                    }
+                });
+
+                hbox.getChildren().addAll(viewButton, deleteButton);
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    // Add buttons to the cell
-                    HBox hbox = new HBox(viewButton);
-                    setGraphic(hbox);
-                }
+                setGraphic(empty ? null : hbox);
             }
         });
         actionColumn.setMinWidth(100);

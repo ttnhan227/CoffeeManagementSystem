@@ -1257,6 +1257,29 @@ public class Datasource extends Product {
             return false;
         }
     }
+
+    public boolean deleteOrder(int orderId) {
+        // First delete related order details
+        String deleteDetailsSQL = "DELETE FROM orderDetail WHERE orderID = ?";
+        String deleteOrderSQL = "DELETE FROM [order] WHERE id = ?";
+        
+        try (PreparedStatement detailStmt = conn.prepareStatement(deleteDetailsSQL);
+             PreparedStatement orderStmt = conn.prepareStatement(deleteOrderSQL)) {
+            
+            // Delete order details first
+            detailStmt.setInt(1, orderId);
+            detailStmt.executeUpdate();
+            
+            // Then delete the order
+            orderStmt.setInt(1, orderId);
+            int rows = orderStmt.executeUpdate();
+            return rows > 0;
+            
+        } catch (SQLException e) {
+            System.out.println("Delete failed: " + e.getMessage());
+            return false;
+        }
+    }
 }
 
 
