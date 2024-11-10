@@ -1,13 +1,17 @@
 package model;
 
-import controller.UserSessionController;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.File;
-import java.net.URL;
+
+import controller.UserSessionController;
 public class Datasource extends Product {
 
     public static final String DB_NAME = "store_manager.sqlite";
@@ -1135,6 +1139,122 @@ public class Datasource extends Product {
             stmt.setString(2, expiryDate);
             stmt.setInt(3, discount);
             stmt.executeUpdate();
+        }
+    }
+
+    public List<Customer> getAllCustomers(int sortOrder) {
+        StringBuilder query = new StringBuilder("SELECT * FROM customer");
+        
+        if (sortOrder != ORDER_BY_NONE) {
+            query.append(" ORDER BY name");
+            if (sortOrder == ORDER_BY_DESC) {
+                query.append(" DESC");
+            } else {
+                query.append(" ASC");
+            }
+        }
+
+        try (Statement statement = conn.createStatement();
+             ResultSet results = statement.executeQuery(query.toString())) {
+            
+            List<Customer> customers = new ArrayList<>();
+            while (results.next()) {
+                Customer customer = new Customer();
+                customer.setId(results.getInt("id"));
+                customer.setName(results.getString("name"));
+                customer.setAddress(results.getString("address"));
+                customer.setContact_info(results.getString("contact"));
+                customer.setPoints(results.getInt("points"));
+                customers.add(customer);
+            }
+            return customers;
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean deleteSingleCustomer(int customerId) {
+        String sql = "DELETE FROM customer WHERE id = ?";
+        
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, customerId);
+            int rows = statement.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            System.out.println("Delete failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public List<Customer> searchCustomers(String searchString, int sortOrder) {
+        StringBuilder query = new StringBuilder("SELECT * FROM customer WHERE name LIKE ? OR address LIKE ? OR contact LIKE ?");
+        
+        if (sortOrder != ORDER_BY_NONE) {
+            query.append(" ORDER BY name");
+            if (sortOrder == ORDER_BY_DESC) {
+                query.append(" DESC");
+            } else {
+                query.append(" ASC");
+            }
+        }
+
+        try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
+            String searchPattern = "%" + searchString + "%";
+            statement.setString(1, searchPattern);
+            statement.setString(2, searchPattern);
+            statement.setString(3, searchPattern);
+            
+            ResultSet results = statement.executeQuery();
+            List<Customer> customers = new ArrayList<>();
+            
+            while (results.next()) {
+                Customer customer = new Customer();
+                customer.setId(results.getInt("id"));
+                customer.setName(results.getString("name"));
+                customer.setAddress(results.getString("address"));
+                customer.setContact_info(results.getString("contact"));
+                customer.setPoints(results.getInt("points"));
+                customers.add(customer);
+            }
+            return customers;
+        } catch (SQLException e) {
+            System.out.println("Search failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean insertNewCustomer(String name, String address, String contact) {
+        String sql = "INSERT INTO customer (name, address, contact, points) VALUES (?, ?, ?, ?)";
+        
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, name);
+            statement.setString(2, address);
+            statement.setString(3, contact);
+            statement.setInt(4, 0); // Initialize points to 0 for new customers
+            
+            int affectedRows = statement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.out.println("Insert failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean updateCustomer(int customerId, String name, String address, String contact) {
+        String sql = "UPDATE customer SET name = ?, address = ?, contact = ? WHERE id = ?";
+        
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, name);
+            statement.setString(2, address);
+            statement.setString(3, contact);
+            statement.setInt(4, customerId);
+            
+            int affectedRows = statement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.out.println("Update failed: " + e.getMessage());
+            return false;
         }
     }
 }

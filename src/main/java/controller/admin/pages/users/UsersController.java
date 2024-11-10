@@ -180,8 +180,8 @@ public class UsersController {
             usersContent.getChildren().clear();
             usersContent.getChildren().add(root);
 
-            CreateUserController createUserController = fxmlLoader.getController();
-            createUserController.initializeForm();
+            AddUserController addUserController = fxmlLoader.getController();
+            addUserController.initializeForm();
         } catch (IOException e) {
             e.printStackTrace();
         }

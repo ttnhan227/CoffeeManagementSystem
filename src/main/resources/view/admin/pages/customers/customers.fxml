@@ -64,20 +64,24 @@
             <center>
                 <TableView fx:id="tableCustomersPage" editable="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn prefWidth="150.0" text="Full Name">
+                        <TableColumn prefWidth="150.0" text="Name">
                             <cellValueFactory>
-                                <PropertyValueFactory property="fullname" />
+                                <PropertyValueFactory property="name" />
                             </cellValueFactory>
                         </TableColumn>
                         <TableColumn prefWidth="200.0" text="Address">
                             <cellValueFactory>
-                                <PropertyValueFactory property="email" />
+                                <PropertyValueFactory property="address" />
                             </cellValueFactory>
                         </TableColumn>
-
                         <TableColumn prefWidth="125.0" text="Contact">
                             <cellValueFactory>
-                                <PropertyValueFactory property="phoneNumber" />
+                                <PropertyValueFactory property="contact_info" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn prefWidth="100.0" text="Points">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="points" />
                             </cellValueFactory>
                         </TableColumn>
                     </columns>

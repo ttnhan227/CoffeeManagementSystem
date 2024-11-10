@@ -7,7 +7,7 @@ import model.Datasource;
 import app.utils.PasswordUtils;
 import java.time.LocalDate;
 
-public class CreateUserController {
+public class AddUserController {
 
     @FXML
     private TextField fieldCreateUserName;

@@ -3797,8 +3797,8 @@ public class UsersController {
             customersContent.getChildren().clear();
             customersContent.getChildren().add(root);
 
-            CreateUserController createUserController = fxmlLoader.getController();
-            createUserController.initializeForm();
+            CreateUserController addUserController = fxmlLoader.getController();
+            addUserController.initializeForm();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -9421,7 +9421,7 @@ File: src/main/resources/view/admin/pages/users/add-user.fxml
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controller.admin.pages.users.CreateUserController"
+            fx:controller="controller.admin.pages.users.AddUserController"
             prefHeight="600.0" prefWidth="600.0">
 
     <Text text="Create New User" layoutX="20.0" layoutY="20.0">
