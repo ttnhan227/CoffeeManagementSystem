@@ -14,8 +14,3 @@
 .axis-tick-mark {
     -fx-font-size: 16px;  /* Adjust to desired size */
 }
-
-.chart-bar {
-    -fx-bar-gap: 1px;     /* Reduce the gap inside each bar, if needed */
-    -fx-bar-width: 10px;  /* Adjust the width here to make bars thinner */
-}

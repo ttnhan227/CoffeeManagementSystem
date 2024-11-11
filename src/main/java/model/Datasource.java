@@ -1313,7 +1313,7 @@ public class Datasource extends Product {
             ResultSet results = stmt.executeQuery();
 
             while (results.next()) {
-                String orderDateStr = results.getString("order_date");
+                String orderDateStr = results.getString("orderDate");
 
                 // Parse order date to LocalDate and extract the year
                 LocalDate orderDate = LocalDate.parse(orderDateStr, formatter);
@@ -1322,6 +1322,7 @@ public class Datasource extends Product {
                 if(year == orderYear && month == orderMonth){
                     List<OrderDetail> tempList = searchAllOrderDetailByOrderID(results.getInt("id"));
                     list.addAll(tempList);
+                    //System.out.println(tempList);
                 }
 //                OrderDetail orderDetail = new OrderDetail();
 //                orderDetail.setId(results.getInt("id"));
