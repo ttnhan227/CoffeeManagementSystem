@@ -421,13 +421,33 @@ public class NewOrderController implements Initializable {
         return quantities.get(index);
     }
 
-    private void paymentBoxLoader(){
+    private void paymentBoxLoader() {
         totalText.setText("");
         finalText.setText("0");
         discountText.setText("0");
+
+        // Create a Text node for customer name
+        Text customerLabel = new Text("Customer: ");
+        customerLabel.setFont(new Font("System Bold", 15));
+        Text customerNameText = new Text("No customer selected");
+        customerNameText.setFont(new Font(15));
+
+        // Add customer info to payment HBox
+        HBox customerInfoBox = new HBox(5, customerLabel, customerNameText);
+        customerInfoBox.setAlignment(javafx.geometry.Pos.CENTER);
+        paymentHBox.getChildren().add(0, customerInfoBox);
+        paymentHBox.setSpacing(20); // Add some spacing between elements
+
         ListChangeListener<Object> changeListener = change -> {
             while (change.next()) {
                 Platform.runLater(() -> {
+                    // Update customer name
+                    if (customer != null && customer.getName() != null) {
+                        customerNameText.setText(customer.getName());
+                    } else {
+                        customerNameText.setText("No customer selected");
+                    }
+
                     double total = 0;
                     double fin = 0;
                     double temp = 0;
@@ -435,7 +455,6 @@ public class NewOrderController implements Initializable {
                     if (couponField.getText().isEmpty() || coupons.isEmpty()) {
                         discount = 0;
                     } else {
-                        //int couponID = Integer.parseInt(couponField.getText());
                         discount = (double) coupons.getFirst().getDiscount() / 100;
                     }
                     DecimalFormat format = new DecimalFormat("#.##");
@@ -457,12 +476,22 @@ public class NewOrderController implements Initializable {
 
                     formattedString = format.format(fin);
                     finalText.setText(String.valueOf(formattedString));
-
-                    //formattedString = format.format(discount);
                     discountText.setText(discount * 100 + "%");
                 });
             }
         };
+
+        // Add listener for customer changes
+        customerNameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                if (customer != null && customer.getName() != null) {
+                    customerNameText.setText(customer.getName());
+                } else {
+                    customerNameText.setText("No customer selected");
+                }
+            });
+        });
+
         productList.addListener(changeListener);
         quantities.addListener(changeListener);
         coupons.addListener(changeListener);
