@@ -3,12 +3,14 @@ package controller.admin;
 import controller.UserSessionController;
 import controller.admin.pages.CouponController;
 import controller.admin.pages.HomeController;
+import controller.admin.pages.customers.CustomerController;
 import controller.admin.pages.RevenueController;
 import controller.admin.pages.users.UsersController;
 import controller.admin.pages.products.ProductsController;
 import controller.admin.pages.orders.NewOrderController;
 import controller.admin.pages.orders.ViewOrderController;
 import controller.admin.pages.orders.UserOrdersController;
+import javafx.animation.ScaleTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +24,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.Order;
 import model.Datasource;
 
@@ -36,7 +39,7 @@ public class MainDashboardController implements Initializable {
     @FXML
     public Button btnProducts;
     @FXML
-    public Button btnCustomers;
+    public Button btnUsers;
     @FXML
     public Button btnOrders;
     @FXML
@@ -45,11 +48,16 @@ public class MainDashboardController implements Initializable {
     public Button lblLogOut;
     @FXML
     public AnchorPane dashHead;
+    public Button btnCoupon;
     @FXML
     private StackPane dashContent;
     @FXML
     private Label lblUsrName;
     public Button btnNewOrder;
+    @FXML
+    public Button btnCustomer;
+
+
 
     public void btnHomeOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/home/home.fxml");
@@ -57,6 +65,7 @@ public class MainDashboardController implements Initializable {
         homeController.getDashboardProdCount();
         homeController.getDashboardCostCount();
     }
+
 
     public void btnProductsOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/products/products.fxml");
@@ -76,7 +85,7 @@ public class MainDashboardController implements Initializable {
 
     public void btnLogOutOnClick(ActionEvent actionEvent) throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Are you sure that you want to log out?");
+        alert.setHeaderText("Are you sure that you want tbtnProductso log out?");
         alert.setTitle("Log Out?");
         Optional<ButtonType> result = alert.showAndWait();
 
@@ -89,6 +98,11 @@ public class MainDashboardController implements Initializable {
             dialogStage.show();
         }
     }
+    public void btnCustomerOnClick(ActionEvent actionEvent) {
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/customers/customers.fxml");
+        CustomerController controller = fxmlLoader.getController();
+    }
+
 
     private FXMLLoader loadFxmlPage(String view_path) {
         FXMLLoader fxmlLoader = new FXMLLoader();
@@ -108,10 +122,33 @@ public class MainDashboardController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         lblUsrName.setText(UserSessionController.getUserFullName());
 
+        // Apply scale transition on buttons for hover effect
+        applyScaleEffect(btnHome);
+        applyScaleEffect(btnProducts);
+        applyScaleEffect(btnUsers);
+        applyScaleEffect(btnOrders);
+        applyScaleEffect(btnSettings);
+        applyScaleEffect(lblLogOut);
+        applyScaleEffect(btnNewOrder);
+        applyScaleEffect(btnCustomer);
+
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/home/home.fxml");
         HomeController homeController = fxmlLoader.getController();
         homeController.getDashboardProdCount();
         homeController.getDashboardCostCount();
+    }
+
+    private void applyScaleEffect(Button button) {
+        ScaleTransition scaleIn = new ScaleTransition(Duration.millis(200), button);
+        scaleIn.setToX(1.1); // Slightly enlarge the button
+        scaleIn.setToY(1.1);
+
+        ScaleTransition scaleOut = new ScaleTransition(Duration.millis(200), button);
+        scaleOut.setToX(1); // Reset the button to normal size
+        scaleOut.setToY(1);
+
+        button.setOnMouseEntered(event -> scaleIn.play());
+        button.setOnMouseExited(event -> scaleOut.play());
     }
 
     public void btnOrdersOnClick(ActionEvent actionEvent) {
@@ -155,7 +192,7 @@ public class MainDashboardController implements Initializable {
         controller.loadProductList();
         controller.totalText.setText(String.valueOf(order.getTotal()));
         controller.finalText.setText(String.valueOf(order.getFin()));
-        controller.discountText.setText(String.valueOf(order.getDiscount()) + "%");
+        controller.discountText.setText(order.getDiscount() + "%");
     }
 
     public void btnCouponOnClick() {

@@ -7,9 +7,9 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controller.admin.pages.users.EditUserController"
-            prefHeight="400.0" prefWidth="600.0">
+            prefHeight="600.0" prefWidth="600.0">
 
-    <Text text="Edit Customer" layoutX="20.0" layoutY="20.0">
+    <Text text="Edit Employee" layoutX="20.0" layoutY="20.0">
         <font>
             <Font name="Arial" size="20.0" />
         </font>
@@ -24,11 +24,20 @@
     <Label text="Username:" layoutX="20.0" layoutY="140.0"/>
     <TextField fx:id="fieldEditCustomerUsername" layoutX="150.0" layoutY="140.0" prefWidth="400.0"/>
 
-    <Label text="Status:" layoutX="20.0" layoutY="220.0"/>
-    <ComboBox fx:id="fieldEditCustomerStatus" layoutX="150.0" layoutY="220.0" prefWidth="400.0"/>
+    <Label text="Phone Number:" layoutX="20.0" layoutY="180.0"/>
+    <TextField fx:id="fieldEditCustomerPhone" layoutX="150.0" layoutY="180.0" prefWidth="400.0"/>
 
-    <Button text="Save" layoutX="150.0" layoutY="280.0" onAction="#btnEditCustomerOnAction"/>
-    <Text fx:id="viewCustomerResponse" layoutX="150.0" layoutY="320.0" fill="red" visible="false"/>
+    <Label text="Date of Birth:" layoutX="20.0" layoutY="220.0"/>
+    <DatePicker fx:id="fieldEditCustomerDOB" layoutX="150.0" layoutY="220.0" prefWidth="400.0"/>
+
+    <Label text="Gender:" layoutX="20.0" layoutY="260.0"/>
+    <ComboBox fx:id="fieldEditCustomerGender" layoutX="150.0" layoutY="260.0" prefWidth="400.0"/>
+
+    <Label text="Status:" layoutX="20.0" layoutY="300.0"/>
+    <ComboBox fx:id="fieldEditCustomerStatus" layoutX="150.0" layoutY="300.0" prefWidth="400.0"/>
+
+    <Button text="Save" layoutX="150.0" layoutY="360.0" onAction="#btnEditCustomerOnAction"/>
+    <Text fx:id="viewCustomerResponse" layoutX="150.0" layoutY="400.0" fill="red" visible="false"/>
 
     <TextField fx:id="fieldEditCustomerId" visible="false"/>
 </AnchorPane>

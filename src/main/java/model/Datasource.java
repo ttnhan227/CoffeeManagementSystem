@@ -1,13 +1,17 @@
 package model;
 
-import controller.UserSessionController;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.File;
-import java.net.URL;
+
+import controller.UserSessionController;
 public class Datasource extends Product {
 
     public static final String DB_NAME = "store_manager.sqlite";
@@ -48,10 +52,14 @@ public class Datasource extends Product {
     public static final String COLUMN_USERS_SALT = "salt";
     public static final String COLUMN_USERS_ADMIN = "admin";
     public static final String COLUMN_USERS_STATUS = "status";
+    public static final String COLUMN_USERS_DOB = "date_of_birth";
+    public static final String COLUMN_USERS_GENDER = "gender";
+    public static final String COLUMN_USERS_PHONE = "phone_number";
 
     public static final int ORDER_BY_NONE = 1;
     public static final int ORDER_BY_ASC = 2;
     public static final int ORDER_BY_DESC = 3;
+    public static final int ORDER_BY_CREATION_DATE_DESC = 1;
     private static final Datasource instance = new Datasource();
     private Connection conn;
 
@@ -82,13 +90,17 @@ public class Datasource extends Product {
     public List<Product> getAllProducts(int sortOrder) {
         StringBuilder queryProducts = queryProducts();
 
+
         if (sortOrder != ORDER_BY_NONE) {
             queryProducts.append(" ORDER BY ");
-            queryProducts.append(COLUMN_PRODUCTS_NAME);
-            if (sortOrder == ORDER_BY_DESC) {
-                queryProducts.append(" DESC");
-            } else {
-                queryProducts.append(" ASC");
+            switch (sortOrder) {
+                // Sort by ID in descending order
+                case ORDER_BY_DESC:
+                    queryProducts.append(COLUMN_PRODUCTS_NAME + " DESC");
+                    break;
+                case ORDER_BY_ASC:
+                    queryProducts.append(COLUMN_PRODUCTS_NAME + " ASC");
+                    break;
             }
         }
 
@@ -162,8 +174,11 @@ public class Datasource extends Product {
                     .append("category_name LIKE ?)");
         }
 
-        // Apply sorting based on sortOrder
-        if (sortOrder != ORDER_BY_NONE) {
+        // If no search string is provided, sort by id in descending order
+        if (!hasSearchString) {
+            query.append(" ORDER BY ").append(COLUMN_PRODUCTS_ID).append(" DESC");
+        } else if (sortOrder != ORDER_BY_NONE) {
+            // Apply sorting based on the sortOrder
             query.append(" ORDER BY ").append(COLUMN_PRODUCTS_NAME);
             query.append(sortOrder == ORDER_BY_DESC ? " DESC" : " ASC");
         }
@@ -200,6 +215,7 @@ public class Datasource extends Product {
             return null;
         }
     }
+
 
 
 
@@ -332,6 +348,22 @@ public class Datasource extends Product {
             return null;
         }
     }
+    private StringBuilder queryUsers() {
+        return new StringBuilder("SELECT " +
+                TABLE_USERS + "." + COLUMN_USERS_ID + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_FULLNAME + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_EMAIL + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_USERNAME + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_DOB + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_GENDER + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_PHONE + ", " +
+                " (SELECT COUNT(*) FROM " + TABLE_ORDERS + " WHERE " + TABLE_ORDERS + "." + COLUMN_ORDERS_USER_ID + " = " + TABLE_USERS + "." + COLUMN_USERS_ID + ") AS orders" + ", " +
+                TABLE_USERS + "." + COLUMN_USERS_STATUS +
+                " FROM " + TABLE_USERS +
+                " WHERE " + TABLE_USERS + "." + COLUMN_USERS_ADMIN + " = 0"
+        );
+    }
+
     public List<User> getAllUsers(int sortOrder) {
         StringBuilder queryCustomers = queryUsers();
         if (sortOrder != ORDER_BY_NONE) {
@@ -343,41 +375,94 @@ public class Datasource extends Product {
                 queryCustomers.append(" ASC");
             }
         }
+
+        System.out.println("Executing query: " + queryCustomers); // Debug print
+
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery(queryCustomers.toString())) {
 
             List<User> users = new ArrayList<>();
             while (results.next()) {
-                User user = new User();
-                user.setId(results.getInt(1));
-                user.setFullname(results.getString(2));
-                user.setEmail(results.getString(3));
-                user.setUsername(results.getString(4));
-                user.setOrders(results.getInt(5));
-                user.setStatus(results.getString(6));
-                users.add(user);
+                try {
+                    User user = new User();
+                    user.setId(results.getInt(1));
+                    user.setFullname(results.getString(2));
+                    user.setEmail(results.getString(3));
+                    user.setUsername(results.getString(4));
+
+                    // Add null checks for new fields
+                    Date dob = results.getDate(5);
+                    if (!results.wasNull()) {
+                        user.setDateOfBirth(dob);
+                    }
+
+                    String genderStr = results.getString(6);
+                    if (genderStr != null && !genderStr.isEmpty()) {
+                        try {
+                            user.setGender(User.Gender.valueOf(genderStr.toUpperCase()));
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Invalid gender value in database: " + genderStr); // Debug print
+                        }
+                    }
+
+                    user.setPhoneNumber(results.getString(7));
+                    user.setOrders(results.getInt(8));
+                    user.setStatus(results.getString(9));
+
+
+                    users.add(user);
+                    System.out.println("Loaded user: " + user.getFullname()); // Debug print
+                } catch (SQLException e) {
+                    System.out.println("Error processing row: " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
             return users;
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
-            return null;
+            e.printStackTrace();
+            return new ArrayList<>(); // Return empty list instead of null
         }
     }
     public List<User> getOneUser(int customer_id) {
         StringBuilder queryCustomers = queryUsers();
         queryCustomers.append(" AND " + TABLE_USERS + "." + COLUMN_USERS_ID + " = ?");
-        try (PreparedStatement statement = conn.prepareStatement(String.valueOf(queryCustomers))) {
+        try (PreparedStatement statement = conn.prepareStatement(queryCustomers.toString())) {
             statement.setInt(1, customer_id);
             ResultSet results = statement.executeQuery();
             List<User> users = new ArrayList<>();
+
             while (results.next()) {
                 User user = new User();
-                user.setId(results.getInt(1));
-                user.setFullname(results.getString(2));
-                user.setEmail(results.getString(3));
-                user.setUsername(results.getString(4));
-                user.setOrders(results.getInt(5));
-                user.setStatus(results.getString(6));
+                user.setId(results.getInt(COLUMN_USERS_ID));
+                user.setFullname(results.getString(COLUMN_USERS_FULLNAME));
+                user.setEmail(results.getString(COLUMN_USERS_EMAIL));
+                user.setUsername(results.getString(COLUMN_USERS_USERNAME));
+                user.setOrders(results.getInt(5));  // Adjust index if necessary
+                user.setStatus(results.getString(COLUMN_USERS_STATUS));
+
+                // Safely handle potentially null date
+                Date dob = results.getDate(COLUMN_USERS_DOB);
+                if (!results.wasNull()) {
+                    user.setDateOfBirth(dob);
+                }
+
+                // Safely handle potentially null phone number
+                String phone = results.getString(COLUMN_USERS_PHONE);
+                if (!results.wasNull()) {
+                    user.setPhoneNumber(phone);
+                }
+
+                // Safely handle potentially null gender
+                String genderStr = results.getString(COLUMN_USERS_GENDER);
+                if (!results.wasNull()) {
+                    try {
+                        user.setGender(User.Gender.valueOf(genderStr));
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Invalid gender value in database: " + genderStr);
+                    }
+                }
+
                 users.add(user);
             }
             return users;
@@ -386,6 +471,39 @@ public class Datasource extends Product {
             return null;
         }
     }
+
+    public boolean updateOneUser(int customer_id, String fullName, String username, String email,
+                                 String status, Date dateOfBirth, String phoneNumber, User.Gender gender) {
+        String sql = "UPDATE " + TABLE_USERS + " SET "
+                + COLUMN_USERS_FULLNAME + " = ?, "
+                + COLUMN_USERS_USERNAME + " = ?, "
+                + COLUMN_USERS_EMAIL + " = ?, "
+                + COLUMN_USERS_STATUS + " = ?, "
+                + COLUMN_USERS_DOB + " = ?, "
+                + COLUMN_USERS_PHONE + " = ?, "
+                + COLUMN_USERS_GENDER + " = ? "
+                + "WHERE " + COLUMN_USERS_ID + " = ? AND " + COLUMN_USERS_ADMIN + " = 0";
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, fullName);
+            statement.setString(2, username);
+            statement.setString(3, email);
+            statement.setString(4, status);
+            statement.setDate(5, new java.sql.Date(dateOfBirth.getTime()));
+            statement.setString(6, phoneNumber);
+            statement.setString(7, gender.name());  // Convert enum to string
+            statement.setInt(8, customer_id);
+
+            System.out.println("Updating User: " + customer_id + ", " + fullName + ", " + email +
+                    ", " + username + ", " + status + ", " + dateOfBirth + ", " + phoneNumber + ", " + gender);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return false;
+        }
+    }
+
     public List<User> searchUsers(String searchString, int sortOrder) {
         StringBuilder queryCustomers = queryUsers();
         queryCustomers.append(" AND (" + TABLE_USERS + "." + COLUMN_USERS_FULLNAME + " LIKE ? OR " + TABLE_USERS + "." + COLUMN_USERS_USERNAME + " LIKE ?)");
@@ -421,41 +539,6 @@ public class Datasource extends Product {
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }
-    }
-    public boolean updateOneUser(int customer_id, String fullName, String username, String email, String status) {
-        String sql = "UPDATE " + TABLE_USERS + " SET "
-                + COLUMN_USERS_FULLNAME + " = ?, "
-                + COLUMN_USERS_USERNAME + " = ?, "
-                + COLUMN_USERS_EMAIL + " = ?, "
-                + COLUMN_USERS_STATUS + " = ? "
-                + "WHERE " + COLUMN_USERS_ID + " = ? AND " + COLUMN_USERS_ADMIN + " = 0";
-
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setString(1, fullName);
-            statement.setString(2, username);
-            statement.setString(3, email);
-            statement.setString(4, status);
-            statement.setInt(5, customer_id);
-
-            System.out.println("Updating User: " + customer_id + ", " + fullName + ", " + email + ", " + username + ", " + status);
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.out.println("Query failed: " + e.getMessage());
-            return false;
-        }
-    }
-    private StringBuilder queryUsers() {
-        return new StringBuilder("SELECT " +
-                TABLE_USERS + "." + COLUMN_USERS_ID + ", " +
-                TABLE_USERS + "." + COLUMN_USERS_FULLNAME + ", " +
-                TABLE_USERS + "." + COLUMN_USERS_EMAIL + ", " +
-                TABLE_USERS + "." + COLUMN_USERS_USERNAME + ", " +
-                " (SELECT COUNT(*) FROM " + TABLE_ORDERS + " WHERE " + TABLE_ORDERS + "." + COLUMN_ORDERS_USER_ID + " = " + TABLE_USERS + "." + COLUMN_USERS_ID + ") AS orders" + ", " +
-                TABLE_USERS + "." + COLUMN_USERS_STATUS +
-                " FROM " + TABLE_USERS +
-                " WHERE " + TABLE_USERS + "." + COLUMN_USERS_ADMIN + " = 0"
-        );
     }
     public boolean deleteSingleUser(int customerId) {
         String sql = "DELETE FROM " + TABLE_USERS + " WHERE " + COLUMN_USERS_ID + " = ?";
@@ -549,6 +632,45 @@ public class Datasource extends Product {
             statement.setString(3, email);
             statement.setString(4, password);  // Hash the password before storing
             statement.setString(5, salt);  // Store the salt
+
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return false;
+        }
+    }
+    public boolean insertNewUserForm(String fullName, String username, String email,
+                                     String password, String salt, java.sql.Date dob,
+                                     String gender, String phone, String status) {
+        if (conn == null) {
+            System.out.println("Connection is not established. Please open the connection first.");
+            return false;
+        }
+
+        String sql = "INSERT INTO " + TABLE_USERS + " ("
+                + COLUMN_USERS_FULLNAME + ", "
+                + COLUMN_USERS_USERNAME + ", "
+                + COLUMN_USERS_EMAIL + ", "
+                + COLUMN_USERS_PASSWORD + ", "
+                + COLUMN_USERS_SALT + ", "
+                + COLUMN_USERS_DOB + ", "
+                + COLUMN_USERS_GENDER + ", "
+                + COLUMN_USERS_PHONE + ", "
+                + COLUMN_USERS_ADMIN + ", "
+                + COLUMN_USERS_STATUS +
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?)";
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, fullName);
+            statement.setString(2, username);
+            statement.setString(3, email);
+            statement.setString(4, password);
+            statement.setString(5, salt);
+            statement.setDate(6, dob);
+            statement.setString(7, gender);
+            statement.setString(8, phone);
+            statement.setString(9, status);
 
             statement.executeUpdate();
             return true;
@@ -1018,6 +1140,165 @@ public class Datasource extends Product {
             stmt.setInt(3, discount);
             stmt.executeUpdate();
         }
+    }
+
+    public List<Customer> getAllCustomers(int sortOrder) {
+        StringBuilder query = new StringBuilder("SELECT * FROM customer");
+        
+        if (sortOrder != ORDER_BY_NONE) {
+            query.append(" ORDER BY name");
+            if (sortOrder == ORDER_BY_DESC) {
+                query.append(" DESC");
+            } else {
+                query.append(" ASC");
+            }
+        }
+
+        try (Statement statement = conn.createStatement();
+             ResultSet results = statement.executeQuery(query.toString())) {
+            
+            List<Customer> customers = new ArrayList<>();
+            while (results.next()) {
+                Customer customer = new Customer();
+                customer.setId(results.getInt("id"));
+                customer.setName(results.getString("name"));
+                customer.setAddress(results.getString("address"));
+                customer.setContact_info(results.getString("contact"));
+                customer.setPoints(results.getInt("points"));
+                customers.add(customer);
+            }
+            return customers;
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean deleteSingleCustomer(int customerId) {
+        String sql = "DELETE FROM customer WHERE id = ?";
+        
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, customerId);
+            int rows = statement.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            System.out.println("Delete failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public List<Customer> searchCustomers(String searchString, int sortOrder) {
+        StringBuilder query = new StringBuilder("SELECT * FROM customer WHERE name LIKE ? OR address LIKE ? OR contact LIKE ?");
+        
+        if (sortOrder != ORDER_BY_NONE) {
+            query.append(" ORDER BY name");
+            if (sortOrder == ORDER_BY_DESC) {
+                query.append(" DESC");
+            } else {
+                query.append(" ASC");
+            }
+        }
+
+        try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
+            String searchPattern = "%" + searchString + "%";
+            statement.setString(1, searchPattern);
+            statement.setString(2, searchPattern);
+            statement.setString(3, searchPattern);
+            
+            ResultSet results = statement.executeQuery();
+            List<Customer> customers = new ArrayList<>();
+            
+            while (results.next()) {
+                Customer customer = new Customer();
+                customer.setId(results.getInt("id"));
+                customer.setName(results.getString("name"));
+                customer.setAddress(results.getString("address"));
+                customer.setContact_info(results.getString("contact"));
+                customer.setPoints(results.getInt("points"));
+                customers.add(customer);
+            }
+            return customers;
+        } catch (SQLException e) {
+            System.out.println("Search failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean insertNewCustomer(String name, String address, String contact) {
+        String sql = "INSERT INTO customer (name, address, contact, points) VALUES (?, ?, ?, ?)";
+        
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, name);
+            statement.setString(2, address);
+            statement.setString(3, contact);
+            statement.setInt(4, 0); // Initialize points to 0 for new customers
+            
+            int affectedRows = statement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.out.println("Insert failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean updateCustomer(int customerId, String name, String address, String contact) {
+        String sql = "UPDATE customer SET name = ?, address = ?, contact = ? WHERE id = ?";
+        
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, name);
+            statement.setString(2, address);
+            statement.setString(3, contact);
+            statement.setInt(4, customerId);
+            
+            int affectedRows = statement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.out.println("Update failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean deleteOrder(int orderId) {
+        // First delete related order details
+        String deleteDetailsSQL = "DELETE FROM orderDetail WHERE orderID = ?";
+        String deleteOrderSQL = "DELETE FROM [order] WHERE id = ?";
+        
+        try (PreparedStatement detailStmt = conn.prepareStatement(deleteDetailsSQL);
+             PreparedStatement orderStmt = conn.prepareStatement(deleteOrderSQL)) {
+            
+            // Delete order details first
+            detailStmt.setInt(1, orderId);
+            detailStmt.executeUpdate();
+            
+            // Then delete the order
+            orderStmt.setInt(1, orderId);
+            int rows = orderStmt.executeUpdate();
+            return rows > 0;
+            
+        } catch (SQLException e) {
+            System.out.println("Delete failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public Customer getLastInsertedCustomer() {
+        String query = "SELECT * FROM customer WHERE id = last_insert_rowid()";
+        try (Statement statement = conn.createStatement();
+             ResultSet results = statement.executeQuery(query)) {
+            if (results.next()) {
+                Customer customer = new Customer();
+                customer.setId(results.getInt("id"));
+                customer.setName(results.getString("name"));
+                customer.setAddress(results.getString("address"));
+                customer.setContact_info(results.getString("contact"));
+                customer.setPoints(results.getInt("points"));
+                customer.setType(results.getInt("type"));
+                return customer;
+            }
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+        }
+        return null;
     }
 }
 

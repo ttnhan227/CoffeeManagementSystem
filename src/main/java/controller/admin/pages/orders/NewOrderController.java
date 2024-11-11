@@ -15,8 +15,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -91,6 +94,7 @@ public class NewOrderController implements Initializable {
         tableLoader();
         paymentBoxLoader();
         checkBoxLoader();
+        setupCustomerSearch();
     }
 
     private void userNameAndDateLoader(){
@@ -120,12 +124,8 @@ public class NewOrderController implements Initializable {
 
     @FXML
     private boolean checkCoupon(){
-        if(couponHBox.getChildren().contains(valid)){
-            couponHBox.getChildren().remove(valid);
-        }
-        if(couponHBox.getChildren().contains(invalid)){
-            couponHBox.getChildren().remove(invalid);
-        }
+        couponHBox.getChildren().remove(valid);
+        couponHBox.getChildren().remove(invalid);
         List<Coupon> list = Datasource.getInstance().getAllCoupon();
         String cf = couponField.getText();
         for(Coupon coupon: list){
@@ -161,12 +161,8 @@ public class NewOrderController implements Initializable {
 
     @FXML
     private boolean resetCoupon(){
-        if(couponHBox.getChildren().contains(valid)){
-            couponHBox.getChildren().remove(valid);
-        }
-        if(couponHBox.getChildren().contains(invalid)){
-            couponHBox.getChildren().remove(invalid);
-        }
+        couponHBox.getChildren().remove(valid);
+        couponHBox.getChildren().remove(invalid);
         couponField.setText("");
         couponField.setEditable(true);
         coupons.clear();
@@ -195,12 +191,8 @@ public class NewOrderController implements Initializable {
 
     private void couponLoader(){
         couponField.textProperty().addListener(((observableValue, oldValue, newValue) ->{
-            if(couponHBox.getChildren().contains(valid)){
-                couponHBox.getChildren().remove(valid);
-            }
-            if(couponHBox.getChildren().contains(invalid)){
-                couponHBox.getChildren().remove(invalid);
-            }
+            couponHBox.getChildren().remove(valid);
+            couponHBox.getChildren().remove(invalid);
         } ));
     }
 
@@ -210,9 +202,7 @@ public class NewOrderController implements Initializable {
         suggestionList.prefWidthProperty().bind(searchField.widthProperty()); // Bind width to searchField
         //suggestionList.setItems(suggestions);
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(searchHBox.getChildren().contains(invalid)){
-                searchHBox.getChildren().remove(invalid);
-            }
+            searchHBox.getChildren().remove(invalid);
             if (newValue.isEmpty()) {
                 suggestionList.setVisible(false);
             } else {
@@ -422,13 +412,33 @@ public class NewOrderController implements Initializable {
         return quantities.get(index);
     }
 
-    private void paymentBoxLoader(){
+    private void paymentBoxLoader() {
         totalText.setText("");
         finalText.setText("0");
         discountText.setText("0");
+        
+        // Create a Text node for customer name
+        Text customerLabel = new Text("Customer: ");
+        customerLabel.setFont(new Font("System Bold", 15));
+        Text customerNameText = new Text("No customer selected");
+        customerNameText.setFont(new Font(15));
+        
+        // Add customer info to payment HBox
+        HBox customerInfoBox = new HBox(5, customerLabel, customerNameText);
+        customerInfoBox.setAlignment(javafx.geometry.Pos.CENTER);
+        paymentHBox.getChildren().add(0, customerInfoBox);
+        paymentHBox.setSpacing(20); // Add some spacing between elements
+
         ListChangeListener<Object> changeListener = change -> {
             while (change.next()) {
                 Platform.runLater(() -> {
+                    // Update customer name
+                    if (customer != null && customer.getName() != null) {
+                        customerNameText.setText(customer.getName());
+                    } else {
+                        customerNameText.setText("No customer selected");
+                    }
+
                     double total = 0;
                     double fin = 0;
                     double temp = 0;
@@ -436,7 +446,6 @@ public class NewOrderController implements Initializable {
                     if (couponField.getText().isEmpty() || coupons.isEmpty()) {
                         discount = 0;
                     } else {
-                        //int couponID = Integer.parseInt(couponField.getText());
                         discount = (double) coupons.getFirst().getDiscount() / 100;
                     }
                     DecimalFormat format = new DecimalFormat("#.##");
@@ -458,12 +467,22 @@ public class NewOrderController implements Initializable {
 
                     formattedString = format.format(fin);
                     finalText.setText(String.valueOf(formattedString));
-
-                    //formattedString = format.format(discount);
-                    discountText.setText(String.valueOf(discount * 100) + "%");
+                    discountText.setText(discount * 100 + "%");
                 });
             }
         };
+
+        // Add listener for customer changes
+        customerNameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                if (customer != null && customer.getName() != null) {
+                    customerNameText.setText(customer.getName());
+                } else {
+                    customerNameText.setText("No customer selected");
+                }
+            });
+        });
+
         productList.addListener(changeListener);
         quantities.addListener(changeListener);
         coupons.addListener(changeListener);
@@ -527,6 +546,89 @@ public class NewOrderController implements Initializable {
 
     public void setAdminMainDashboardController(MainDashboardController controller){
         this.mainDashboardController = controller;
+    }
+
+    @FXML
+    private void handleAddNewCustomer() {
+        Dialog<Customer> dialog = new Dialog<>();
+        dialog.setTitle("Add New Customer");
+        dialog.setHeaderText("Enter customer details");
+
+        // Create the custom dialog's content
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField nameField = new TextField();
+        TextField addressField = new TextField();
+        TextField contactField = new TextField();
+
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("Address:"), 0, 1);
+        grid.add(addressField, 1, 1);
+        grid.add(new Label("Contact:"), 0, 2);
+        grid.add(contactField, 1, 2);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Add buttons
+        ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
+
+        // Convert the result
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == addButtonType) {
+                if (nameField.getText().isEmpty() || addressField.getText().isEmpty() || contactField.getText().isEmpty()) {
+                    HelperMethods.alertBox("All fields must be filled", null, "Validation Error");
+                    return null;
+                }
+                
+                boolean success = Datasource.getInstance().insertNewCustomer(
+                    nameField.getText(),
+                    addressField.getText(),
+                    contactField.getText()
+                );
+                
+                if (success) {
+                    Customer newCustomer = Datasource.getInstance().getLastInsertedCustomer();
+                    if (newCustomer != null) {
+                        customerNameField.setText(newCustomer.getName());
+                        customer = newCustomer;
+                        return newCustomer;
+                    }
+                }
+                HelperMethods.alertBox("Failed to add customer", null, "Error");
+            }
+            return null;
+        });
+
+        dialog.showAndWait();
+    }
+
+    private void setupCustomerSearch() {
+        customerNameField.setOnKeyReleased(event -> {
+            String searchText = customerNameField.getText().trim();
+            if (!searchText.isEmpty()) {
+                List<Customer> customers = Datasource.getInstance().searchCustomers(searchText, Datasource.ORDER_BY_NONE);
+                if (customers != null && !customers.isEmpty()) {
+                    // Show suggestions in a popup
+                    ContextMenu contextMenu = new ContextMenu();
+                    for (Customer c : customers) {
+                        MenuItem item = new MenuItem(c.getName() + " - " + c.getContact_info());
+                        item.setOnAction(e -> {
+                            customerNameField.setText(c.getName());
+                            customer = c;
+                            contextMenu.hide();
+                        });
+                        contextMenu.getItems().add(item);
+                    }
+                    customerNameField.setContextMenu(contextMenu);
+                    contextMenu.show(customerNameField, Side.BOTTOM, 0, 0);
+                }
+            }
+        });
     }
 }
 

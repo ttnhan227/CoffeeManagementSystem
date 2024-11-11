@@ -6,41 +6,55 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.effect.Reflection?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.admin.pages.orders.UserOrdersController">
-
     <BorderPane layoutX="238.0" layoutY="136.0" prefHeight="521.0" prefWidth="743.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <padding>
             <Insets left="30.0" right="30.0" />
         </padding>
+
+        <!-- Updated top section -->
         <top>
-            <GridPane>
-                <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                </rowConstraints>
-                <children>
+            <VBox spacing="20">
+                <padding>
+                    <Insets bottom="20.0" top="20.0" />
+                </padding>
+                <Text fontSmoothingType="LCD" styleClass="page-title" text="Orders">
+                    <font>
+                        <Font name="SansSerif Bold Italic" size="43.0" />
+                    </font>
+               <effect>
+                  <Reflection fraction="0.66" topOpacity="0.19" />
+               </effect>
+                </Text>
+                <GridPane alignment="CENTER_RIGHT">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
                     <AnchorPane prefHeight="200.0" prefWidth="200.0">
                         <children>
-                            <TextField fx:id="searchField" layoutX="1.0" layoutY="2.0" prefHeight="25.0" prefWidth="291.0" promptText="search orders" />
+                            <TextField fx:id="searchField" layoutX="1.0" layoutY="2.0" prefHeight="25.0" prefWidth="291.0" promptText="Search orders" styleClass="search-field" />
                             <ComboBox fx:id="searchComboBox" layoutX="305.0" layoutY="4.0" maxWidth="600.0" minWidth="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="305.0" AnchorPane.rightAnchor="155.0" AnchorPane.topAnchor="2.0" />
                         </children>
                     </AnchorPane>
-                </children>
-                <BorderPane.margin>
-                    <Insets top="20.0" />
-                </BorderPane.margin>
-            </GridPane>
+                </GridPane>
+            </VBox>
         </top>
+
         <center>
             <TableView fx:id="tableOrdersPage" editable="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                 <columns>
@@ -80,10 +94,11 @@
                 </BorderPane.margin>
             </TableView>
         </center>
+
         <bottom>
             <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" BorderPane.alignment="CENTER">
+                <!-- You can add more buttons or controls here -->
             </HBox>
         </bottom>
     </BorderPane>
-
 </AnchorPane>

@@ -1,5 +1,9 @@
 package controller.users.pages.orders;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import controller.users.UserMainDashboardController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -7,15 +11,20 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import model.Customer;
 import model.Datasource;
 import model.Order;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
+import model.User;
 
 public class UserOrdersController implements Initializable {
     public TableView<Order> tableOrdersPage;
@@ -39,39 +48,53 @@ public class UserOrdersController implements Initializable {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         paidColumn.setCellValueFactory(new PropertyValueFactory<>("fin"));
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("order_date"));
-
         couponColumn.setCellValueFactory(new PropertyValueFactory<>("discount"));
         tableColumn.setCellValueFactory(new PropertyValueFactory<>("tableID"));
+
         employeeColumn.setCellValueFactory(cellData -> {
             int index = tableOrdersPage.getItems().indexOf(cellData.getValue());
             Integer emid = filteredList.get(index).getEmployeeID();
-            return new SimpleStringProperty(Datasource.getInstance().searchOneEmployeeById(emid).getFullname());
+            if (emid != null) {
+                // Fetch the employee and check for null
+                User employee = Datasource.getInstance().searchOneEmployeeById(emid);
+                if (employee != null) {
+                    return new SimpleStringProperty(employee.getFullname());
+                }
+            }
+            // Return an empty string or a default message if the employee is not found
+            return new SimpleStringProperty("Unknown Employee");
         });
+
         customerColumn.setCellValueFactory(cellData -> {
             int index = tableOrdersPage.getItems().indexOf(cellData.getValue());
             Integer cusid = filteredList.get(index).getCustomerID();
-            if(cusid == null){
-                return null;
+            if (cusid == null) {
+                return new SimpleStringProperty(""); // Default value when the customer ID is null
+            } else {
+                Customer customer = Datasource.getInstance().searchOneCustomerById(cusid);
+                if (customer != null) {
+                    return new SimpleStringProperty(customer.getName());
+                } else {
+                    return new SimpleStringProperty(""); // Return an empty string or default if customer is not found
+                }
             }
-            else{
-                return new SimpleStringProperty(Datasource.getInstance().searchOneCustomerById(cusid).getName());
-            }
-
         });
+
         addActionButton();
-        //filteredList = FXCollections.observableArrayList(orderList);
         tableOrdersPage.setItems(filteredList);
     }
+
 
     @FXML
     private void addActionButton(){
         TableColumn<Order, Void> actionColumn = new TableColumn<>("Action");
         actionColumn.setCellFactory(col -> new TableCell<Order, Void>() {
             private final Button viewButton = new Button("View");
-            //private final Button deleteButton = new Button("Delete");
+            private final Button deleteButton = new Button("Delete");
+            private final HBox hbox = new HBox(5); // 5 is spacing between buttons
 
             {
-                // Set the action for the Edit button
+                // Set the action for the View button
                 viewButton.setOnAction(e -> {
                     try {
                         mainDashboardController.viewOrderDetail(new ActionEvent(), getTableRow().getItem());
@@ -80,18 +103,39 @@ public class UserOrdersController implements Initializable {
                     }
                 });
 
+                // Set the action for the Delete button
+                deleteButton.setOnAction(e -> {
+                    Order order = getTableRow().getItem();
+                    if (order != null) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Delete Order");
+                        alert.setHeaderText("Delete Order #" + order.getId());
+                        alert.setContentText("Are you sure you want to delete this order?");
+
+                        alert.showAndWait().ifPresent(response -> {
+                            if (response == ButtonType.OK) {
+                                if (Datasource.getInstance().deleteOrder(order.getId())) {
+                                    orderList.remove(order);
+                                    filteredList.remove(order);
+                                } else {
+                                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                                    errorAlert.setTitle("Error");
+                                    errorAlert.setHeaderText("Delete Failed");
+                                    errorAlert.setContentText("Failed to delete the order.");
+                                    errorAlert.show();
+                                }
+                            }
+                        });
+                    }
+                });
+
+                hbox.getChildren().addAll(viewButton, deleteButton);
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    // Add buttons to the cell
-                    HBox hbox = new HBox(viewButton);
-                    setGraphic(hbox);
-                }
+                setGraphic(empty ? null : hbox);
             }
         });
         actionColumn.setMinWidth(100);
@@ -127,24 +171,14 @@ public class UserOrdersController implements Initializable {
 
         searchComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
             searchField.setText("");
-            if(newValue.equals("All")){
-                searchField.setDisable(true);
-            }
-            else {
-                searchField.setDisable(false);
-            }
+            searchField.setDisable(newValue.equals("All"));
         });
         searchField.textProperty().addListener((obs, oldText, newText) -> {
             applyFilter(searchComboBox.getValue(), newText);
             if(newText == null){
                 applyFilter("All", newText);
             }
-            if(searchComboBox.getValue().equals("All")){
-                searchField.setDisable(true);
-            }
-            else {
-                searchField.setDisable(false);
-            }
+            searchField.setDisable(searchComboBox.getValue().equals("All"));
         });
         searchComboBox.setValue("All");
     }
@@ -192,10 +226,7 @@ public class UserOrdersController implements Initializable {
             case "By table":
                 filteredList.addAll(orderList.filtered(order -> {
                     if(order.getTableID() == null){
-                        if("take away".contains(search.toLowerCase())){
-                            return true;
-                        }
-                        return false;
+                        return "take away".contains(search.toLowerCase());
                     }
                     String table = String.valueOf(order.getTableID());
                     return table.contains(search);
@@ -204,10 +235,7 @@ public class UserOrdersController implements Initializable {
             case "By coupon id":
                 filteredList.addAll(orderList.filtered(order -> {
                     if(order.getCouponID() == null){
-                        if("no coupon".contains(search.toLowerCase())){
-                            return true;
-                        }
-                        return false;
+                        return "no coupon".contains(search.toLowerCase());
                     }
 
                     String id = String.valueOf(order.getCouponID());

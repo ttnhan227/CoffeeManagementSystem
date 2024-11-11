@@ -7,7 +7,7 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controller.admin.pages.users.CreateUserController"
-            prefHeight="400.0" prefWidth="600.0">
+            prefHeight="600.0" prefWidth="600.0">
 
     <Text text="Create New User" layoutX="20.0" layoutY="20.0">
         <font>
@@ -27,10 +27,19 @@
     <Label text="Password:" layoutX="20.0" layoutY="180.0"/>
     <PasswordField fx:id="fieldCreateUserPassword" layoutX="150.0" layoutY="180.0" prefWidth="400.0"/>
 
-    <Label text="Status:" layoutX="20.0" layoutY="220.0"/>
-    <ComboBox fx:id="fieldCreateUserStatus" layoutX="150.0" layoutY="220.0" prefWidth="400.0"/>
+    <Label text="Date of Birth:" layoutX="20.0" layoutY="220.0"/>
+    <DatePicker fx:id="fieldCreateUserDOB" layoutX="150.0" layoutY="220.0" prefWidth="400.0"/>
 
-    <Button text="Create User" layoutX="150.0" layoutY="280.0" onAction="#btnCreateUserOnAction"/>
-    <Text fx:id="viewCreateUserResponse" layoutX="150.0" layoutY="320.0" fill="red" visible="false"/>
+    <Label text="Gender:" layoutX="20.0" layoutY="260.0"/>
+    <ComboBox fx:id="fieldCreateUserGender" layoutX="150.0" layoutY="260.0" prefWidth="400.0"/>
+
+    <Label text="Phone Number:" layoutX="20.0" layoutY="300.0"/>
+    <TextField fx:id="fieldCreateUserPhone" layoutX="150.0" layoutY="300.0" prefWidth="400.0"/>
+
+    <Label text="Status:" layoutX="20.0" layoutY="340.0"/>
+    <ComboBox fx:id="fieldCreateUserStatus" layoutX="150.0" layoutY="340.0" prefWidth="400.0"/>
+
+    <Button text="Create User" layoutX="150.0" layoutY="400.0" onAction="#btnCreateUserOnAction"/>
+    <Text fx:id="viewCreateUserResponse" layoutX="150.0" layoutY="440.0" fill="red" visible="false"/>
 
 </AnchorPane>

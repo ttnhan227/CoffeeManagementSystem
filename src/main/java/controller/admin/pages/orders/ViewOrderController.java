@@ -59,7 +59,7 @@ public class ViewOrderController implements Initializable {
     @FXML
     public Button backToOrderBtn;
 
-    private ObservableList<Product> productList = FXCollections.observableArrayList();
+    private final ObservableList<Product> productList = FXCollections.observableArrayList();
     private ObservableList<OrderDetail> orderDetailsList;
 
     private Order order;

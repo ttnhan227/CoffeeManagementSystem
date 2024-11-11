@@ -1,9 +1,14 @@
+# Ignore all .sqlite files
+*.sqlite
+
+# Explicitly exclude store_manager.sqlite from tracking
+src/main/java/app/db/store_manager.sqlite
+
+# Keep other relevant exclusions
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-src/main/java/app/db/store_manager.sqlite
-
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -37,3 +42,5 @@ build/
 .vscode/
 
 ### Mac OS ###
+repomix-output.txt
+repomix-output.txt

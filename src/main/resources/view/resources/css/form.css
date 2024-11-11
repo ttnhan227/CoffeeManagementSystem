@@ -1,101 +1,133 @@
+/* Root Container */
 .root {
-    -fx-background-color: rgba(249, 249, 249, 0.8);
-    -fx-padding: 20;
+    -fx-padding: 40px;
+    -fx-alignment: center;
 }
 
+/* Border Pane for Form */
 .border-pane {
-    -fx-background-color: rgba(255, 255, 255, 0.9);
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 1;
-    -fx-border-radius: 10;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0.5, 0, 5);
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(79, 50, 29, 0.2), 15, 0.5, 0, 5);
+    -fx-max-width: 800px;
+    -fx-pref-width: 800px;
 }
 
+/* GridPane Layout */
 .grid-pane {
     -fx-padding: 20;
+    -fx-alignment: center;
+    -fx-max-width: 700px;
 }
 
+/* Heading Text */
 .heading-text {
-    -fx-font-size: 28px;
+    -fx-font-size: 36px;
+    -fx-font-family: "Helvetica Neue";
     -fx-font-weight: bold;
-    -fx-text-fill: #333;
-    -fx-padding: 20 0 10 0;
+    -fx-text-fill: #4F321D;
+    -fx-padding: 30 0 30 0;
 }
 
+/* Label Styles */
 .label {
     -fx-font-size: 14px;
-    -fx-text-fill: #555;
+    -fx-font-family: "Helvetica Neue";
+    -fx-font-weight: bold;
+    -fx-text-fill: #6B4423;
     -fx-padding: 5;
 }
 
+/* TextField Styling */
 .text-field {
-    -fx-border-color: #ccc;
-    -fx-border-radius: 4;
-    -fx-padding: 10;
+    -fx-background-color: #FAF6F1;
+    -fx-border-color: #E5D3BA;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 12px;
+    -fx-font-size: 14px;
+    -fx-max-width: 300px;
+}
+.text-field:focused {
+    -fx-border-color: #C8A27C;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(200, 162, 124, 0.2), 5, 0, 0, 0);
+}
+
+/* TextArea Styling */
+.text-area {
+    -fx-background-color: #FAF6F1;
+    -fx-border-color: #E5D3BA;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 12px;
+    -fx-font-size: 14px;
+    -fx-max-width: 300px;
+    -fx-pref-height: 100px;
+}
+.text-area:focused {
+    -fx-border-color: #C8A27C;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(200, 162, 124, 0.2), 5, 0, 0, 0);
+}
+
+/* ComboBox Styling */
+.combo-box {
+    -fx-background-color: #FAF6F1;
+    -fx-border-color: #E5D3BA;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 4px;
+    -fx-max-width: 300px;
+}
+.combo-box:focused {
+    -fx-border-color: #C8A27C;
     -fx-background-color: white;
 }
-.text-field:focused { -fx-border-color: #007bff; }
-
-/* TextArea styles */
-.text-area {
-    -fx-border-color: #cccccc; /* Light grey border for text areas */
-    -fx-border-radius: 4; /* Rounded corners */
-    -fx-padding: 10; /* Padding inside text areas */
-    -fx-background-color: #ffffff; /* White background */
+.combo-box .list-cell {
+    -fx-padding: 8px;
 }
 
-.text-area:focused {
-    -fx-border-color: #007bff; /* Blue border when focused */
-}
-
-/* ComboBox styles */
-.combo-box {
-    -fx-border-color: #cccccc; /* Light grey border for ComboBoxes */
-    -fx-border-radius: 4; /* Rounded corners */
-    -fx-background-color: #ffffff; /* White background */
-}
-
-.combo-box:focused {
-    -fx-border-color: #007bff; /* Blue border when focused */
-}
-
-/* Button styles */
+/* Button Styling */
 .button {
--fx-background-color: #007bff;
+    -fx-background-color: #6B4423;
     -fx-text-fill: white;
-    -fx-padding: 10 20;
-     -fx-border-radius: 5; /* Modern rounded corners */
- -fx-background-radius: 5;  /* match background with border */
-
+    -fx-padding: 12px 24px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
 }
-
 .button:hover {
-    -fx-background-color: #0056b3;  /* less strong  hover */
-
+    -fx-background-color: #8B593A;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 0);
 }
-
-
-
-
 .button:pressed {
-
-     -fx-background-color: #004085;
-
-
-}
-/* ImageView styles */
-.image-view-container {
-    -fx-alignment: center; /* Center the image */
+    -fx-background-color: #4F321D;
 }
 
-/* Message Text styles */
+/* Success Message */
 .message-text {
-    -fx-font-size: 14px; /* Font size for messages */
-    -fx-text-fill: #28a745; /* Green color for success messages */
-    -fx-padding: 10; /* Padding around the message */
-    -fx-opacity: 0; /* Initially hidden */
+    -fx-font-size: 14px;
+    -fx-text-fill: #2E7D32;
+    -fx-padding: 10;
+    -fx-opacity: 0;
+    -fx-font-weight: bold;
+}
+.message-text.visible {
+    -fx-opacity: 1;
 }
 
-.message-text.visible {
-    -fx-opacity: 1; /* Make visible when the product is updated */
+/* Image Selection Container */
+.image-view-container {
+    -fx-background-color: #FAF6F1;
+    -fx-border-color: #E5D3BA;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 20px;
+    -fx-max-width: 300px;
+    -fx-max-height: 300px;
 }
