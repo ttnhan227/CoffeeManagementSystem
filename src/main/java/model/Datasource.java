@@ -31,19 +31,10 @@ public class Datasource extends Product {
     public static final String COLUMN_PRODUCTS_IMAGE = "image";
     public static final String COLUMN_PRODUCTS_ACTIVE = "active"; // New column for isDisabled
 
-
-
     public static final String TABLE_CATEGORIES = "categories";
     public static final String COLUMN_CATEGORIES_ID = "id";
     public static final String COLUMN_CATEGORIES_NAME = "name";
     public static final String COLUMN_CATEGORIES_DESCRIPTION = "description";
-
-    public static final String TABLE_ORDERS = "orders";
-    public static final String COLUMN_ORDERS_ID = "id";
-    public static final String COLUMN_ORDERS_PRODUCT_ID = "product_id";
-    public static final String COLUMN_ORDERS_USER_ID = "user_id";
-    public static final String COLUMN_ORDERS_ORDER_DATE = "order_date";
-    public static final String COLUMN_ORDERS_ORDER_STATUS = "order_status";
 
     public static final String TABLE_USERS = "users";
     public static final String COLUMN_USERS_ID = "id";
@@ -239,20 +230,7 @@ public class Datasource extends Product {
                 " = " + TABLE_CATEGORIES + "." + COLUMN_CATEGORIES_ID
         );
     }
-    //not using
-//    public boolean deleteSingleProduct(int productId) {
-//        String sql = "DELETE FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_PRODUCTS_ID + " = ?";
-//
-//        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-//            statement.setInt(1, productId);
-//            int rows = statement.executeUpdate();
-//            System.out.println(rows + " record(s) deleted.");
-//            return true;
-//        } catch (SQLException e) {
-//            System.out.println("Query failed: " + e.getMessage());
-//            return false;
-//        }
-//    }
+
     public boolean insertNewProduct(String name, String description, double price,
                                     int quantity, int category_id, String imagePath, boolean isDisabled) {
         String sql = "INSERT INTO " + TABLE_PRODUCTS + " ("
@@ -359,7 +337,6 @@ public class Datasource extends Product {
                 TABLE_USERS + "." + COLUMN_USERS_DOB + ", " +
                 TABLE_USERS + "." + COLUMN_USERS_GENDER + ", " +
                 TABLE_USERS + "." + COLUMN_USERS_PHONE + ", " +
-                " (SELECT COUNT(*) FROM " + TABLE_ORDERS + " WHERE " + TABLE_ORDERS + "." + COLUMN_ORDERS_USER_ID + " = " + TABLE_USERS + "." + COLUMN_USERS_ID + ") AS orders" + ", " +
                 TABLE_USERS + "." + COLUMN_USERS_STATUS +
                 " FROM " + TABLE_USERS +
                 " WHERE " + TABLE_USERS + "." + COLUMN_USERS_ADMIN + " = 0"
@@ -392,7 +369,7 @@ public class Datasource extends Product {
                     user.setEmail(results.getString(3));
                     user.setUsername(results.getString(4));
 
-                    // Add null checks for new fields
+                    // Handle optional fields with null checks
                     Date dob = results.getDate(5);
                     if (!results.wasNull()) {
                         user.setDateOfBirth(dob);
@@ -408,9 +385,7 @@ public class Datasource extends Product {
                     }
 
                     user.setPhoneNumber(results.getString(7));
-                    user.setOrders(results.getInt(8));
-                    user.setStatus(results.getString(9));
-
+                    user.setStatus(results.getString(8)); // Now correctly mapped to column 8
 
                     users.add(user);
                     System.out.println("Loaded user: " + user.getFullname()); // Debug print
@@ -426,6 +401,7 @@ public class Datasource extends Product {
             return new ArrayList<>(); // Return empty list instead of null
         }
     }
+
     public List<User> getOneUser(int customer_id) {
         StringBuilder queryCustomers = queryUsers();
         queryCustomers.append(" AND " + TABLE_USERS + "." + COLUMN_USERS_ID + " = ?");
@@ -550,24 +526,14 @@ public class Datasource extends Product {
             int rows = statement.executeUpdate();
             System.out.println(rows + " " + TABLE_USERS + " record(s) deleted.");
 
-
-            String sql2 = "DELETE FROM " + TABLE_ORDERS + " WHERE " + COLUMN_ORDERS_USER_ID + " = ?";
-
-            try (PreparedStatement statement2 = conn.prepareStatement(sql2)) {
-                statement2.setInt(1, customerId);
-                int rows2 = statement2.executeUpdate();
-                System.out.println(rows2 + " " + TABLE_ORDERS + " record(s) deleted.");
-                return true;
-            } catch (SQLException e) {
-                System.out.println("Query failed: " + e.getMessage());
-                return false;
-            }
+            return rows > 0; // Return true if at least one record was deleted
 
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return false;
         }
     }
+
     public User getUserByEmail(String email) throws SQLException {
 
         PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM " + TABLE_USERS + " WHERE " + COLUMN_USERS_EMAIL + " = ?");
@@ -1008,17 +974,17 @@ public class Datasource extends Product {
              ResultSet results = statement.executeQuery(query)){
             List<Order> list = new ArrayList<>();
             while (results.next()) {
-              Order o = new Order();
-              o.setId(results.getInt("id"));
-              o.setEmployeeID((Integer) results.getObject("employeeID"));
-              o.setCustomerID((Integer) results.getObject("customerID"));
-              o.setCouponID((Integer) results.getObject("couponID"));
-              o.setTableID((Integer) results.getObject("tableID"));
-              o.setOrder_date(results.getString("orderDate"));
-              o.setTotal(results.getDouble("total"));
-              o.setDiscount(results.getInt("discount"));
-              o.setFin(results.getDouble("final"));
-              list.add(o);
+                Order o = new Order();
+                o.setId(results.getInt("id"));
+                o.setEmployeeID((Integer) results.getObject("employeeID"));
+                o.setCustomerID((Integer) results.getObject("customerID"));
+                o.setCouponID((Integer) results.getObject("couponID"));
+                o.setTableID((Integer) results.getObject("tableID"));
+                o.setOrder_date(results.getString("orderDate"));
+                o.setTotal(results.getDouble("total"));
+                o.setDiscount(results.getInt("discount"));
+                o.setFin(results.getDouble("final"));
+                list.add(o);
             }
             return list;
 
@@ -1146,7 +1112,7 @@ public class Datasource extends Product {
 
     public List<Customer> getAllCustomers(int sortOrder) {
         StringBuilder query = new StringBuilder("SELECT * FROM customer");
-        
+
         if (sortOrder != ORDER_BY_NONE) {
             query.append(" ORDER BY name");
             if (sortOrder == ORDER_BY_DESC) {
@@ -1158,7 +1124,7 @@ public class Datasource extends Product {
 
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery(query.toString())) {
-            
+
             List<Customer> customers = new ArrayList<>();
             while (results.next()) {
                 Customer customer = new Customer();
@@ -1178,7 +1144,7 @@ public class Datasource extends Product {
 
     public boolean deleteSingleCustomer(int customerId) {
         String sql = "DELETE FROM customer WHERE id = ?";
-        
+
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, customerId);
             int rows = statement.executeUpdate();
@@ -1191,7 +1157,7 @@ public class Datasource extends Product {
 
     public List<Customer> searchCustomers(String searchString, int sortOrder) {
         StringBuilder query = new StringBuilder("SELECT * FROM customer WHERE name LIKE ? OR address LIKE ? OR contact LIKE ?");
-        
+
         if (sortOrder != ORDER_BY_NONE) {
             query.append(" ORDER BY name");
             if (sortOrder == ORDER_BY_DESC) {
@@ -1206,10 +1172,10 @@ public class Datasource extends Product {
             statement.setString(1, searchPattern);
             statement.setString(2, searchPattern);
             statement.setString(3, searchPattern);
-            
+
             ResultSet results = statement.executeQuery();
             List<Customer> customers = new ArrayList<>();
-            
+
             while (results.next()) {
                 Customer customer = new Customer();
                 customer.setId(results.getInt("id"));
@@ -1228,13 +1194,13 @@ public class Datasource extends Product {
 
     public boolean insertNewCustomer(String name, String address, String contact) {
         String sql = "INSERT INTO customer (name, address, contact, points) VALUES (?, ?, ?, ?)";
-        
+
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setString(1, name);
             statement.setString(2, address);
             statement.setString(3, contact);
             statement.setInt(4, 0); // Initialize points to 0 for new customers
-            
+
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
@@ -1245,13 +1211,13 @@ public class Datasource extends Product {
 
     public boolean updateCustomer(int customerId, String name, String address, String contact) {
         String sql = "UPDATE customer SET name = ?, address = ?, contact = ? WHERE id = ?";
-        
+
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setString(1, name);
             statement.setString(2, address);
             statement.setString(3, contact);
             statement.setInt(4, customerId);
-            
+
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
@@ -1264,19 +1230,19 @@ public class Datasource extends Product {
         // First delete related order details
         String deleteDetailsSQL = "DELETE FROM orderDetail WHERE orderID = ?";
         String deleteOrderSQL = "DELETE FROM [order] WHERE id = ?";
-        
+
         try (PreparedStatement detailStmt = conn.prepareStatement(deleteDetailsSQL);
              PreparedStatement orderStmt = conn.prepareStatement(deleteOrderSQL)) {
-            
+
             // Delete order details first
             detailStmt.setInt(1, orderId);
             detailStmt.executeUpdate();
-            
+
             // Then delete the order
             orderStmt.setInt(1, orderId);
             int rows = orderStmt.executeUpdate();
             return rows > 0;
-            
+
         } catch (SQLException e) {
             System.out.println("Delete failed: " + e.getMessage());
             return false;

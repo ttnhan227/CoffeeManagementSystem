@@ -13,6 +13,7 @@ import controller.admin.pages.orders.NewOrderController;
 import controller.admin.pages.orders.UserOrdersController;
 import controller.admin.pages.orders.ViewOrderController;
 import controller.admin.pages.products.ProductsController;
+import controller.admin.pages.users.UsersController;
 import javafx.animation.ScaleTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -71,12 +72,18 @@ public class MainDashboardController implements Initializable {
         ProductsController controller = fxmlLoader.getController();
         controller.listProducts();
     }
+    public void btnUsersOnClick(ActionEvent actionEvent) {
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/users/users.fxml");
+        UsersController controller = fxmlLoader.getController();
+        controller.listUsers();
+    }
 
     public void btnCustomerOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/customers/customers.fxml");
         CustomerController controller = fxmlLoader.getController();
         controller.listCustomers();
     }
+
 
     public void btnSettingsOnClick(ActionEvent actionEvent) {
         loadFxmlPage("/view/admin/pages/settings/settings.fxml");
@@ -204,5 +211,5 @@ public class MainDashboardController implements Initializable {
         //controller.updateChart(2024);
     }
 
-    
+
 }
