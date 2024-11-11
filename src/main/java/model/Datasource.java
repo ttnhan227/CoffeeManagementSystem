@@ -230,20 +230,7 @@ public class Datasource extends Product {
                 " = " + TABLE_CATEGORIES + "." + COLUMN_CATEGORIES_ID
         );
     }
-    //not using
-//    public boolean deleteSingleProduct(int productId) {
-//        String sql = "DELETE FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_PRODUCTS_ID + " = ?";
-//
-//        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-//            statement.setInt(1, productId);
-//            int rows = statement.executeUpdate();
-//            System.out.println(rows + " record(s) deleted.");
-//            return true;
-//        } catch (SQLException e) {
-//            System.out.println("Query failed: " + e.getMessage());
-//            return false;
-//        }
-//    }
+
     public boolean insertNewProduct(String name, String description, double price,
                                     int quantity, int category_id, String imagePath, boolean isDisabled) {
         String sql = "INSERT INTO " + TABLE_PRODUCTS + " ("
