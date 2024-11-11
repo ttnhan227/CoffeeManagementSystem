@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label; // Import Label for error messages
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -29,7 +29,7 @@ public class RegisterController {
     @FXML
     private PasswordField passwordField;
     @FXML
-    private Label messageLabel; // Declare messageLabel for displaying errors
+    private Label messageLabel;
 
     Stage dialogStage = new Stage();
     Scene scene;
@@ -43,73 +43,87 @@ public class RegisterController {
         dialogStage.show();
     }
 
+    private void showError(String message) {
+        messageLabel.setText(message);
+        messageLabel.getStyleClass().addAll("error-label", "visible");
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(15000);
+                javafx.application.Platform.runLater(() -> {
+                    messageLabel.getStyleClass().remove("visible");
+                });
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void highlightErrorField(TextField field) {
+        field.getStyleClass().add("error");
+        field.setOnKeyTyped(e -> field.getStyleClass().remove("error"));
+    }
+
     public void handleRegisterButtonAction(ActionEvent actionEvent) throws SQLException {
-        String validationErrors = "";
-        boolean errors = false;
         String fullName = fullNameField.getText();
         String username = usernameField.getText();
         String email = emailField.getText();
         String providedPassword = passwordField.getText();
 
+        messageLabel.setText("");
+        fullNameField.getStyleClass().remove("error");
+        usernameField.getStyleClass().remove("error");
+        emailField.getStyleClass().remove("error");
+        passwordField.getStyleClass().remove("error");
+
         // Validate Full Name
-        if (fullName == null || fullName.isEmpty()) {
-            validationErrors += "Please enter your Name and Surname!\n";
-            errors = true;
-        } else if (!HelperMethods.validateFullName(fullName)) {
-            validationErrors += "Please enter a valid Name and Surname!\n";
-            errors = true;
+        if (fullName.isEmpty() || !HelperMethods.validateFullName(fullName)) {
+            showError("Full name must contain only letters, start with an uppercase letter, and be 4+ characters.");
+            highlightErrorField(fullNameField);
+            return;
         }
 
         // Validate Username
-        if (username == null || username.isEmpty()) {
-            validationErrors += "Please enter a username!\n";
-            errors = true;
-        } else if (!HelperMethods.validateUsername(username)) {
-            validationErrors += "Please enter a valid Username!\n";
-            errors = true;
-        } else {
-            User userByUsername = Datasource.getInstance().getUserByUsername(username);
-            if (userByUsername != null && userByUsername.getUsername() != null) {
-                validationErrors += "There is already a user registered with this username!\n";
-                errors = true;
-            }
+        if (username.isEmpty() || !HelperMethods.validateUsername(username)) {
+            showError("Username must be 5-30 characters, start with a letter, and contain only letters, numbers, or underscores.");
+            highlightErrorField(usernameField);
+            return;
+        }
+
+        // Check username availability
+        User userByUsername = Datasource.getInstance().getUserByUsername(username);
+        if (userByUsername != null && userByUsername.getUsername() != null) {
+            showError("Username is already taken.");
+            highlightErrorField(usernameField);
+            return;
         }
 
         // Validate Email
-        if (email == null || email.isEmpty()) {
-            validationErrors += "Please enter an email address!\n";
-            errors = true;
-        } else if (!HelperMethods.validateEmail(email)) {
-            validationErrors += "Please enter a valid Email address!\n";
-            errors = true;
-        } else {
-            User userByEmail = Datasource.getInstance().getUserByEmail(email);
-            if (userByEmail != null && userByEmail.getEmail() != null) {
-                validationErrors += "There is already a user registered with this email address!\n";
-                errors = true;
-            }
+        if (email.isEmpty() || !HelperMethods.validateEmail(email)) {
+            showError("Enter a valid email address (e.g., user@example.com).");
+            highlightErrorField(emailField);
+            return;
+        }
+
+        // Check email availability
+        User userByEmail = Datasource.getInstance().getUserByEmail(email);
+        if (userByEmail != null && userByEmail.getEmail() != null) {
+            showError("Email is already registered.");
+            highlightErrorField(emailField);
+            return;
         }
 
         // Validate Password
-        if (providedPassword == null || providedPassword.isEmpty()) {
-            validationErrors += "Please enter the password!\n";
-            errors = true;
-        } else if (!HelperMethods.validatePassword(providedPassword)) {
-            validationErrors += "Password must be at least 6 and maximum 16 characters!\n";
-            errors = true;
+        if (providedPassword.isEmpty() || !HelperMethods.validatePassword(providedPassword)) {
+            showError("Password must be 6-16 characters long.");
+            highlightErrorField(passwordField);
+            return;
         }
 
-        // Display validation errors or proceed
-        if (errors) {
-            messageLabel.setText(validationErrors); // Set error message in the label
-            return; // Early exit if there are validation errors
-        }
-
-        // Proceed with user registration
         String salt = PasswordUtils.getSalt(30);
         String securePassword = PasswordUtils.generateSecurePassword(providedPassword, salt);
 
-        Task<Boolean> addUserTask = new Task<Boolean>() {
+        Task<Boolean> addUserTask = new Task<>() {
             @Override
             protected Boolean call() {
                 return Datasource.getInstance().insertNewUser(fullName, username, email, securePassword, salt);
@@ -118,38 +132,31 @@ public class RegisterController {
 
         addUserTask.setOnSucceeded(e -> {
             if (addUserTask.getValue()) {
-                User user;
                 try {
-                    user = Datasource.getInstance().getUserByEmail(email);
-                } catch (SQLException err) {
-                    err.printStackTrace();
-                    return;
-                }
+                    // Show success message with username and email
+                    HelperMethods.alertBox("Registration Successful",
+                            "Welcome!\nYour username: " + username + "\nYour email: " + email, "Insert data");
 
-                if (user != null) {
-                    UserSessionController.setUserId(user.getId());
-                    UserSessionController.setUserFullName(user.getFullname());
-                    UserSessionController.setUserName(user.getUsername());
-                    UserSessionController.setUserEmail(user.getEmail());
-                    UserSessionController.setUserAdmin(user.getAdmin());
-                    UserSessionController.setUserStatus(user.getStatus());
-
+                    // Redirect to login page
                     Node node = (Node) actionEvent.getSource();
                     dialogStage = (Stage) node.getScene().getWindow();
                     dialogStage.close();
-                    try {
-                        scene = new Scene(FXMLLoader.load(getClass().getResource(user.getAdmin() == 0 ? "/view/users/main-dashboard.fxml" : "/view/admin/main-dashboard.fxml")));
-                    } catch (IOException ioException) {
-                        ioException.printStackTrace();
-                    }
+
+                    // Load the login page and set it to the stage
+                    scene = new Scene(FXMLLoader.load(getClass().getResource("/view/login.fxml")));
                     dialogStage.setScene(scene);
                     dialogStage.show();
+
+                } catch (IOException ex) {
+                    showError("An error occurred while redirecting. Please try again.");
+                    ex.printStackTrace();
                 }
             } else {
-                messageLabel.setText("Registration failed! Please try again.");
+                showError("Registration failed. Please try again.");
             }
         });
 
         new Thread(addUserTask).start();
     }
+
 }
