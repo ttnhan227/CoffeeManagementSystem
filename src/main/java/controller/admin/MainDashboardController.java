@@ -1,15 +1,18 @@
 package controller.admin;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
 import controller.UserSessionController;
 import controller.admin.pages.CouponController;
 import controller.admin.pages.HomeController;
 import controller.admin.pages.customers.CustomerController;
-import controller.admin.pages.RevenueController;
-import controller.admin.pages.users.UsersController;
-import controller.admin.pages.products.ProductsController;
 import controller.admin.pages.orders.NewOrderController;
-import controller.admin.pages.orders.ViewOrderController;
 import controller.admin.pages.orders.UserOrdersController;
+import controller.admin.pages.orders.ViewOrderController;
+import controller.admin.pages.products.ProductsController;
 import javafx.animation.ScaleTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,13 +28,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import model.Order;
 import model.Datasource;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import model.Order;
 
 public class MainDashboardController implements Initializable {
     @FXML
@@ -49,6 +47,7 @@ public class MainDashboardController implements Initializable {
     @FXML
     public AnchorPane dashHead;
     public Button btnCoupon;
+    public Button btnRevenue;
     @FXML
     private StackPane dashContent;
     @FXML
@@ -73,10 +72,10 @@ public class MainDashboardController implements Initializable {
         controller.listProducts();
     }
 
-    public void btnCustomersOnClick(ActionEvent actionEvent) {
-        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/users/users.fxml");
-        UsersController controller = fxmlLoader.getController();
-        controller.listUsers();
+    public void btnCustomerOnClick(ActionEvent actionEvent) {
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/customers/customers.fxml");
+        CustomerController controller = fxmlLoader.getController();
+        controller.listCustomers();
     }
 
     public void btnSettingsOnClick(ActionEvent actionEvent) {
@@ -97,10 +96,6 @@ public class MainDashboardController implements Initializable {
             dialogStage.setScene(scene);
             dialogStage.show();
         }
-    }
-    public void btnCustomerOnClick(ActionEvent actionEvent) {
-        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/customers/customers.fxml");
-        CustomerController controller = fxmlLoader.getController();
     }
 
 
@@ -208,4 +203,6 @@ public class MainDashboardController implements Initializable {
         //.createLineChart();
         //controller.updateChart(2024);
     }
+
+    
 }
