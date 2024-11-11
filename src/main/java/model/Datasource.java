@@ -35,7 +35,7 @@ public class Datasource extends Product {
     public static final String COLUMN_CATEGORIES_ID = "id";
     public static final String COLUMN_CATEGORIES_NAME = "name";
     public static final String COLUMN_CATEGORIES_DESCRIPTION = "description";
-    
+
     public static final String TABLE_USERS = "users";
     public static final String COLUMN_USERS_ID = "id";
     public static final String COLUMN_USERS_FULLNAME = "fullname";
