@@ -1,0 +1,21 @@
+/* Increase the size of the chart title */
+.chart-title {
+    -fx-font-size: 20px;  /* Adjust to desired size */
+    -fx-font-weight: bold;
+}
+
+/* Increase the font size for axis labels */
+.axis-label {
+    -fx-font-size: 16px;  /* Adjust to desired size */
+    -fx-font-weight: bold;
+}
+
+/* Increase the font size for tick labels */
+.axis-tick-mark {
+    -fx-font-size: 16px;  /* Adjust to desired size */
+}
+
+.chart-bar {
+    -fx-bar-gap: 1px;     /* Reduce the gap inside each bar, if needed */
+    -fx-bar-width: 10px;  /* Adjust the width here to make bars thinner */
+}

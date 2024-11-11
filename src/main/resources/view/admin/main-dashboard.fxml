@@ -26,13 +26,14 @@
                     <AnchorPane prefWidth="127.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                              <Button fx:id="btnHome" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnHomeOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Home" />
-                              <Button fx:id="btnProducts" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnProductsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Menu" />
-                              <Button fx:id="btnNewOrder" contentDisplay="TOP" mnemonicParsing="false" onAction="#onClickNewOrder" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="New Order" />
-                              <Button fx:id="btnOrders" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnOrdersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Orders" />
-                              <Button fx:id="btnCustomers" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCustomersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Employee" />
-                              <Button fx:id="btnSettings" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnSettingsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Settings" />
-                        <Button fx:id="btnCoupon" contentDisplay="TOP" layoutX="10.0" layoutY="265.0" mnemonicParsing="false" onAction="#btnCouponOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Coupon" />
+                              <Button fx:id="btnHome" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnHomeOnClick" prefHeight="70.0" prefWidth="127.0" styleClass="menuButton" text="Home" />
+                              <Button fx:id="btnProducts" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnProductsOnClick" prefHeight="70.0" prefWidth="127.0" styleClass="menuButton" text="Menu" />
+                              <Button fx:id="btnNewOrder" contentDisplay="TOP" mnemonicParsing="false" onAction="#onClickNewOrder" prefHeight="70.0" prefWidth="127.0" styleClass="menuButton" text="New Order" />
+                              <Button fx:id="btnOrders" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnOrdersOnClick" prefHeight="70.0" prefWidth="127.0" styleClass="menuButton" text="Orders" />
+                              <Button fx:id="btnCustomers" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCustomersOnClick" prefHeight="70.0" prefWidth="127.0" styleClass="menuButton" text="Employee" />
+                              <Button fx:id="btnSettings" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnSettingsOnClick" prefHeight="70.0" prefWidth="127.0" styleClass="menuButton" text="Settings" />
+                        <Button fx:id="btnCoupon" contentDisplay="TOP" layoutX="10.0" layoutY="265.0" mnemonicParsing="false" onAction="#btnCouponOnClick" prefHeight="70.0" prefWidth="127.0" styleClass="menuButton" text="Coupon" />
+                        <Button fx:id="btnRevenue" mnemonicParsing="false" onAction="#btnRevenueOnClick" prefHeight="70.0" prefWidth="127.0" text="Revenue" />
                      </children>
                   </VBox>
                     </AnchorPane>

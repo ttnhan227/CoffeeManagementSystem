@@ -3,6 +3,7 @@ package controller.admin;
 import controller.UserSessionController;
 import controller.admin.pages.CouponController;
 import controller.admin.pages.HomeController;
+import controller.admin.pages.RevenueController;
 import controller.admin.pages.users.UsersController;
 import controller.admin.pages.products.ProductsController;
 import controller.admin.pages.orders.NewOrderController;
@@ -161,5 +162,13 @@ public class MainDashboardController implements Initializable {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/coupon.fxml");
         CouponController controller = fxmlLoader.getController();
         controller.setMainDashboardController(this);
+    }
+
+    public void btnRevenueOnClick(){
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/revenue.fxml");
+        //RevenueController controller = fxmlLoader.getController();
+        //controller.createBarChart();
+        //.createLineChart();
+        //controller.updateChart(2024);
     }
 }
