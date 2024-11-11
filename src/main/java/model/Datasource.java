@@ -974,17 +974,17 @@ public class Datasource extends Product {
              ResultSet results = statement.executeQuery(query)){
             List<Order> list = new ArrayList<>();
             while (results.next()) {
-              Order o = new Order();
-              o.setId(results.getInt("id"));
-              o.setEmployeeID((Integer) results.getObject("employeeID"));
-              o.setCustomerID((Integer) results.getObject("customerID"));
-              o.setCouponID((Integer) results.getObject("couponID"));
-              o.setTableID((Integer) results.getObject("tableID"));
-              o.setOrder_date(results.getString("orderDate"));
-              o.setTotal(results.getDouble("total"));
-              o.setDiscount(results.getInt("discount"));
-              o.setFin(results.getDouble("final"));
-              list.add(o);
+                Order o = new Order();
+                o.setId(results.getInt("id"));
+                o.setEmployeeID((Integer) results.getObject("employeeID"));
+                o.setCustomerID((Integer) results.getObject("customerID"));
+                o.setCouponID((Integer) results.getObject("couponID"));
+                o.setTableID((Integer) results.getObject("tableID"));
+                o.setOrder_date(results.getString("orderDate"));
+                o.setTotal(results.getDouble("total"));
+                o.setDiscount(results.getInt("discount"));
+                o.setFin(results.getDouble("final"));
+                list.add(o);
             }
             return list;
 
@@ -1112,7 +1112,7 @@ public class Datasource extends Product {
 
     public List<Customer> getAllCustomers(int sortOrder) {
         StringBuilder query = new StringBuilder("SELECT * FROM customer");
-        
+
         if (sortOrder != ORDER_BY_NONE) {
             query.append(" ORDER BY name");
             if (sortOrder == ORDER_BY_DESC) {
@@ -1124,7 +1124,7 @@ public class Datasource extends Product {
 
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery(query.toString())) {
-            
+
             List<Customer> customers = new ArrayList<>();
             while (results.next()) {
                 Customer customer = new Customer();
@@ -1144,7 +1144,7 @@ public class Datasource extends Product {
 
     public boolean deleteSingleCustomer(int customerId) {
         String sql = "DELETE FROM customer WHERE id = ?";
-        
+
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, customerId);
             int rows = statement.executeUpdate();
@@ -1157,7 +1157,7 @@ public class Datasource extends Product {
 
     public List<Customer> searchCustomers(String searchString, int sortOrder) {
         StringBuilder query = new StringBuilder("SELECT * FROM customer WHERE name LIKE ? OR address LIKE ? OR contact LIKE ?");
-        
+
         if (sortOrder != ORDER_BY_NONE) {
             query.append(" ORDER BY name");
             if (sortOrder == ORDER_BY_DESC) {
@@ -1172,10 +1172,10 @@ public class Datasource extends Product {
             statement.setString(1, searchPattern);
             statement.setString(2, searchPattern);
             statement.setString(3, searchPattern);
-            
+
             ResultSet results = statement.executeQuery();
             List<Customer> customers = new ArrayList<>();
-            
+
             while (results.next()) {
                 Customer customer = new Customer();
                 customer.setId(results.getInt("id"));
@@ -1194,13 +1194,13 @@ public class Datasource extends Product {
 
     public boolean insertNewCustomer(String name, String address, String contact) {
         String sql = "INSERT INTO customer (name, address, contact, points) VALUES (?, ?, ?, ?)";
-        
+
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setString(1, name);
             statement.setString(2, address);
             statement.setString(3, contact);
             statement.setInt(4, 0); // Initialize points to 0 for new customers
-            
+
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
@@ -1211,13 +1211,13 @@ public class Datasource extends Product {
 
     public boolean updateCustomer(int customerId, String name, String address, String contact) {
         String sql = "UPDATE customer SET name = ?, address = ?, contact = ? WHERE id = ?";
-        
+
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setString(1, name);
             statement.setString(2, address);
             statement.setString(3, contact);
             statement.setInt(4, customerId);
-            
+
             int affectedRows = statement.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
@@ -1230,19 +1230,19 @@ public class Datasource extends Product {
         // First delete related order details
         String deleteDetailsSQL = "DELETE FROM orderDetail WHERE orderID = ?";
         String deleteOrderSQL = "DELETE FROM [order] WHERE id = ?";
-        
+
         try (PreparedStatement detailStmt = conn.prepareStatement(deleteDetailsSQL);
              PreparedStatement orderStmt = conn.prepareStatement(deleteOrderSQL)) {
-            
+
             // Delete order details first
             detailStmt.setInt(1, orderId);
             detailStmt.executeUpdate();
-            
+
             // Then delete the order
             orderStmt.setInt(1, orderId);
             int rows = orderStmt.executeUpdate();
             return rows > 0;
-            
+
         } catch (SQLException e) {
             System.out.println("Delete failed: " + e.getMessage());
             return false;
