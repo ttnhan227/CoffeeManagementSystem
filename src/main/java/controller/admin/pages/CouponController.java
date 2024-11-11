@@ -2,15 +2,18 @@ package controller.admin.pages;
 
 import app.utils.HelperMethods;
 import controller.admin.MainDashboardController;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
+import model.Coupon;
 import model.Datasource;
+import model.Order;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -26,6 +29,14 @@ public class CouponController implements Initializable {
     public TextField discountField;
     public Button generateBtn;
     public Label statusLabel;
+    public Pagination pagination;
+    public VBox discountVBox;
+    private TableView<Coupon> tableView = new TableView<>();
+    private TableColumn<Coupon, Integer> idColumn = new TableColumn<>("ID");
+    private TableColumn<Coupon, Integer> discountColumn = new TableColumn<>("Discount(%)");
+    private TableColumn<Coupon, String> dateColumn = new TableColumn<>("Expiry");
+
+    private ObservableList<Coupon> list;
 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private MainDashboardController mainDashboardController;
@@ -34,6 +45,8 @@ public class CouponController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         statusLabel.setText("");
         loadDatePicker();
+        loadTableView();
+        pagination.setPageFactory(pageIndex -> pageIndex == 0 ? discountVBox : tableView);
     }
 
     private void loadDatePicker(){
@@ -125,7 +138,10 @@ public class CouponController implements Initializable {
 
             statusLabel.setText("Coupon saved with ID: " + couponId);
             HelperMethods.alertBox("Insert coupon to Database successfully\nNew coupon id: " + couponId, "", "DB");
-            mainDashboardController.btnHomeOnClick(new ActionEvent());
+            //mainDashboardController.btnHomeOnClick(new ActionEvent());
+            list = FXCollections.observableArrayList(Datasource.getInstance().getAllCoupon());
+            tableView.setItems(list);
+            pagination.setCurrentPageIndex(1);
         } catch (NumberFormatException e) {
             statusLabel.setText("Discount must be a valid integer.");
         } catch (SQLException e) {
@@ -146,5 +162,19 @@ public class CouponController implements Initializable {
 
     public void setMainDashboardController(MainDashboardController mainDashboardController) {
         this.mainDashboardController = mainDashboardController;
+    }
+
+    private void loadTableView(){
+        list = FXCollections.observableArrayList(Datasource.getInstance().getAllCoupon());
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        discountColumn.setCellValueFactory(new PropertyValueFactory<>("discount"));
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("expiry"));
+        idColumn.setMinWidth(200);
+        discountColumn.setMinWidth(200);
+        dateColumn.setMinWidth(200);
+        tableView.getColumns().add(idColumn);
+        tableView.getColumns().add(discountColumn);
+        tableView.getColumns().add(dateColumn);
+        tableView.setItems(list);
     }
 }
