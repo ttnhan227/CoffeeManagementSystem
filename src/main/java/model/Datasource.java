@@ -31,20 +31,11 @@ public class Datasource extends Product {
     public static final String COLUMN_PRODUCTS_IMAGE = "image";
     public static final String COLUMN_PRODUCTS_ACTIVE = "active"; // New column for isDisabled
 
-
-
     public static final String TABLE_CATEGORIES = "categories";
     public static final String COLUMN_CATEGORIES_ID = "id";
     public static final String COLUMN_CATEGORIES_NAME = "name";
     public static final String COLUMN_CATEGORIES_DESCRIPTION = "description";
-
-    public static final String TABLE_ORDERS = "orders";
-    public static final String COLUMN_ORDERS_ID = "id";
-    public static final String COLUMN_ORDERS_PRODUCT_ID = "product_id";
-    public static final String COLUMN_ORDERS_USER_ID = "user_id";
-    public static final String COLUMN_ORDERS_ORDER_DATE = "order_date";
-    public static final String COLUMN_ORDERS_ORDER_STATUS = "order_status";
-
+    
     public static final String TABLE_USERS = "users";
     public static final String COLUMN_USERS_ID = "id";
     public static final String COLUMN_USERS_FULLNAME = "fullname";
@@ -359,7 +350,6 @@ public class Datasource extends Product {
                 TABLE_USERS + "." + COLUMN_USERS_DOB + ", " +
                 TABLE_USERS + "." + COLUMN_USERS_GENDER + ", " +
                 TABLE_USERS + "." + COLUMN_USERS_PHONE + ", " +
-                " (SELECT COUNT(*) FROM " + TABLE_ORDERS + " WHERE " + TABLE_ORDERS + "." + COLUMN_ORDERS_USER_ID + " = " + TABLE_USERS + "." + COLUMN_USERS_ID + ") AS orders" + ", " +
                 TABLE_USERS + "." + COLUMN_USERS_STATUS +
                 " FROM " + TABLE_USERS +
                 " WHERE " + TABLE_USERS + "." + COLUMN_USERS_ADMIN + " = 0"
@@ -392,7 +382,7 @@ public class Datasource extends Product {
                     user.setEmail(results.getString(3));
                     user.setUsername(results.getString(4));
 
-                    // Add null checks for new fields
+                    // Handle optional fields with null checks
                     Date dob = results.getDate(5);
                     if (!results.wasNull()) {
                         user.setDateOfBirth(dob);
@@ -408,9 +398,7 @@ public class Datasource extends Product {
                     }
 
                     user.setPhoneNumber(results.getString(7));
-                    user.setOrders(results.getInt(8));
-                    user.setStatus(results.getString(9));
-
+                    user.setStatus(results.getString(8)); // Now correctly mapped to column 8
 
                     users.add(user);
                     System.out.println("Loaded user: " + user.getFullname()); // Debug print
@@ -426,6 +414,7 @@ public class Datasource extends Product {
             return new ArrayList<>(); // Return empty list instead of null
         }
     }
+
     public List<User> getOneUser(int customer_id) {
         StringBuilder queryCustomers = queryUsers();
         queryCustomers.append(" AND " + TABLE_USERS + "." + COLUMN_USERS_ID + " = ?");
@@ -550,24 +539,14 @@ public class Datasource extends Product {
             int rows = statement.executeUpdate();
             System.out.println(rows + " " + TABLE_USERS + " record(s) deleted.");
 
-
-            String sql2 = "DELETE FROM " + TABLE_ORDERS + " WHERE " + COLUMN_ORDERS_USER_ID + " = ?";
-
-            try (PreparedStatement statement2 = conn.prepareStatement(sql2)) {
-                statement2.setInt(1, customerId);
-                int rows2 = statement2.executeUpdate();
-                System.out.println(rows2 + " " + TABLE_ORDERS + " record(s) deleted.");
-                return true;
-            } catch (SQLException e) {
-                System.out.println("Query failed: " + e.getMessage());
-                return false;
-            }
+            return rows > 0; // Return true if at least one record was deleted
 
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return false;
         }
     }
+
     public User getUserByEmail(String email) throws SQLException {
 
         PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM " + TABLE_USERS + " WHERE " + COLUMN_USERS_EMAIL + " = ?");
