@@ -59,7 +59,7 @@ public class MainDashboardController implements Initializable {
 
 
     public void btnHomeOnClick(ActionEvent actionEvent) {
-        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/home/home.fxml");
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/home.fxml");
         HomeController homeController = fxmlLoader.getController();
         homeController.getDashboardProdCount();
         homeController.getDashboardCostCount();
@@ -127,7 +127,7 @@ public class MainDashboardController implements Initializable {
         applyScaleEffect(btnNewOrder);
         applyScaleEffect(btnCustomer);
 
-        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/home/home.fxml");
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/home.fxml");
         HomeController homeController = fxmlLoader.getController();
         homeController.getDashboardProdCount();
         homeController.getDashboardCostCount();

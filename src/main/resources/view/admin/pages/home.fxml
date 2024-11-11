@@ -98,18 +98,18 @@
                 </children>
             </HBox>
 
-            <!-- LineChart for displaying product and users data -->
             <LineChart fx:id="dataChart" GridPane.columnSpan="2" GridPane.rowIndex="4">
                 <xAxis>
-                    <CategoryAxis label="Category" />
+                    <CategoryAxis label="" /> <!-- Removed Category label -->
                 </xAxis>
                 <yAxis>
-                    <NumberAxis label="Count" />
+                    <NumberAxis label="" /> <!-- Removed Count label -->
                 </yAxis>
                 <padding>
                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                 </padding>
             </LineChart>
+
         </children>
     </GridPane>
 </AnchorPane>

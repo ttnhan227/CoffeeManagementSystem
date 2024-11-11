@@ -47,7 +47,7 @@ public class UserMainDashboardController implements Initializable {
 
     // On Click methods for buttons
     public void btnHomeOnClick(ActionEvent actionEvent) {
-        FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/home/home.fxml");
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/home.fxml");
         UserHomeController homeController = fxmlLoader.getController();
         homeController.getDashboardProdCount();
         homeController.getDashboardCostCount();
@@ -120,7 +120,7 @@ public class UserMainDashboardController implements Initializable {
         applyScaleEffect(lblLogOut);
 
         // Load default page (Home page)
-        FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/home/home.fxml");
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/home.fxml");
         UserHomeController homeController = fxmlLoader.getController();
         homeController.getDashboardProdCount();
         homeController.getDashboardCostCount();
