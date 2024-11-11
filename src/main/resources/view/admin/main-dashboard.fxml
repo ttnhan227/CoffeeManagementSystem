@@ -31,7 +31,7 @@
                               <Button fx:id="btnProducts" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnProductsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Menu" />
                               <Button fx:id="btnNewOrder" contentDisplay="TOP" mnemonicParsing="false" onAction="#onClickNewOrder" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="New Order" />
                               <Button fx:id="btnOrders" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnOrdersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Orders" />
-                              <Button fx:id="btnUsers" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCustomerOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Employee" />
+                              <Button fx:id="btnUsers" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnUsersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Employee" />
                         <Button fx:id="btnCoupon" contentDisplay="TOP" layoutX="10.0" layoutY="265.0" mnemonicParsing="false" onAction="#btnCouponOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Coupon" />
                         <Button fx:id="btnCustomer" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCustomerOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Customer" />
                               <Button fx:id="btnSettings" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnSettingsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Settings" />
