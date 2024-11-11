@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -1300,6 +1302,42 @@ public class Datasource extends Product {
         }
         return null;
     }
+
+    public List<OrderDetail> searchAllOrderDetailByYear(int year, int month){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String query = "SELECT * FROM [order]";
+        List<OrderDetail> list = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            //stmt.setInt(1, id);
+            ResultSet results = stmt.executeQuery();
+
+            while (results.next()) {
+                String orderDateStr = results.getString("order_date");
+
+                // Parse order date to LocalDate and extract the year
+                LocalDate orderDate = LocalDate.parse(orderDateStr, formatter);
+                int orderYear = orderDate.getYear();
+                int orderMonth = orderDate.getMonthValue();
+                if(year == orderYear && month == orderMonth){
+                    List<OrderDetail> tempList = searchAllOrderDetailByOrderID(results.getInt("id"));
+                    list.addAll(tempList);
+                }
+//                OrderDetail orderDetail = new OrderDetail();
+//                orderDetail.setId(results.getInt("id"));
+//                orderDetail.setOrderID(results.getInt("orderID"));
+//                orderDetail.setProductID(results.getInt("productID"));
+//                orderDetail.setQuantity(results.getInt("quantity"));
+//                orderDetail.setTotal(results.getDouble("total"));
+//                list.add(orderDetail);
+            }
+            return list;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
 }
 
 
