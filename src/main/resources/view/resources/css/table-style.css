@@ -1,0 +1,61 @@
+.table-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #666666;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #f0f0f0 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 5px;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.table-view .table-cell {
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 10px;
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 14px;
+}
+
+.table-view .table-column {
+    -fx-border-width: 0;
+}
+
+.table-view .virtual-flow .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-padding: -100;
+}
+
+.table-view .virtual-flow .scroll-bar:horizontal {
+    -fx-opacity: 0;
+    -fx-padding: -100;
+}
+
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    visibility: hidden;
+    -fx-padding: 0;
+    -fx-pref-height: 0;
+}
+
+.table-view .placeholder {
+    -fx-background-color: transparent;
+} 

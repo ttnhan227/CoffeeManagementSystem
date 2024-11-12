@@ -4,24 +4,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.control.Pagination;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import model.Datasource;
 import model.OrderDetail;
-import model.Product;
 
-import java.awt.print.Pageable;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class HomeController {
 
@@ -30,35 +22,76 @@ public class HomeController {
     @FXML
     public Label customersCount;
     @FXML
-    public LineChart<String, Number> dataChart;
-    public Pagination pagination;
-    public GridPane gridPane;
-
-    private VBox vbox = new VBox();
+    private TableView<OrderDetail> bestSellingTable;
 
     @FXML
     public void initialize() {
-        // Initialize the chart with product and customer data
-        setupLineChart();
-        // Load product and customer counts
+        setupBestSellingTable();
         getDashboardProdCount();
         getDashboardCostCount();
-        loadTable();
+        loadBestSellingProducts();
+        
+        // Set fixed height for the table
+        bestSellingTable.setFixedCellSize(50);
+        bestSellingTable.setPrefHeight(200); // Height for 3 rows + header + padding
+        bestSellingTable.setMaxHeight(200); // Prevent table from growing
+        bestSellingTable.setMinHeight(200); // Prevent table from shrinking
+        
+        // Prevent table from showing empty rows
+        bestSellingTable.setStyle(
+            "-fx-background-color: transparent;" +
+            "-fx-table-cell-border-color: transparent;"
+        );
     }
 
-    private void setupLineChart() {
-        XYChart.Series<String, Number> productSeries = new XYChart.Series<>();
-        productSeries.setName("Products");
+    private void setupBestSellingTable() {
+        // Create columns
+        TableColumn<OrderDetail, String> productColumn = new TableColumn<>("Product Name");
+        productColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        productColumn.setStyle("-fx-alignment: CENTER-LEFT;");
 
-        XYChart.Series<String, Number> customerSeries = new XYChart.Series<>();
-        customerSeries.setName("Customers");
+        TableColumn<OrderDetail, Integer> quantityColumn = new TableColumn<>("Quantity Sold");
+        quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        quantityColumn.setStyle("-fx-alignment: CENTER;");
 
-        // Adding placeholder values (0) initially
-        productSeries.getData().add(new XYChart.Data<>("Product Count", 0));
-        customerSeries.getData().add(new XYChart.Data<>("Employee Count", 0));
+        TableColumn<OrderDetail, Double> totalColumn = new TableColumn<>("Total Revenue");
+        totalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
+        totalColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
 
-        // Add the series to the chart
-        dataChart.getData().addAll(productSeries, customerSeries);
+        // Format the total revenue column to show currency
+        totalColumn.setCellFactory(tc -> new TableCell<OrderDetail, Double>() {
+            @Override
+            protected void updateItem(Double price, boolean empty) {
+                super.updateItem(price, empty);
+                if (empty || price == null) {
+                    setText(null);
+                } else {
+                    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "US"));
+                    setText(currencyFormat.format(price));
+                }
+            }
+        });
+
+        // Set column widths
+        productColumn.prefWidthProperty().bind(bestSellingTable.widthProperty().multiply(0.4));
+        quantityColumn.prefWidthProperty().bind(bestSellingTable.widthProperty().multiply(0.3));
+        totalColumn.prefWidthProperty().bind(bestSellingTable.widthProperty().multiply(0.3));
+
+        // Add columns to table
+        bestSellingTable.getColumns().addAll(productColumn, quantityColumn, totalColumn);
+        
+        // Style the table header
+        bestSellingTable.getStylesheets().add(getClass().getResource("/view/resources/css/table-style.css").toExternalForm());
+    }
+
+    private void loadBestSellingProducts() {
+        ObservableList<OrderDetail> products = FXCollections.observableArrayList(
+            Datasource.getInstance().getTopThreeProducts()
+        );
+        bestSellingTable.setItems(products);
+        
+        // Disable table selection
+        bestSellingTable.setSelectionModel(null);
     }
 
     public void getDashboardProdCount() {
@@ -70,13 +103,7 @@ public class HomeController {
         };
 
         getDashProdCount.setOnSucceeded(e -> {
-            int productCount = getDashProdCount.valueProperty().getValue();
-            productsCount.setText(String.valueOf(productCount));
-
-            // Update the chart with actual product count
-            XYChart.Series<String, Number> productSeries = dataChart.getData().get(0); // Products series is the first one
-            productSeries.getData().clear(); // Clear placeholder data
-            productSeries.getData().add(new XYChart.Data<>("Product Count", productCount));
+            productsCount.setText(String.valueOf(getDashProdCount.valueProperty().getValue()));
         });
 
         new Thread(getDashProdCount).start();
@@ -91,44 +118,9 @@ public class HomeController {
         };
 
         getDashCostCount.setOnSucceeded(e -> {
-            int customerCount = getDashCostCount.valueProperty().getValue();
-            customersCount.setText(String.valueOf(customerCount));
-
-            // Update the chart with actual customer count
-            XYChart.Series<String, Number> customerSeries = dataChart.getData().get(1); // Customers series is the second one
-            customerSeries.getData().clear(); // Clear placeholder data
-            customerSeries.getData().add(new XYChart.Data<>("Employee Count", customerCount));
+            customersCount.setText(String.valueOf(getDashCostCount.valueProperty().getValue()));
         });
 
         new Thread(getDashCostCount).start();
-    }
-
-    private void loadTable(){
-        vbox.setAlignment(Pos.CENTER);
-        vbox.setSpacing(10);
-        Text text = new Text("Best selling products");
-        text.setFill(Color.RED);
-        text.setFont(new Font(30));
-        TableView<OrderDetail> tableView = new TableView<>();
-        TableColumn<OrderDetail, String> productColumn = new TableColumn<>("Product Name");
-        productColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
-
-        TableColumn<OrderDetail, Integer> quantityColumn = new TableColumn<>("Quantity");
-        quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-
-        TableColumn<OrderDetail, Double> totalColumn = new TableColumn<>("Total");
-        totalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
-
-        productColumn.setMinWidth(150);
-        quantityColumn.setMinWidth(150);
-        totalColumn.setMinWidth(150);
-
-        tableView.getColumns().addAll(productColumn, quantityColumn, totalColumn);
-        ObservableList<OrderDetail> list = FXCollections.observableArrayList(Datasource.getInstance().getTopThreeProducts());
-        tableView.setItems(list);
-        vbox.getChildren().add(text);
-        vbox.getChildren().add(tableView);
-
-        pagination.setPageFactory(pageIndex -> pageIndex == 0 ? gridPane : vbox);
     }
 }
