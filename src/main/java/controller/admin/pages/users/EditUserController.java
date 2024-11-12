@@ -45,7 +45,7 @@ public class EditUserController {
     @FXML
     private void initialize() {
         // Populate the status combo box with predefined statuses
-        fieldEditCustomerStatus.setItems(FXCollections.observableArrayList("Active", "Inactive"));
+        fieldEditCustomerStatus.setItems(FXCollections.observableArrayList("enabled", "disabled"));
 
         // Populate the gender combo box with enum values
         fieldEditCustomerGender.setItems(FXCollections.observableArrayList(Gender.values()));

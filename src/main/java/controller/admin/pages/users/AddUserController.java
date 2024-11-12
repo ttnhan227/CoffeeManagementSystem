@@ -38,11 +38,11 @@ public class AddUserController {
 
     public void initializeForm() {
         // Initialize combo boxes
-        fieldCreateUserStatus.getItems().addAll("Active", "Inactive");
+        fieldCreateUserStatus.getItems().addAll("enabled", "disabled");
         fieldCreateUserGender.getItems().addAll("Male", "Female", "Other");
 
         // Set default values
-        fieldCreateUserStatus.setValue("Active");
+        fieldCreateUserStatus.setValue("enabled");
         fieldCreateUserDOB.setValue(LocalDate.now());
     }
 
