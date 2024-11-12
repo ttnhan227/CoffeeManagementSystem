@@ -1,0 +1,20 @@
+.dialog-pane {
+    -fx-background-color: #f4f4f4; /* Light background */
+    -fx-border-color: #ccc; /* Border color */
+}
+
+.dialog-pane .content.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333; /* Darker text */
+}
+
+.dialog-pane .header-panel .label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2a9d8f; /* Custom color for header */
+}
+
+.button-bar .button {
+    -fx-background-color: #2a9d8f;
+    -fx-text-fill: white;
+}

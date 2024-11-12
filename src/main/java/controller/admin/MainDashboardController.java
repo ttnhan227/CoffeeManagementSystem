@@ -91,7 +91,7 @@ public class MainDashboardController implements Initializable {
 
     public void btnLogOutOnClick(ActionEvent actionEvent) throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Are you sure that you want tbtnProductso log out?");
+        alert.setHeaderText("Are you sure that you want to log out?");
         alert.setTitle("Log Out?");
         Optional<ButtonType> result = alert.showAndWait();
 
