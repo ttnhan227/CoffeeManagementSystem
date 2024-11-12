@@ -28,7 +28,8 @@ public class LoginController {
 
     private void showError(String message) {
         messageLabel.setText(message);
-        messageLabel.getStyleClass().addAll("error-label", "visible");
+        messageLabel.setManaged(true);
+        messageLabel.getStyleClass().add("visible");
         
         // Add error style to fields
         if (usernameField.getText().isEmpty()) {
@@ -44,6 +45,7 @@ public class LoginController {
                 Thread.sleep(3000);
                 javafx.application.Platform.runLater(() -> {
                     messageLabel.getStyleClass().remove("visible");
+                    messageLabel.setManaged(false);
                     usernameField.getStyleClass().remove("error");
                     passwordField.getStyleClass().remove("error");
                 });

@@ -1,79 +1,94 @@
 .root {
-    -fx-background-image: url("../img/brand/realistic-coffee-background-with-drawings_79603-607.jpg");
-    -fx-background-size: cover;
-    -fx-background-position: bottom;
-    -fx-background-repeat: no-repeat;
+    -fx-background-color: #ffffff;
 }
 
-.anchor-pane-overlay {
-    -fx-background-color: rgba(44, 28, 20, 0.65);
+.left-side {
+    -fx-background-image: url("../img/brand/realistic-coffee-background-with-drawings_79603-607.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 0);
+}
+
+.left-side::before {
+    -fx-background-color: rgba(244, 228, 212, 0.3); /* Cream color overlay */
+    -fx-content: "";
+    -fx-position: absolute;
+    -fx-top: 0;
+    -fx-left: 0;
+    -fx-right: 0;
+    -fx-bottom: 0;
+}
+
+.right-side {
+    -fx-background-color: white;
+    -fx-padding: 40px;
+}
+
+.form-container {
+    -fx-spacing: 15;
+    -fx-alignment: center;
+    -fx-padding: 20 40;
+    -fx-max-width: 400;
 }
 
 #welcome-text {
-    -fx-fill: #f4e4d4; /* Lighter, warmer cream color */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 6, 0, 0, 2),
-                innershadow(gaussian, #d4a574, 1, 0, 0, 1); /* Added inner glow */
+    -fx-fill: #2c1c14;
     -fx-font-weight: bold;
+    -fx-font-size: 36px;
+}
+
+#text {
+    -fx-fill: #666666;
+    -fx-font-weight: normal;
 }
 
 .text-field, .password-field {
-    -fx-background-color: rgba(255, 255, 255, 0.9);
-    -fx-background-radius: 5;
-    -fx-border-radius: 5;
-    -fx-border-color: #8b5e3c;
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #e0e0e0;
     -fx-border-width: 1;
     -fx-text-fill: #2c1c14;
-    -fx-prompt-text-fill: #8b5e3c;
+    -fx-prompt-text-fill: #999999;
+    -fx-padding: 12 16;
 }
 
 .text-field:focused, .password-field:focused {
     -fx-border-color: #d4a574;
     -fx-border-width: 2;
+    -fx-background-color: #fff;
 }
 
 .button {
-    -fx-background-radius: 5;
+    -fx-background-radius: 8;
     -fx-cursor: hand;
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 6, 0, 0, 3);
-    -fx-padding: 8 16;
+    -fx-padding: 12 24;
     -fx-min-width: 200;
-    -fx-min-height: 35;
+    -fx-min-height: 45;
 }
 
 .button.success {
-    -fx-background-color: linear-gradient(to bottom, #c17f59, #8b5e3c);
-    -fx-text-fill: #ffffff;
-    -fx-border-color: #d4a574;
-    -fx-border-width: 1;
-    -fx-border-radius: 5;
+    -fx-background-color: #8b5e3c;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(139, 94, 60, 0.2), 4, 0, 0, 2);
 }
 
 .button.success:hover {
-    -fx-background-color: linear-gradient(to bottom, #d4a574, #c17f59);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 4);
-    -fx-border-color: #e6b788;
+    -fx-background-color: #a06f47;
 }
 
 .button.primary {
-    -fx-background-color: linear-gradient(to bottom, #e6b788, #d4a574);
-    -fx-text-fill: #2c1c14;
+    -fx-background-color: white;
+    -fx-text-fill: #8b5e3c;
     -fx-border-color: #8b5e3c;
-    -fx-border-width: 1;
-    -fx-border-radius: 5;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
 }
 
 .button.primary:hover {
-    -fx-background-color: linear-gradient(to bottom, #f0c79c, #e6b788);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 4);
-    -fx-border-color: #c17f59;
-}
-
-#text {
-     -fx-fill: #f4e4d4; /* Lighter, warmer cream color */
-         -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 6, 0, 0, 2),
-                     innershadow(gaussian, #d4a574, 1, 0, 0, 1); /* Added inner glow */
-         -fx-font-weight: bold;
+    -fx-background-color: #fff5eb;
 }
 
 .error-label {
@@ -89,21 +104,14 @@
     -fx-text-alignment: center;
     -fx-wrap-text: true;
     -fx-max-width: 350;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 1);
     -fx-opacity: 0;
 }
 
 .error-label.visible {
     -fx-opacity: 1;
-    -fx-transition: opacity 0.3s ease-in-out;
 }
 
-.form-container {
-    -fx-spacing: 15;
-    -fx-padding: 20;
-}
-
-.text-field:error, .password-field:error {
+.text-field.error, .password-field.error {
     -fx-border-color: #ff6b6b;
-    -fx-effect: dropshadow(gaussian, rgba(255, 107, 107, 0.2), 4, 0, 0, 0);
+    -fx-border-width: 2;
 }

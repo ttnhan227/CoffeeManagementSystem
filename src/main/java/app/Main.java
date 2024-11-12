@@ -21,7 +21,7 @@ public class Main extends Application {
         primaryStage.setTitle("Coffee Store System");
         primaryStage.getIcons().add(new Image(getClass().getResource("/view/resources/img/brand/pngtree-simple-coffee-shop-logo-png-image_13299684.png").toString()));
 
-        primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.setScene(new Scene(root, 800, 800));
         primaryStage.show();
     }
 

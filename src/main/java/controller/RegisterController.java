@@ -1,5 +1,8 @@
 package controller;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 import app.utils.HelperMethods;
 import app.utils.PasswordUtils;
 import javafx.concurrent.Task;
@@ -14,9 +17,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.Datasource;
 import model.User;
-
-import java.io.IOException;
-import java.sql.SQLException;
 
 public class RegisterController {
 
@@ -45,13 +45,15 @@ public class RegisterController {
 
     private void showError(String message) {
         messageLabel.setText(message);
-        messageLabel.getStyleClass().addAll("error-label", "visible");
+        messageLabel.setManaged(true);
+        messageLabel.getStyleClass().add("visible");
 
         new Thread(() -> {
             try {
-                Thread.sleep(15000);
+                Thread.sleep(3000);
                 javafx.application.Platform.runLater(() -> {
                     messageLabel.getStyleClass().remove("visible");
+                    messageLabel.setManaged(false);
                 });
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -61,7 +63,12 @@ public class RegisterController {
 
     private void highlightErrorField(TextField field) {
         field.getStyleClass().add("error");
-        field.setOnKeyTyped(e -> field.getStyleClass().remove("error"));
+        field.setOnKeyTyped(e -> {
+            field.getStyleClass().remove("error");
+            // Clear error message when user starts typing
+            messageLabel.getStyleClass().remove("visible");
+            messageLabel.setManaged(false);
+        });
     }
 
     public void handleRegisterButtonAction(ActionEvent actionEvent) throws SQLException {
