@@ -1,16 +1,42 @@
 /* Increase the size of the chart title */
 .chart-title {
-    -fx-font-size: 20px;  /* Adjust to desired size */
+    -fx-font-size: 24px;
     -fx-font-weight: bold;
+    -fx-text-fill: #2c1c14;
 }
 
 /* Increase the font size for axis labels */
 .axis-label {
-    -fx-font-size: 16px;  /* Adjust to desired size */
-    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #666666;
 }
 
 /* Increase the font size for tick labels */
 .axis-tick-mark {
     -fx-font-size: 16px;  /* Adjust to desired size */
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-padding: 12px;
+}
+
+.chart-plot-background {
+    -fx-background-color: white;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: #e0e0e0;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #e0e0e0;
+}
+
+.default-color0 { 
+    -fx-background-color: #8b5e3c;
+}
+
+.default-color1 {
+    -fx-background-color: #d4a574;
 }

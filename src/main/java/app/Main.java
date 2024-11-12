@@ -18,7 +18,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/view/login.fxml"));
-        primaryStage.setTitle("Coffee Store System");
+        primaryStage.setTitle("Coffee Management System");
         primaryStage.getIcons().add(new Image(getClass().getResource("/view/resources/img/brand/pngtree-simple-coffee-shop-logo-png-image_13299684.png").toString()));
 
         primaryStage.setScene(new Scene(root, 800, 800));

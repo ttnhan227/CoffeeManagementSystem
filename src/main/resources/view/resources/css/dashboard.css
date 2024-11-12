@@ -1,28 +1,24 @@
 /* General Layout and Background */
 .root, #mainContainer {
-    -fx-background-color: #F5F1EB; /* Warm beige background */
-    -fx-font-family: 'Lato', sans-serif; /* Modern, clean font */
-    -fx-font-size: 16px;
-    -fx-line-spacing: 1.6;
+    -fx-background-color: #ffffff;
+    -fx-font-family: 'Helvetica Neue', sans-serif;
+    -fx-font-size: 14px;
 }
 
 /* General Button Style */
 .button {
-    -fx-background-color: #8B5A2B; /* Dark brown accent color */
-    -fx-text-fill: #FFFFFF; /* White text color */
-    -fx-padding: 12px 24px; /* Slightly larger padding for better visual impact */
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
     -fx-background-radius: 8;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 2);
-    -fx-transition: background-color 0.3s ease;
+    -fx-font-weight: bold;
+    -fx-padding: 12 24;
+    -fx-background-color: #8b5e3c;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(139, 94, 60, 0.2), 4, 0, 0, 2);
 }
 
 /* Hover State for Button */
 .button:hover {
-    -fx-background-color: #6F4E37; /* Slightly darker brown shade */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 6, 0, 0, 3);
+    -fx-background-color: #a06f47;
 }
 
 /* Active/Pressed State for Button */
@@ -32,7 +28,7 @@
 
 /* Logout Button */
 .logout-button {
-    -fx-background-color: #C24641;
+    -fx-background-color: #ff6b6b;
     -fx-text-fill: white;
     -fx-padding: 10px 20px;
     -fx-background-radius: 8;
@@ -41,7 +37,7 @@
 }
 
 .logout-button:hover {
-    -fx-background-color: #A93F39;
+    -fx-background-color: #ff8585;
 }
 
 .logout-button:pressed {
@@ -50,10 +46,13 @@
 
 /* Dashboard Cards */
 .dashboard-card {
-    -fx-background-color: #FFFFFF; /* White background */
+    -fx-background-color: white;
     -fx-padding: 30px;
     -fx-background-radius: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 5);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
     -fx-text-fill: #5C432F; /* Dark brown text */
 }
 
@@ -170,7 +169,7 @@
 }
 
 .table-view .column-header-background {
-    -fx-background-color: #8B5A2B;
+    -fx-background-color: #8b5e3c;
 }
 
 .table-view .column-header {
@@ -180,13 +179,17 @@
 .table-view .column-header .label {
     -fx-text-fill: white;
     -fx-font-weight: bold;
+    -fx-padding: 12 16;
 }
 
 /* Chart styling */
 .chart {
-    -fx-padding: 10px;
+    -fx-padding: 20px;
     -fx-background-color: white;
-    -fx-background-radius: 10;
+    -fx-background-radius: 8;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
 }
 
 .chart-plot-background {
@@ -249,11 +252,18 @@
 /* ComboBox styling */
 .combo-box {
     -fx-background-color: white;
-    -fx-background-radius: 5;
-    -fx-border-radius: 5;
-    -fx-border-color: #dddddd;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-padding: 8;
 }
 
 .combo-box:hover {
     -fx-border-color: #8B5A2B;
+}
+
+.combo-box:focused {
+    -fx-border-color: #d4a574;
+    -fx-border-width: 2;
 }
