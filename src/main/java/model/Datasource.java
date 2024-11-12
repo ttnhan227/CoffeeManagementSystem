@@ -451,33 +451,47 @@ public class Datasource extends Product {
     }
 
     public boolean updateOneUser(int customer_id, String fullName, String username, String email,
-                                 String status, Date dateOfBirth, String phoneNumber, User.Gender gender) {
-        String sql = "UPDATE " + TABLE_USERS + " SET "
+                                 String status, Date dateOfBirth, String phoneNumber, User.Gender gender,
+                                 String hashedPassword, String salt) {
+        StringBuilder sql = new StringBuilder("UPDATE " + TABLE_USERS + " SET "
                 + COLUMN_USERS_FULLNAME + " = ?, "
                 + COLUMN_USERS_USERNAME + " = ?, "
                 + COLUMN_USERS_EMAIL + " = ?, "
                 + COLUMN_USERS_STATUS + " = ?, "
                 + COLUMN_USERS_DOB + " = ?, "
                 + COLUMN_USERS_PHONE + " = ?, "
-                + COLUMN_USERS_GENDER + " = ? "
-                + "WHERE " + COLUMN_USERS_ID + " = ? AND " + COLUMN_USERS_ADMIN + " = 0";
+                + COLUMN_USERS_GENDER + " = ?");
+        
+        // Add password and salt fields to update only if a new password is provided
+        if (hashedPassword != null) {
+            sql.append(", " + COLUMN_USERS_PASSWORD + " = ?, "
+                    + COLUMN_USERS_SALT + " = ?");
+        }
+        
+        sql.append(" WHERE " + COLUMN_USERS_ID + " = ? AND " + COLUMN_USERS_ADMIN + " = 0");
 
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setString(1, fullName);
-            statement.setString(2, username);
-            statement.setString(3, email);
-            statement.setString(4, status);
-            statement.setDate(5, new java.sql.Date(dateOfBirth.getTime()));
-            statement.setString(6, phoneNumber);
-            statement.setString(7, gender.name());  // Convert enum to string
-            statement.setInt(8, customer_id);
+        try (PreparedStatement statement = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            statement.setString(paramIndex++, fullName);
+            statement.setString(paramIndex++, username);
+            statement.setString(paramIndex++, email);
+            statement.setString(paramIndex++, status);
+            statement.setDate(paramIndex++, new java.sql.Date(dateOfBirth.getTime()));
+            statement.setString(paramIndex++, phoneNumber);
+            statement.setString(paramIndex++, gender.name());
+            
+            // Add password and salt parameters if provided
+            if (hashedPassword != null) {
+                statement.setString(paramIndex++, hashedPassword);
+                statement.setString(paramIndex++, salt);
+            }
+            
+            statement.setInt(paramIndex, customer_id);
 
-            System.out.println("Updating User: " + customer_id + ", " + fullName + ", " + email +
-                    ", " + username + ", " + status + ", " + dateOfBirth + ", " + phoneNumber + ", " + gender);
-            statement.executeUpdate();
-            return true;
+            int affectedRows = statement.executeUpdate();
+            return affectedRows > 0;
         } catch (SQLException e) {
-            System.out.println("Query failed: " + e.getMessage());
+            System.out.println("Update failed: " + e.getMessage());
             return false;
         }
     }

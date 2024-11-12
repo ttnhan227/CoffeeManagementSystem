@@ -36,8 +36,14 @@
     <Label text="Status:" layoutX="20.0" layoutY="300.0"/>
     <ComboBox fx:id="fieldEditCustomerStatus" layoutX="150.0" layoutY="300.0" prefWidth="400.0"/>
 
-    <Button text="Save" layoutX="150.0" layoutY="360.0" onAction="#btnEditCustomerOnAction"/>
-    <Text fx:id="viewCustomerResponse" layoutX="150.0" layoutY="400.0" fill="red" visible="false"/>
+    <Label text="New Password:" layoutX="20.0" layoutY="340.0"/>
+    <PasswordField fx:id="fieldEditCustomerPassword" layoutX="150.0" layoutY="340.0" prefWidth="400.0"/>
+
+    <Label text="Confirm Password:" layoutX="20.0" layoutY="380.0"/>
+    <PasswordField fx:id="fieldEditCustomerConfirmPassword" layoutX="150.0" layoutY="380.0" prefWidth="400.0"/>
+
+    <Button text="Save" layoutX="150.0" layoutY="420.0" onAction="#btnEditCustomerOnAction"/>
+    <Text fx:id="viewCustomerResponse" layoutX="150.0" layoutY="460.0" fill="red" visible="false"/>
 
     <TextField fx:id="fieldEditCustomerId" visible="false"/>
 </AnchorPane>

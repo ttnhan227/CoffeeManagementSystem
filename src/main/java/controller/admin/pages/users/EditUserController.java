@@ -1,5 +1,6 @@
 package controller.admin.pages.users;
 
+import app.utils.PasswordUtils;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -34,6 +35,12 @@ public class EditUserController {
     private Text viewCustomerResponse;
     @FXML
     private TextField fieldEditCustomerId;
+    @FXML
+    private PasswordField fieldEditCustomerPassword;
+    @FXML
+    private PasswordField fieldEditCustomerConfirmPassword;
+
+    private String currentUserSalt;
 
     @FXML
     private void initialize() {
@@ -55,11 +62,31 @@ public class EditUserController {
         Gender gender = fieldEditCustomerGender.getValue();
         String status = fieldEditCustomerStatus.getValue();
 
+        String newPassword = fieldEditCustomerPassword.getText();
+        String confirmPassword = fieldEditCustomerConfirmPassword.getText();
+
+        if (!newPassword.isEmpty() || !confirmPassword.isEmpty()) {
+            if (!newPassword.equals(confirmPassword)) {
+                viewCustomerResponse.setText("Passwords do not match!");
+                viewCustomerResponse.setVisible(true);
+                return;
+            }
+        }
+
         if (areCustomerInputsValid(fullname, email, username, phoneNumber, dob, gender, status)) {
             Task<Boolean> updateCustomerTask = new Task<Boolean>() {
                 @Override
                 protected Boolean call() {
-                    java.sql.Date sqlDateOfBirth = java.sql.Date.valueOf(dob);  // Convert LocalDate directly to java.sql.Date
+                    java.sql.Date sqlDateOfBirth = java.sql.Date.valueOf(dob);
+                    
+                    String salt = currentUserSalt;
+                    String hashedPassword = null;
+                    
+                    if (!newPassword.isEmpty()) {
+                        salt = PasswordUtils.getSalt(30);
+                        hashedPassword = PasswordUtils.generateSecurePassword(newPassword, salt);
+                    }
+
                     return Datasource.getInstance().updateOneUser(
                             customerId,
                             fullname,
@@ -68,7 +95,9 @@ public class EditUserController {
                             status,
                             sqlDateOfBirth,
                             phoneNumber,
-                            gender
+                            gender,
+                            hashedPassword,
+                            salt
                     );
                 }
             };
@@ -77,8 +106,10 @@ public class EditUserController {
                 if (updateCustomerTask.valueProperty().get()) {
                     viewCustomerResponse.setText("User updated successfully!");
                     viewCustomerResponse.setVisible(true);
+                    fieldEditCustomerPassword.clear();
+                    fieldEditCustomerConfirmPassword.clear();
                 } else {
-                    viewCustomerResponse.setText("Failed to update customer.");
+                    viewCustomerResponse.setText("Failed to update user.");
                     viewCustomerResponse.setVisible(true);
                 }
             });
@@ -109,16 +140,14 @@ public class EditUserController {
             if (users != null && !users.isEmpty()) {
                 User user = users.get(0);
 
-                // Set the ID field
-                fieldEditCustomerId.setText(String.valueOf(user.getId()));
+                currentUserSalt = user.getSalt();
 
-                // Set text fields, handling potential nulls
+                fieldEditCustomerId.setText(String.valueOf(user.getId()));
                 fieldEditCustomerName.setText(user.getFullname() != null ? user.getFullname() : "");
                 fieldEditCustomerEmail.setText(user.getEmail() != null ? user.getEmail() : "");
                 fieldEditCustomerUsername.setText(user.getUsername() != null ? user.getUsername() : "");
                 fieldEditCustomerPhone.setText(user.getPhoneNumber() != null ? user.getPhoneNumber() : "");
 
-                // Handle DatePicker field
                 if (user.getDateOfBirth() != null) {
                     fieldEditCustomerDOB.setValue(user.getDateOfBirth().toInstant()
                             .atZone(ZoneId.systemDefault())
@@ -127,21 +156,14 @@ public class EditUserController {
                     fieldEditCustomerDOB.setValue(null);
                 }
 
-                // Handle Gender ComboBox
-                fieldEditCustomerGender.setValue(user.getGender());  // ComboBox can handle null values
-
-                // Handle Status ComboBox
+                fieldEditCustomerGender.setValue(user.getGender());
                 fieldEditCustomerStatus.setValue(user.getStatus() != null ? user.getStatus() : "");
 
-                // Reset any previous error messages
                 viewCustomerResponse.setVisible(false);
 
             } else {
-                // Handle case where user is not found
                 viewCustomerResponse.setText("User not found.");
                 viewCustomerResponse.setVisible(true);
-
-                // Clear all fields
                 clearFields();
             }
         });
@@ -150,15 +172,12 @@ public class EditUserController {
             Throwable throwable = fillCustomerTask.getException();
             viewCustomerResponse.setText("Error: " + throwable.getMessage());
             viewCustomerResponse.setVisible(true);
-
-            // Clear all fields on error
             clearFields();
         });
 
         new Thread(fillCustomerTask).start();
     }
 
-    // Helper method to clear all fields
     private void clearFields() {
         fieldEditCustomerId.setText("");
         fieldEditCustomerName.setText("");
@@ -168,6 +187,8 @@ public class EditUserController {
         fieldEditCustomerDOB.setValue(null);
         fieldEditCustomerGender.setValue(null);
         fieldEditCustomerStatus.setValue(null);
+        fieldEditCustomerPassword.clear();
+        fieldEditCustomerConfirmPassword.clear();
     }
 
     private boolean areCustomerInputsValid(String fullname, String email, String username,
