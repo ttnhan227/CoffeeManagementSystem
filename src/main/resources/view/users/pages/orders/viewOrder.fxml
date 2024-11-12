@@ -172,6 +172,11 @@
                   </Text>
                </children>
             </HBox>
+            <Button fx:id="printBtn" mnemonicParsing="false" onAction="#printOnClick" prefHeight="40.0" prefWidth="150.0" text="Print" textFill="#29007c">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Button>
          </children>
       </VBox>
    </children>

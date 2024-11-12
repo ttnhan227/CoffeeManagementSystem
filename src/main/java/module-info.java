@@ -3,8 +3,7 @@ module app {
     requires javafx.fxml;
     requires java.sql;
     requires org.slf4j;
-    requires java.desktop;
-    requires javafx.graphics; // Add this line
+    requires javafx.swing; // Add this line
 
     // Export the packages you want other modules to access (if any)
     exports app;

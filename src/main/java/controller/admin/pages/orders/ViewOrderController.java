@@ -1,22 +1,31 @@
 package controller.admin.pages.orders;
 
 import controller.admin.MainDashboardController; // Ensure this imports the correct controller
+import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.WritableImage;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import model.*;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -58,6 +67,7 @@ public class ViewOrderController implements Initializable {
     public TableColumn<Product, String> categoryColumn;
     @FXML
     public Button backToOrderBtn;
+    public Button printBtn;
 
     private final ObservableList<Product> productList = FXCollections.observableArrayList();
     private ObservableList<OrderDetail> orderDetailsList;
@@ -138,5 +148,43 @@ public class ViewOrderController implements Initializable {
     @FXML
     private void toOrder() {
         mainDashboardController.btnOrdersOnClick(new ActionEvent()); // Navigate back to orders
+    }
+    @FXML
+    public void printOnClick(){
+        Node parentNode = printBtn.getParent();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save PNG");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG Files", "*.png"));
+
+        File file = fileChooser.showSaveDialog(new Stage());
+
+        if (file != null) {
+            // Ensure rendering is complete before taking the snapshot
+            Platform.runLater(() -> saveNodeAsPng(parentNode, file));
+        }
+    }
+
+    private void saveNodeAsPng(Node node, File file) {
+        try {
+            // Check and print node bounds for debugging
+            System.out.println("Node width: " + node.getBoundsInParent().getWidth());
+            System.out.println("Node height: " + node.getBoundsInParent().getHeight());
+
+            // Create the snapshot with the node's size
+            WritableImage snapshot = new WritableImage(
+                    (int) node.getBoundsInParent().getWidth(),
+                    (int) node.getBoundsInParent().getHeight()
+            );
+            node.snapshot(null, snapshot);
+
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
+
+            ImageIO.write(bufferedImage, "PNG", file);
+            System.out.println("PNG saved to: " + file.getAbsolutePath());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
