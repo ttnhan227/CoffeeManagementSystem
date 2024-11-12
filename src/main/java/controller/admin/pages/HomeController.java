@@ -33,6 +33,10 @@ public class HomeController {
     @FXML
     public Label customersCount;
     @FXML
+    public Label employeesCount;
+    @FXML
+    public Label ordersCount;
+    @FXML
     private TableView<OrderDetail> bestSellingTable;
     @FXML
     private ComboBox<Integer> yearComboBox;
@@ -51,7 +55,9 @@ public class HomeController {
     public void initialize() {
         setupBestSellingTable();
         getDashboardProdCount();
-        getDashboardCostCount();
+        getDashboardEmployeeCount();
+        getDashboardOrderCount();
+        getDashboardCustomerCount();
         loadBestSellingProducts();
         
         // Initialize revenue charts
@@ -141,19 +147,49 @@ public class HomeController {
         new Thread(getDashProdCount).start();
     }
 
-    public void getDashboardCostCount() {
-        Task<Integer> getDashCostCount = new Task<Integer>() {
+    public void getDashboardEmployeeCount() {
+        Task<Integer> getDashEmployeeCount = new Task<Integer>() {
+            @Override
+            protected Integer call() {
+                return Datasource.getInstance().countAllEmployees();
+            }
+        };
+
+        getDashEmployeeCount.setOnSucceeded(e -> {
+            employeesCount.setText(String.valueOf(getDashEmployeeCount.valueProperty().getValue()));
+        });
+
+        new Thread(getDashEmployeeCount).start();
+    }
+
+    public void getDashboardOrderCount() {
+        Task<Integer> getDashOrderCount = new Task<Integer>() {
+            @Override
+            protected Integer call() {
+                return Datasource.getInstance().countAllOrders();
+            }
+        };
+
+        getDashOrderCount.setOnSucceeded(e -> {
+            ordersCount.setText(String.valueOf(getDashOrderCount.valueProperty().getValue()));
+        });
+
+        new Thread(getDashOrderCount).start();
+    }
+
+    public void getDashboardCustomerCount() {
+        Task<Integer> getDashCustomerCount = new Task<Integer>() {
             @Override
             protected Integer call() {
                 return Datasource.getInstance().countAllCustomers();
             }
         };
 
-        getDashCostCount.setOnSucceeded(e -> {
-            customersCount.setText(String.valueOf(getDashCostCount.valueProperty().getValue()));
+        getDashCustomerCount.setOnSucceeded(e -> {
+            customersCount.setText(String.valueOf(getDashCustomerCount.valueProperty().getValue()));
         });
 
-        new Thread(getDashCostCount).start();
+        new Thread(getDashCustomerCount).start();
     }
 
     private void setupCharts() {
@@ -174,7 +210,7 @@ public class HomeController {
         lineYAxis.setTickUnit(500);
 
         // Apply CSS
-        revenueBarChart.getStylesheets().add(getClass().getResource("/view/resources/css/chart-style.css").toExternalForm());
+        revenueBarChart.getStylesheets().add(getClass().getResource("/view/resources/css/home.css").toExternalForm());
     }
 
     private void loadCombobox() {

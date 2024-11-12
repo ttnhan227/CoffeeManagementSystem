@@ -48,8 +48,8 @@
 //        lineChart.setPrefHeight(600);
 //        barChart.setCategoryGap(20);
 //
-//        barChart.getStylesheets().add(getClass().getResource("/view/resources/css/chart-style.css").toExternalForm());
-//        lineChart.getStylesheets().add(getClass().getResource("/view/resources/css/chart-style.css").toExternalForm());
+//        barChart.getStylesheets().add(getClass().getResource("/view/resources/css/home.css").toExternalForm());
+//        lineChart.getStylesheets().add(getClass().getResource("/view/resources/css/home.css").toExternalForm());
 //
 //        //loadTooltip();
 //        pagination.setPageFactory(pageIndex -> pageIndex == 0 ? barChart : lineChart);

@@ -32,6 +32,32 @@
                         <Label text="Total Employees" style="-fx-text-fill: #666666;">
                             <font><Font size="18"/></font>
                         </Label>
+                        <Label fx:id="employeesCount" text="0" style="-fx-text-fill: #2c3e50;">
+                            <font><Font size="36" name="System Bold"/></font>
+                        </Label>
+                    </VBox>
+                </StackPane>
+
+                <!-- Orders Stats Card -->
+                <StackPane styleClass="stat-card" style="-fx-background-color: white; -fx-background-radius: 10;">
+                    <Rectangle width="300" height="150" arcWidth="20" arcHeight="20" style="-fx-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);"/>
+                    <VBox alignment="CENTER" spacing="10">
+                        <Label text="Total Orders" style="-fx-text-fill: #666666;">
+                            <font><Font size="18"/></font>
+                        </Label>
+                        <Label fx:id="ordersCount" text="0" style="-fx-text-fill: #2c3e50;">
+                            <font><Font size="36" name="System Bold"/></font>
+                        </Label>
+                    </VBox>
+                </StackPane>
+
+                <!-- Customers Stats Card -->
+                <StackPane styleClass="stat-card" style="-fx-background-color: white; -fx-background-radius: 10;">
+                    <Rectangle width="300" height="150" arcWidth="20" arcHeight="20" style="-fx-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);"/>
+                    <VBox alignment="CENTER" spacing="10">
+                        <Label text="Total Customers" style="-fx-text-fill: #666666;">
+                            <font><Font size="18"/></font>
+                        </Label>
                         <Label fx:id="customersCount" text="0" style="-fx-text-fill: #2c3e50;">
                             <font><Font size="36" name="System Bold"/></font>
                         </Label>

@@ -1335,6 +1335,38 @@ public class Datasource extends Product {
 
         return orderDetails;
     }
+
+    public Integer countAllEmployees() {
+        try (Statement statement = conn.createStatement();
+             ResultSet results = statement.executeQuery("SELECT COUNT(*) FROM " + TABLE_USERS +
+                     " WHERE " + COLUMN_USERS_ADMIN + "= 1"
+             )
+        ) {
+            if (results.next()) {
+                return results.getInt(1);
+            } else {
+                return 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return 0;
+        }
+    }
+
+    public Integer countAllOrders() {
+        try (Statement statement = conn.createStatement();
+             ResultSet results = statement.executeQuery("SELECT COUNT(*) FROM [order]")
+        ) {
+            if (results.next()) {
+                return results.getInt(1);
+            } else {
+                return 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return 0;
+        }
+    }
 }
 
 
