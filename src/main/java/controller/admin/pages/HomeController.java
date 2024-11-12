@@ -80,8 +80,7 @@ public class HomeController {
         // Add columns to table
         bestSellingTable.getColumns().addAll(productColumn, quantityColumn, totalColumn);
         
-        // Style the table header
-        bestSellingTable.getStylesheets().add(getClass().getResource("/view/resources/css/table-style.css").toExternalForm());
+
     }
 
     private void loadBestSellingProducts() {
