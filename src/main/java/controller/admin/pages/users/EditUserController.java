@@ -79,8 +79,8 @@ public class EditUserController {
                 protected Boolean call() {
                     java.sql.Date sqlDateOfBirth = java.sql.Date.valueOf(dob);
                     
-                    String salt = currentUserSalt;
                     String hashedPassword = null;
+                    String salt = null;
                     
                     if (!newPassword.isEmpty()) {
                         salt = PasswordUtils.getSalt(30);
@@ -140,24 +140,27 @@ public class EditUserController {
             if (users != null && !users.isEmpty()) {
                 User user = users.get(0);
 
-                currentUserSalt = user.getSalt();
-
                 fieldEditCustomerId.setText(String.valueOf(user.getId()));
                 fieldEditCustomerName.setText(user.getFullname() != null ? user.getFullname() : "");
                 fieldEditCustomerEmail.setText(user.getEmail() != null ? user.getEmail() : "");
                 fieldEditCustomerUsername.setText(user.getUsername() != null ? user.getUsername() : "");
                 fieldEditCustomerPhone.setText(user.getPhoneNumber() != null ? user.getPhoneNumber() : "");
 
+                // Handle Date of Birth - Modified conversion
                 if (user.getDateOfBirth() != null) {
-                    fieldEditCustomerDOB.setValue(user.getDateOfBirth().toInstant()
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDate());
-                } else {
-                    fieldEditCustomerDOB.setValue(null);
+                    java.sql.Date sqlDate = (java.sql.Date) user.getDateOfBirth();
+                    fieldEditCustomerDOB.setValue(sqlDate.toLocalDate());
                 }
 
-                fieldEditCustomerGender.setValue(user.getGender());
-                fieldEditCustomerStatus.setValue(user.getStatus() != null ? user.getStatus() : "");
+                // Handle Gender
+                if (user.getGender() != null) {
+                    fieldEditCustomerGender.setValue(user.getGender());
+                }
+
+                // Handle Status
+                if (user.getStatus() != null && !user.getStatus().isEmpty()) {
+                    fieldEditCustomerStatus.setValue(user.getStatus().toLowerCase());
+                }
 
                 viewCustomerResponse.setVisible(false);
 

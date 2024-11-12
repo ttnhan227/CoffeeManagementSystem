@@ -355,7 +355,6 @@ public class Datasource extends Product {
             }
         }
 
-        System.out.println("Executing query: " + queryCustomers); // Debug print
 
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery(queryCustomers.toString())) {
@@ -405,47 +404,57 @@ public class Datasource extends Product {
     public List<User> getOneUser(int customer_id) {
         StringBuilder queryCustomers = queryUsers();
         queryCustomers.append(" AND " + TABLE_USERS + "." + COLUMN_USERS_ID + " = ?");
+        
+        System.out.println("Executing query: " + queryCustomers.toString()); // Debug print
+        
         try (PreparedStatement statement = conn.prepareStatement(queryCustomers.toString())) {
             statement.setInt(1, customer_id);
             ResultSet results = statement.executeQuery();
             List<User> users = new ArrayList<>();
 
             while (results.next()) {
+                try {
                 User user = new User();
                 user.setId(results.getInt(COLUMN_USERS_ID));
                 user.setFullname(results.getString(COLUMN_USERS_FULLNAME));
                 user.setEmail(results.getString(COLUMN_USERS_EMAIL));
                 user.setUsername(results.getString(COLUMN_USERS_USERNAME));
-                user.setOrders(results.getInt(5));  // Adjust index if necessary
-                user.setStatus(results.getString(COLUMN_USERS_STATUS));
-
-                // Safely handle potentially null date
+                
+                // Handle Date of Birth
                 Date dob = results.getDate(COLUMN_USERS_DOB);
                 if (!results.wasNull()) {
                     user.setDateOfBirth(dob);
                 }
-
-                // Safely handle potentially null phone number
-                String phone = results.getString(COLUMN_USERS_PHONE);
-                if (!results.wasNull()) {
-                    user.setPhoneNumber(phone);
-                }
-
-                // Safely handle potentially null gender
+                
+                // Handle Gender
                 String genderStr = results.getString(COLUMN_USERS_GENDER);
-                if (!results.wasNull()) {
+                if (genderStr != null && !genderStr.isEmpty()) {
                     try {
-                        user.setGender(User.Gender.valueOf(genderStr));
-                    } catch (IllegalArgumentException e) {
+                        user.setGender(User.Gender.valueOf(genderStr.toUpperCase()));
+                    } catch (IllegalArgumentException ex) {
                         System.out.println("Invalid gender value in database: " + genderStr);
                     }
                 }
-
+                
+                user.setPhoneNumber(results.getString(COLUMN_USERS_PHONE));
+                user.setStatus(results.getString(COLUMN_USERS_STATUS));
+                    
                 users.add(user);
+                    System.out.println("Found user: " + user.getFullname()); // Debug print
+                } catch (SQLException e) {
+                    System.out.println("Error processing user row: " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
+            
+            if (users.isEmpty()) {
+                System.out.println("No users found for ID: " + customer_id); // Debug print
+            }
+            
             return users;
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -1350,21 +1359,16 @@ public class Datasource extends Product {
 
     public Integer countAllEmployees() {
         String query = "SELECT COUNT(*) FROM " + TABLE_USERS + " WHERE " + COLUMN_USERS_ADMIN + " = 0";
-        System.out.println("Executing query: " + query); // Debug print
-        
+
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery(query)) {
             if (results.next()) {
-                int count = results.getInt(1);
-                System.out.println("Found " + count + " employees"); // Debug print
-                return count;
+                return results.getInt(1);
             } else {
-                System.out.println("No results found"); // Debug print
                 return 0;
             }
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
-            e.printStackTrace(); // Print full stack trace
             return 0;
         }
     }

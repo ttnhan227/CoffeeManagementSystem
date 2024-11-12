@@ -114,10 +114,8 @@ public class ProductsController {
         try {
             URL resourceUrl = getClass().getResource("/view/resources/img/coffee_pictures/");
             if (resourceUrl != null) {
-                System.out.println("Resources directory exists at: " + resourceUrl);
                 File resourceDir = new File(resourceUrl.toURI());
                 if (resourceDir.exists() && resourceDir.isDirectory()) {
-                    System.out.println("Contents of image directory:");
                     for (File file : resourceDir.listFiles()) {
                         System.out.println(" - " + file.getName());
                     }
