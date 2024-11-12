@@ -662,9 +662,7 @@ public class Datasource extends Product {
     }
     public Integer countAllCustomers() {
         try (Statement statement = conn.createStatement();
-             ResultSet results = statement.executeQuery("SELECT COUNT(*) FROM " + TABLE_USERS +
-                     " WHERE " + COLUMN_USERS_ADMIN + "= 0"
-             )
+             ResultSet results = statement.executeQuery("SELECT COUNT(*) FROM customer")
         ) {
             if (results.next()) {
                 return results.getInt(1);
@@ -1337,18 +1335,22 @@ public class Datasource extends Product {
     }
 
     public Integer countAllEmployees() {
+        String query = "SELECT COUNT(*) FROM " + TABLE_USERS + " WHERE " + COLUMN_USERS_ADMIN + " = 0";
+        System.out.println("Executing query: " + query); // Debug print
+        
         try (Statement statement = conn.createStatement();
-             ResultSet results = statement.executeQuery("SELECT COUNT(*) FROM " + TABLE_USERS +
-                     " WHERE " + COLUMN_USERS_ADMIN + "= 1"
-             )
-        ) {
+             ResultSet results = statement.executeQuery(query)) {
             if (results.next()) {
-                return results.getInt(1);
+                int count = results.getInt(1);
+                System.out.println("Found " + count + " employees"); // Debug print
+                return count;
             } else {
+                System.out.println("No results found"); // Debug print
                 return 0;
             }
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
+            e.printStackTrace(); // Print full stack trace
             return 0;
         }
     }
