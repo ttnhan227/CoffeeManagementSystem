@@ -198,13 +198,13 @@ public class MainDashboardController implements Initializable {
         controller.setMainDashboardController(this);
     }
 
-    public void btnRevenueOnClick(){
-        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/revenue.fxml");
-        //RevenueController controller = fxmlLoader.getController();
-        //controller.createBarChart();
-        //.createLineChart();
-        //controller.updateChart(2024);
-    }
+//    public void btnRevenueOnClick(){
+//        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/revenue.fxml");
+//        //RevenueController controller = fxmlLoader.getController();
+//        //controller.createBarChart();
+//        //.createLineChart();
+//        //controller.updateChart(2024);
+//    }
 
 
 }
