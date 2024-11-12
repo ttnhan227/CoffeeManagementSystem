@@ -36,6 +36,12 @@ public class EditProductController extends ProductsController {
     private File selectedImageFile; // New
     private static final String IMAGE_UPLOAD_PATH = "/view/resources/img/coffee_pictures/"; // New
 
+    private Runnable onProductEdited;
+
+    public void setOnProductEdited(Runnable callback) {
+        this.onProductEdited = callback;
+    }
+
     @FXML
     private void initialize() {
         fieldEditProductCategoryId.setItems(FXCollections.observableArrayList(Datasource.getInstance().getProductCategories(Datasource.ORDER_BY_ASC)));
@@ -94,9 +100,8 @@ public class EditProductController extends ProductsController {
     @FXML
     private void btnEditProductOnAction() {
         Categories category = fieldEditProductCategoryId.getSelectionModel().getSelectedItem();
-        int cat_id = category != null ? category.getId() : 0; // Only set if a category is selected
+        int cat_id = category != null ? category.getId() : 0;
 
-        // Validate the product inputs
         if (areProductInputsValid(
                 fieldEditProductName.getText(),
                 fieldEditProductDescription.getText(),
@@ -109,16 +114,10 @@ public class EditProductController extends ProductsController {
             String productDescription = fieldEditProductDescription.getText();
             double productPrice = Double.parseDouble(fieldEditProductPrice.getText());
             int productQuantity = Integer.parseInt(fieldEditProductQuantity.getText());
-
-            // Attempt to save the new image
-            String newImagePath = saveImageFile(); // This will return null if no new image was selected
-
-            // If no new image is selected, retain the existing image path
+            String newImagePath = saveImageFile();
             String finalImagePath = (newImagePath != null) ? newImagePath : getCurrentImagePath(productId);
-            boolean isEnabled = true; // Change this logic as per your requirements
+            boolean isEnabled = true;
 
-
-            // Prepare and execute update task
             Task<Boolean> editProductTask = new Task<Boolean>() {
                 @Override
                 protected Boolean call() {
@@ -132,7 +131,11 @@ public class EditProductController extends ProductsController {
                 if (editProductTask.valueProperty().get()) {
                     viewProductResponse.setVisible(true);
                     System.out.println("Product edited!");
-                    clearForm(); // Optionally clear the form
+                    
+                    // Notify parent and refresh
+                    if (onProductEdited != null) {
+                        onProductEdited.run();
+                    }
                 }
             });
 

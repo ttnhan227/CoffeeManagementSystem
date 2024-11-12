@@ -26,6 +26,8 @@
     -fx-font-size: 36px;
     -fx-fill: #2c1c14;
     -fx-font-weight: bold;
+    -fx-text-fill: #4F321D;
+    -fx-padding: 30 0 30 0;
 }
 
 /* Label Styles */

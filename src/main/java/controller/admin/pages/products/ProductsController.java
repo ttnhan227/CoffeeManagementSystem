@@ -15,6 +15,9 @@ import javafx.util.StringConverter;
 import model.Datasource;
 import model.Product;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
+import javafx.stage.Modality;
+import javafx.scene.Scene;
 
 import java.io.File;
 import java.net.URL;
@@ -318,13 +321,29 @@ public class ProductsController {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/admin/pages/products/add-product.fxml"));
             AnchorPane root = fxmlLoader.load();
 
+            // Create new stage for popup
+            Stage popupStage = new Stage();
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.setTitle("Add New Product");
+
+            // Apply CSS
+            Scene scene = new Scene(root);
             URL cssUrl = getClass().getResource("/css/form.css");
             if (cssUrl != null) {
-                root.getStylesheets().add(cssUrl.toExternalForm());
+                scene.getStylesheets().add(cssUrl.toExternalForm());
             }
 
-            productsContent.getChildren().clear();
-            productsContent.getChildren().add(root);
+            popupStage.setScene(scene);
+
+            // Get the controller and set up callback for refresh
+            AddProductController controller = fxmlLoader.getController();
+            controller.setOnProductAdded(() -> {
+                listProducts();
+                popupStage.close();
+            });
+
+            // Show the popup
+            popupStage.showAndWait();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -337,16 +356,32 @@ public class ProductsController {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/admin/pages/products/edit-product.fxml"));
             AnchorPane root = fxmlLoader.load();
 
+            // Create new stage for popup
+            Stage popupStage = new Stage();
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.setTitle("Edit Product");
+
+            // Apply CSS
+            Scene scene = new Scene(root);
             URL cssUrl = getClass().getResource("/css/form.css");
             if (cssUrl != null) {
-                root.getStylesheets().add(cssUrl.toExternalForm());
+                scene.getStylesheets().add(cssUrl.toExternalForm());
             }
 
-            productsContent.getChildren().clear();
-            productsContent.getChildren().add(root);
+            popupStage.setScene(scene);
 
+            // Get the controller and set up callback for refresh
             EditProductController controller = fxmlLoader.getController();
+            controller.setOnProductEdited(() -> {
+                listProducts();
+                popupStage.close();
+            });
+            
+            // Fill the form with product data
             controller.fillEditingProductFields(product_id);
+
+            // Show the popup
+            popupStage.showAndWait();
 
         } catch (IOException e) {
             e.printStackTrace();

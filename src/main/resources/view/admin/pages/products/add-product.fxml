@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1280.0" styleClass="root" stylesheets="@../../../resources/css/form.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.admin.pages.products.AddProductController">
+<AnchorPane prefHeight="200.0" prefWidth="400.0" styleClass="root" stylesheets="@../../../resources/css/form.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.admin.pages.products.AddProductController">
     <children>
         <VBox alignment="CENTER" spacing="40" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
             <!-- Title -->

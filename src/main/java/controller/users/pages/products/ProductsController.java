@@ -1,5 +1,4 @@
 package controller.users.pages.products;
-import javafx.geometry.Insets;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import app.utils.HelperMethods;
@@ -12,16 +11,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 import model.Datasource;
 import model.Product;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-
+import javafx.stage.Stage;
+import javafx.stage.Modality;
+import javafx.scene.Scene;
 
 import java.io.File;
 import java.net.URL;
@@ -34,7 +30,6 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 public class ProductsController {
-
 
     @FXML
     public TextField fieldProductsSearch;
@@ -49,6 +44,8 @@ public class ProductsController {
     @FXML
     private TableView<Product> tableProductsPage;
     private TableColumn<Product, Void> colBtnEdit;
+    @FXML
+    private Button toggleStatusButton;
 
     public static TextFormatter<Double> formatDoubleField() {
         Pattern validEditingState = Pattern.compile("-?(([1-9][0-9]*)|0)?(\\.[0-9]*)?");
@@ -120,10 +117,8 @@ public class ProductsController {
         try {
             URL resourceUrl = getClass().getResource("/view/resources/img/coffee_pictures/");
             if (resourceUrl != null) {
-                System.out.println("Resources directory exists at: " + resourceUrl);
                 File resourceDir = new File(resourceUrl.toURI());
                 if (resourceDir.exists() && resourceDir.isDirectory()) {
-                    System.out.println("Contents of image directory:");
                     for (File file : resourceDir.listFiles()) {
                         System.out.println(" - " + file.getName());
                     }
@@ -149,7 +144,6 @@ public class ProductsController {
 
         if (imageColumn != null) {
             imageColumn.setCellValueFactory(null);
-
             imageColumn.setCellFactory(col -> new TableCell<Product, ImageView>() {
                 @Override
                 protected void updateItem(ImageView item, boolean empty) {
@@ -174,13 +168,14 @@ public class ProductsController {
         Task<ObservableList<Product>> getAllProductsTask = new Task<ObservableList<Product>>() {
             @Override
             protected ObservableList<Product> call() {
-                return FXCollections.observableArrayList(Datasource.getInstance().getAllProducts(Datasource.ORDER_BY_CREATION_DATE_DESC));
+                return FXCollections.observableArrayList(Datasource.getInstance().getAllProducts(Datasource.ORDER_BY_CREATION_DATE_DESC)); // Order by newest first
             }
         };
 
         getAllProductsTask.setOnSucceeded(e -> {
             productsContainer.getChildren().clear();
             ObservableList<Product> products = getAllProductsTask.getValue();
+            // Add products in reverse order to show newest first
             for (int i = products.size() - 1; i >= 0; i--) {
                 try {
                     addProductCard(products.get(i));
@@ -197,6 +192,7 @@ public class ProductsController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/users/pages/products/product-card.fxml"));
         VBox productCard = loader.load();
 
+        // Get UI elements
         ImageView productImage = (ImageView) productCard.lookup("#productImage");
         Text productName = (Text) productCard.lookup("#productName");
         Text productCategory = (Text) productCard.lookup("#productCategory");
@@ -208,6 +204,7 @@ public class ProductsController {
         productImage.setOnMouseClicked(event -> showProductDescription(product));
         updateProductCardStatus(product, productCard, productName, toggleStatusButton);
 
+        // Toggle status button action
         toggleStatusButton.setOnAction(event -> {
             product.setDisabled(!product.isDisabled());
             if (Datasource.getInstance().updateProductStatus(product.getId(), product.isDisabled())) {
@@ -217,6 +214,7 @@ public class ProductsController {
             }
         });
 
+        // Load image asynchronously
         Task<Image> loadImageTask = new Task<Image>() {
             @Override
             protected Image call() {
@@ -246,12 +244,14 @@ public class ProductsController {
         loadImageTask.setOnFailed(event -> productImage.setImage(DEFAULT_IMAGE));
         new Thread(loadImageTask).start();
 
+        // Set product information
         productName.setText(product.getName());
         productCategory.setText(product.getCategory_name());
         productPrice.setText(String.format("$%.2f", product.getPrice()));
         productStock.setText(String.format("Stock: %d", product.getQuantity()));
         productCard.setStyle(productCard.getStyle() + "; -fx-cursor: hand;");
 
+        // Set up edit button action
         editButton.setOnAction(event -> btnEditProduct(product.getId()));
 
         productsContainer.getChildren().add(productCard);
@@ -280,41 +280,8 @@ public class ProductsController {
         alert.setTitle(product.getName() + " Description");
         alert.setHeaderText(null);
         alert.setContentText(product.getDescription());
-
         alert.getButtonTypes().setAll(ButtonType.OK);
         alert.showAndWait();
-    }
-
-    @FXML
-    private void addActionButtonsToTable() {
-        if (colBtnEdit == null) {
-            colBtnEdit = new TableColumn<>("Actions");
-
-            Callback<TableColumn<Product, Void>, TableCell<Product, Void>> cellFactory = param -> new TableCell<Product, Void>() {
-                private final Button editButton = new Button("Edit");
-                private final HBox buttonsPane = new HBox();
-
-                {
-                    editButton.getStyleClass().addAll("button", "xs", "primary");
-                    editButton.setOnAction((ActionEvent event) -> {
-                        Product productData = getTableView().getItems().get(getIndex());
-                        btnEditProduct(productData.getId());
-                    });
-
-                    buttonsPane.setSpacing(10);
-                    buttonsPane.getChildren().add(editButton);
-                }
-
-                @Override
-                public void updateItem(Void item, boolean empty) {
-                    super.updateItem(item, empty);
-                    setGraphic(empty ? null : buttonsPane);
-                }
-            };
-
-            colBtnEdit.setCellFactory(cellFactory);
-            tableProductsPage.getColumns().add(colBtnEdit);
-        }
     }
 
     @FXML
@@ -354,13 +321,29 @@ public class ProductsController {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/users/pages/products/add-product.fxml"));
             AnchorPane root = fxmlLoader.load();
 
+            // Create new stage for popup
+            Stage popupStage = new Stage();
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.setTitle("Add New Product");
+
+            // Apply CSS
+            Scene scene = new Scene(root);
             URL cssUrl = getClass().getResource("/css/form.css");
             if (cssUrl != null) {
-                root.getStylesheets().add(cssUrl.toExternalForm());
+                scene.getStylesheets().add(cssUrl.toExternalForm());
             }
 
-            productsContent.getChildren().clear();
-            productsContent.getChildren().add(root);
+            popupStage.setScene(scene);
+
+            // Get the controller and set up callback for refresh
+            AddProductController controller = fxmlLoader.getController();
+            controller.setOnProductAdded(() -> {
+                listProducts();
+                popupStage.close();
+            });
+
+            // Show the popup
+            popupStage.showAndWait();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -373,16 +356,32 @@ public class ProductsController {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/users/pages/products/edit-product.fxml"));
             AnchorPane root = fxmlLoader.load();
 
+            // Create new stage for popup
+            Stage popupStage = new Stage();
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.setTitle("Edit Product");
+
+            // Apply CSS
+            Scene scene = new Scene(root);
             URL cssUrl = getClass().getResource("/css/form.css");
             if (cssUrl != null) {
-                root.getStylesheets().add(cssUrl.toExternalForm());
+                scene.getStylesheets().add(cssUrl.toExternalForm());
             }
 
-            productsContent.getChildren().clear();
-            productsContent.getChildren().add(root);
+            popupStage.setScene(scene);
 
+            // Get the controller and set up callback for refresh
             EditProductController controller = fxmlLoader.getController();
+            controller.setOnProductEdited(() -> {
+                listProducts();
+                popupStage.close();
+            });
+
+            // Fill the form with product data
             controller.fillEditingProductFields(product_id);
+
+            // Show the popup
+            popupStage.showAndWait();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -391,11 +390,8 @@ public class ProductsController {
 
     @FXML
     boolean areProductInputsValid(String fieldAddProductName, String fieldAddProductDescription, String fieldAddProductPrice, String fieldAddProductQuantity, int productCategoryId) {
-        // TODO
-        //  Better validate inputs.
         System.out.println("TODO: Better validate inputs.");
         String errorMessage = "";
-
 
         if (fieldAddProductName == null || fieldAddProductName.length() < 3) {
             errorMessage += "please enter a valid name!\n";
@@ -406,7 +402,6 @@ public class ProductsController {
         if (!HelperMethods.validateProductPrice(fieldAddProductPrice)) {
             errorMessage += "Price is not valid!\n";
         }
-
         if (!HelperMethods.validateProductQuantity(fieldAddProductQuantity)) {
             errorMessage += "Not valid quantity!\n";
         }
@@ -414,18 +409,15 @@ public class ProductsController {
         if (errorMessage.length() == 0) {
             return true;
         } else {
-            // Show the error message.
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Invalid Fields");
             alert.setHeaderText("Please correct invalid fields");
             alert.setContentText(errorMessage);
-
             alert.showAndWait();
-
             return false;
         }
-
     }
+
     @FXML
     public void btnManageCategoryOnClick(ActionEvent actionEvent) {
         try {

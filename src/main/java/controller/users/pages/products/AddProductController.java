@@ -31,6 +31,12 @@ public class AddProductController extends ProductsController {
     private File selectedImageFile; // New
     private static final String IMAGE_UPLOAD_PATH = "/view/resources/img/coffee_pictures/"; // New
 
+    private Runnable onProductAdded;
+
+    public void setOnProductAdded(Runnable callback) {
+        this.onProductAdded = callback;
+    }
+
     @FXML
     private void initialize() {
         fieldAddProductCategoryId.setItems(FXCollections.observableArrayList(
@@ -105,7 +111,7 @@ public class AddProductController extends ProductsController {
             int productQuantity = Integer.parseInt(fieldAddProductQuantity.getText());
             int productCategoryId = category.getId();
             String imagePath = saveImageFile();
-            boolean isEnabled = true; // Change this logic as per your requirements
+            boolean isEnabled = true;
 
             Task<Boolean> addProductTask = new Task<Boolean>() {
                 @Override
@@ -124,8 +130,10 @@ public class AddProductController extends ProductsController {
                     // Clear the form
                     clearForm();
 
-                    // Refresh the products list
-                    listProducts();
+                    // Notify parent and refresh
+                    if (onProductAdded != null) {
+                        onProductAdded.run();
+                    }
                 }
             });
 
