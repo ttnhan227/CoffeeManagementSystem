@@ -48,9 +48,7 @@ public class UserMainDashboardController implements Initializable {
     // On Click methods for buttons
     public void btnHomeOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/home.fxml");
-        UserHomeController homeController = fxmlLoader.getController();
-        homeController.getDashboardProdCount();
-        homeController.getDashboardCostCount();
+
     }
 
     public void btnOrdersOnClick(ActionEvent actionEvent) {
@@ -121,9 +119,7 @@ public class UserMainDashboardController implements Initializable {
 
         // Load default page (Home page)
         FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/home.fxml");
-        UserHomeController homeController = fxmlLoader.getController();
-        homeController.getDashboardProdCount();
-        homeController.getDashboardCostCount();
+
     }
 
     private void applyScaleEffect(Button button) {

@@ -7,13 +7,13 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.chart.*?>
 
-<AnchorPane style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.admin.pages.HomeController">
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.admin.pages.HomeController">
     <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <VBox spacing="20" style="-fx-padding: 20;">
             <!-- Stats Cards Container -->
             <HBox spacing="20">
                 <!-- Products Stats Card -->
-                <StackPane styleClass="stat-card" style="-fx-background-color: white; -fx-background-radius: 10;">
+                <StackPane styleClass="stat-card">
                     <Rectangle width="300" height="150" arcWidth="20" arcHeight="20" style="-fx-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);"/>
                     <VBox alignment="CENTER" spacing="10">
                         <Label text="Total Products" style="-fx-text-fill: #666666;">
@@ -26,7 +26,7 @@
                 </StackPane>
 
                 <!-- Employees Stats Card -->
-                <StackPane styleClass="stat-card" style="-fx-background-color: white; -fx-background-radius: 10;">
+                <StackPane styleClass="stat-card">
                     <Rectangle width="300" height="150" arcWidth="20" arcHeight="20" style="-fx-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);"/>
                     <VBox alignment="CENTER" spacing="10">
                         <Label text="Total Employees" style="-fx-text-fill: #666666;">
@@ -39,7 +39,7 @@
                 </StackPane>
 
                 <!-- Orders Stats Card -->
-                <StackPane styleClass="stat-card" style="-fx-background-color: white; -fx-background-radius: 10;">
+                <StackPane styleClass="stat-card">
                     <Rectangle width="300" height="150" arcWidth="20" arcHeight="20" style="-fx-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);"/>
                     <VBox alignment="CENTER" spacing="10">
                         <Label text="Total Orders" style="-fx-text-fill: #666666;">
@@ -52,7 +52,7 @@
                 </StackPane>
 
                 <!-- Customers Stats Card -->
-                <StackPane styleClass="stat-card" style="-fx-background-color: white; -fx-background-radius: 10;">
+                <StackPane styleClass="stat-card">
                     <Rectangle width="300" height="150" arcWidth="20" arcHeight="20" style="-fx-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);"/>
                     <VBox alignment="CENTER" spacing="10">
                         <Label text="Total Customers" style="-fx-text-fill: #666666;">
@@ -66,7 +66,7 @@
             </HBox>
 
             <!-- Best Selling Products Table -->
-            <VBox spacing="10" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+            <VBox spacing="10" style="-fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
                 <Label text="Top 3 Best Selling Products" style="-fx-text-fill: #2c3e50;">
                     <font><Font size="24" name="System Bold"/></font>
                 </Label>
@@ -86,7 +86,7 @@
                     </Label>
                     <ComboBox fx:id="yearComboBox" prefWidth="120"/>
                 </HBox>
-                
+
                 <HBox spacing="20">
                     <!-- Bar Chart -->
                     <VBox HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 10;">
@@ -95,7 +95,7 @@
                             <yAxis><NumberAxis side="LEFT"/></yAxis>
                         </BarChart>
                     </VBox>
-                    
+
                     <!-- Line Chart -->
                     <VBox HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 10;">
                         <LineChart fx:id="growthLineChart" prefHeight="400" legendVisible="false">

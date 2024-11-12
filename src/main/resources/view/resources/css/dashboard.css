@@ -144,3 +144,112 @@
 .header-container h1 {
     -fx-margin: 0;
 }
+
+/* Add these styles at the end of the file */
+
+/* ScrollPane styling */
+.scroll-pane {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Stat card styling */
+.stat-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+}
+
+/* Table styling */
+.table-view {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #8B5A2B;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+/* Chart styling */
+.chart {
+    -fx-padding: 10px;
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+}
+
+.chart-plot-background {
+    -fx-background-color: white;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: #dddddd;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #dddddd;
+}
+
+/* Bar Chart specific styling */
+.bar-chart {
+    -fx-background-color: white;
+}
+
+.bar-chart .chart-content {
+    -fx-background-color: white;
+}
+
+.bar-chart .plot-content {
+    -fx-background-color: white;
+}
+
+/* Line Chart specific styling */
+.line-chart {
+    -fx-background-color: white;
+}
+
+.line-chart .chart-content {
+    -fx-background-color: white;
+}
+
+.line-chart .plot-content {
+    -fx-background-color: white;
+}
+
+/* Chart Legend styling */
+.chart-legend {
+    -fx-background-color: transparent;
+}
+
+/* Axis styling */
+.axis {
+    -fx-tick-label-fill: #666666;
+}
+
+.axis-label {
+    -fx-text-fill: #666666;
+}
+
+/* Chart title styling */
+.chart-title {
+    -fx-text-fill: #2c3e50;
+}
+
+/* ComboBox styling */
+.combo-box {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #dddddd;
+}
+
+.combo-box:hover {
+    -fx-border-color: #8B5A2B;
+}
