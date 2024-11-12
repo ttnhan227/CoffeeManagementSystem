@@ -1,11 +1,27 @@
 package controller.admin.pages;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import model.Datasource;
+import model.OrderDetail;
+import model.Product;
+
+import java.awt.print.Pageable;
 
 public class HomeController {
 
@@ -15,6 +31,10 @@ public class HomeController {
     public Label customersCount;
     @FXML
     public LineChart<String, Number> dataChart;
+    public Pagination pagination;
+    public GridPane gridPane;
+
+    private VBox vbox = new VBox();
 
     @FXML
     public void initialize() {
@@ -23,6 +43,7 @@ public class HomeController {
         // Load product and customer counts
         getDashboardProdCount();
         getDashboardCostCount();
+        loadTable();
     }
 
     private void setupLineChart() {
@@ -80,5 +101,34 @@ public class HomeController {
         });
 
         new Thread(getDashCostCount).start();
+    }
+
+    private void loadTable(){
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setSpacing(10);
+        Text text = new Text("Top 3 best selling products");
+        text.setFill(Color.RED);
+        text.setFont(new Font(30));
+        TableView<OrderDetail> tableView = new TableView<>();
+        TableColumn<OrderDetail, String> productColumn = new TableColumn<>("Product Name");
+        productColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
+
+        TableColumn<OrderDetail, Integer> quantityColumn = new TableColumn<>("Quantity");
+        quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+
+        TableColumn<OrderDetail, Double> totalColumn = new TableColumn<>("Total");
+        totalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
+
+        productColumn.setMinWidth(150);
+        quantityColumn.setMinWidth(150);
+        totalColumn.setMinWidth(150);
+
+        tableView.getColumns().addAll(productColumn, quantityColumn, totalColumn);
+        ObservableList<OrderDetail> list = FXCollections.observableArrayList(Datasource.getInstance().getTopThreeProducts());
+        tableView.setItems(list);
+        vbox.getChildren().add(text);
+        vbox.getChildren().add(tableView);
+
+        pagination.setPageFactory(pageIndex -> pageIndex == 0 ? gridPane : vbox);
     }
 }

@@ -6,6 +6,7 @@ public class OrderDetail {
     private int productID;
     private int quantity;
     private Double total;
+    private String productName;
 
     public int getId() {
         return id;
@@ -27,6 +28,10 @@ public class OrderDetail {
         return total;
     }
 
+    public String getProductName() {
+        return productName;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -45,5 +50,9 @@ public class OrderDetail {
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 }

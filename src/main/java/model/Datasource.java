@@ -1305,6 +1305,36 @@ public class Datasource extends Product {
         return null;
     }
 
+    public List<OrderDetail> getTopThreeProducts(){
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        String query =
+                "SELECT od.productID, p.name, SUM(od.quantity) AS quantity, SUM(od.total) AS total " +
+                        "FROM orderDetail od " +
+                        "JOIN products p ON od.productID = p.id " +
+                        "GROUP BY od.productID " +
+                        "ORDER BY total DESC " +
+                        "LIMIT 3";
+        try (PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int productID = rs.getInt("productID");
+                String productName = rs.getString("name");
+                int quantity = rs.getInt("quantity");
+                double total = rs.getDouble("total");
+                OrderDetail detail = new OrderDetail();
+                detail.setProductID(productID);
+                detail.setQuantity(quantity);
+                detail.setProductName(productName);
+                detail.setTotal(total);
+                orderDetails.add(detail);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return orderDetails;
+    }
 }
 
 

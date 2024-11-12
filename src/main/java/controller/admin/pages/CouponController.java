@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
@@ -35,8 +36,10 @@ public class CouponController implements Initializable {
     private TableColumn<Coupon, Integer> idColumn = new TableColumn<>("ID");
     private TableColumn<Coupon, Integer> discountColumn = new TableColumn<>("Discount(%)");
     private TableColumn<Coupon, String> dateColumn = new TableColumn<>("Expiry");
+    private  VBox vbox = new VBox();
 
     private ObservableList<Coupon> list;
+    private ObservableList<Coupon> filteredList = FXCollections.observableArrayList();
 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private MainDashboardController mainDashboardController;
@@ -46,7 +49,7 @@ public class CouponController implements Initializable {
         statusLabel.setText("");
         loadDatePicker();
         loadTableView();
-        pagination.setPageFactory(pageIndex -> pageIndex == 0 ? discountVBox : tableView);
+        pagination.setPageFactory(pageIndex -> pageIndex == 0 ? discountVBox : vbox);
     }
 
     private void loadDatePicker(){
@@ -140,7 +143,9 @@ public class CouponController implements Initializable {
             HelperMethods.alertBox("Insert coupon to Database successfully\nNew coupon id: " + couponId, "", "DB");
             //mainDashboardController.btnHomeOnClick(new ActionEvent());
             list = FXCollections.observableArrayList(Datasource.getInstance().getAllCoupon());
-            tableView.setItems(list);
+//            filteredList.addAll(list);
+//            tableView.setItems(filteredList);
+            applyFilter("");
             pagination.setCurrentPageIndex(1);
         } catch (NumberFormatException e) {
             statusLabel.setText("Discount must be a valid integer.");
@@ -165,7 +170,10 @@ public class CouponController implements Initializable {
     }
 
     private void loadTableView(){
+        vbox.setSpacing(10);
+        vbox.setAlignment(Pos.CENTER);
         list = FXCollections.observableArrayList(Datasource.getInstance().getAllCoupon());
+        filteredList.addAll(list);
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         discountColumn.setCellValueFactory(new PropertyValueFactory<>("discount"));
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("expiry"));
@@ -175,6 +183,24 @@ public class CouponController implements Initializable {
         tableView.getColumns().add(idColumn);
         tableView.getColumns().add(discountColumn);
         tableView.getColumns().add(dateColumn);
-        tableView.setItems(list);
+        tableView.setItems(filteredList);
+
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search by id");
+        searchField.textProperty().addListener((obs, oldText, newText) -> applyFilter(newText));
+        searchField.setMinWidth(150);
+        searchField.setMaxWidth(200);
+
+        vbox.getChildren().add(searchField);
+        vbox.getChildren().add(tableView);
+    }
+
+    private void applyFilter(String search){
+        filteredList.clear();
+        if(search.isEmpty()){
+            filteredList.addAll(list);
+            return;
+        }
+        filteredList.addAll(list.filtered(coupon -> String.valueOf(coupon.getId()).contains(search)));
     }
 }
