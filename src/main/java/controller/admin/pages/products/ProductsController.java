@@ -423,8 +423,22 @@ public class ProductsController {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/admin/pages/products/categories.fxml"));
             AnchorPane root = fxmlLoader.load();
-            productsContent.getChildren().clear();
-            productsContent.getChildren().add(root);
+
+            // Create new stage for popup
+            Stage popupStage = new Stage();
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.setTitle("Manage Categories");
+
+            // Apply CSS
+            Scene scene = new Scene(root);
+            URL cssUrl = getClass().getResource("/css/form.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
+            popupStage.setScene(scene);
+            popupStage.showAndWait();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

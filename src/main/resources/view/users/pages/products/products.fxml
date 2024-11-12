@@ -28,14 +28,14 @@
                     <padding>
                         <Insets bottom="20.0" top="20.0" />
                     </padding>
-                    <Text fontSmoothingType="LCD" styleClass="page-title" text="Menu">
-                        <font>
-                            <Font name="SansSerif Bold Italic" size="43.0" />
-                        </font>
-                        <effect>
-                            <Reflection fraction="0.66" topOpacity="0.19" />
-                        </effect>
-                    </Text>
+<!--                    <Text fontSmoothingType="LCD" styleClass="page-title" text="Menu">-->
+<!--                        <font>-->
+<!--                            <Font name="SansSerif Bold Italic" size="43.0" />-->
+<!--                        </font>-->
+<!--                        <effect>-->
+<!--                            <Reflection fraction="0.66" topOpacity="0.19" />-->
+<!--                        </effect>-->
+<!--                    </Text>-->
                     <GridPane alignment="CENTER_RIGHT">
                         <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -45,7 +45,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         </rowConstraints>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                            <TextField fx:id="fieldProductsSearch" layoutX="1.0" layoutY="2.0" prefHeight="25.0" prefWidth="291.0" promptText="Search coffee..." styleClass="search-field" />
+                            <TextField fx:id="fieldProductsSearch" layoutX="1.0" layoutY="2.0" prefHeight="25.0" prefWidth="291.0" promptText="Search coffee by name or type..." styleClass="search-field" />
                             <Button layoutX="300.0" layoutY="2.0" mnemonicParsing="false" onAction="#btnProductsSearchOnAction" prefHeight="26.0" styleClass="button,info,sm" text="Search" />
                         </AnchorPane>
                         <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.columnIndex="1">

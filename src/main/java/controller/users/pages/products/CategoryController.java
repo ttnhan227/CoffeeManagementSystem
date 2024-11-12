@@ -4,10 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import model.Categories;
 import model.Datasource;
 
@@ -17,108 +15,127 @@ public class CategoryController {
     @FXML
     public TextField fieldCategoryDescription;
     @FXML
-    public TableView<Categories> categoriesTable; // Specify the type for type safety
+    public TableView<Categories> categoriesTable;
     @FXML
-    public TableColumn<Categories, Integer> categoryIdColumn; // Specify the type for type safety
+    public TableColumn<Categories, Integer> categoryIdColumn;
     @FXML
-    public TableColumn<Categories, String> categoryNameColumn; // Specify the type for type safety
+    public TableColumn<Categories, String> categoryNameColumn;
     @FXML
-    public TableColumn<Categories, String> descriptionColumn; // Specify the type for type safety
+    public TableColumn<Categories, String> descriptionColumn;
 
-    private final ObservableList<Categories> categoryList; // Store the categories in an observable list
-    private final Datasource datasource; // Reference to the Datasource
+    private final ObservableList<Categories> categoryList;
+    private final Datasource datasource;
 
     public CategoryController() {
-        datasource = Datasource.getInstance(); // Get the instance of Datasource
-        categoryList = FXCollections.observableArrayList(); // Create the observable list
-        // Do not load categories here
+        datasource = Datasource.getInstance();
+        categoryList = FXCollections.observableArrayList();
     }
 
     @FXML
     private void initialize() {
-        loadCategories(); // Load categories once the UI components are initialized
+        // Set up table columns
+        categoryIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        categoryNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+
+        // Add selection listener to populate fields when a category is selected
+        categoriesTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                fieldCategoryName.setText(newSelection.getName());
+                fieldCategoryDescription.setText(newSelection.getDescription());
+            }
+        });
+
+        loadCategories();
     }
 
     private void loadCategories() {
-        categoryList.setAll(datasource.getAllCategories()); // Fetch categories from the datasource
-        categoriesTable.setItems(categoryList); // Set the items for the TableView
+        categoryList.setAll(datasource.getAllCategories());
+        categoriesTable.setItems(categoryList);
     }
 
+    @FXML
     public void btnAddCategoryOnClick(ActionEvent actionEvent) {
-        String name = fieldCategoryName.getText();
-        String description = fieldCategoryDescription.getText();
+        if (!validateInputs()) return;
 
-        if (name.isEmpty() || description.isEmpty()) {
-            showAlert("Error", "Please fill in all fields.");
-            return;
-        }
+        Categories newCategory = new Categories();
+        newCategory.setName(fieldCategoryName.getText());
+        newCategory.setDescription(fieldCategoryDescription.getText());
 
-        Categories newCategory = new Categories(); // Create a new Categories object
-        newCategory.setName(name);
-        newCategory.setDescription(description);
-
-        // Add the new category to the datasource
         if (datasource.addCategory(newCategory)) {
-            categoryList.add(newCategory); // Add to the observable list
-            clearFields(); // Clear input fields
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Category added successfully!");
+            loadCategories();
+            clearFields();
         } else {
-            showAlert("Error", "Could not add the category. Please try again.");
+            showAlert(Alert.AlertType.ERROR, "Error", "Could not add the category. Please try again.");
         }
     }
 
+    @FXML
     public void btnEditCategoryOnClick(ActionEvent actionEvent) {
         Categories selectedCategory = categoriesTable.getSelectionModel().getSelectedItem();
-
         if (selectedCategory == null) {
-            showAlert("Error", "Please select a category to edit.");
+            showAlert(Alert.AlertType.WARNING, "Warning", "Please select a category to edit.");
             return;
         }
 
+        if (!validateInputs()) return;
+
+        selectedCategory.setName(fieldCategoryName.getText());
+        selectedCategory.setDescription(fieldCategoryDescription.getText());
+
+        if (datasource.updateCategory(selectedCategory)) {
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Category updated successfully!");
+            loadCategories();
+            clearFields();
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Error", "Could not update the category. Please try again.");
+        }
+    }
+
+    @FXML
+    public void btnDeleteCategoryOnClick(ActionEvent actionEvent) {
+        Categories selectedCategory = categoriesTable.getSelectionModel().getSelectedItem();
+        if (selectedCategory == null) {
+            showAlert(Alert.AlertType.WARNING, "Warning", "Please select a category to delete.");
+            return;
+        }
+
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.setTitle("Confirm Delete");
+        confirmDialog.setHeaderText("Delete Category");
+        confirmDialog.setContentText("Are you sure you want to delete this category?");
+
+        if (confirmDialog.showAndWait().get() == ButtonType.OK) {
+            if (datasource.deleteCategory(selectedCategory.getId())) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Category deleted successfully!");
+                loadCategories();
+                clearFields();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Could not delete the category. It may be in use.");
+            }
+        }
+    }
+
+    private boolean validateInputs() {
         String name = fieldCategoryName.getText();
         String description = fieldCategoryDescription.getText();
 
         if (name.isEmpty() || description.isEmpty()) {
-            showAlert("Error", "Please fill in all fields.");
-            return;
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Please fill in all fields.");
+            return false;
         }
-
-        selectedCategory.setName(name); // Update the selected category
-        selectedCategory.setDescription(description);
-
-        // Update via datasource
-        if (datasource.updateCategory(selectedCategory)) {
-            categoriesTable.refresh(); // Refresh the table to reflect changes
-            clearFields(); // Clear input fields
-        } else {
-            showAlert("Error", "Could not update the category. Please try again.");
-        }
-    }
-
-    public void btnDeleteCategoryOnClick(ActionEvent actionEvent) {
-        Categories selectedCategory = categoriesTable.getSelectionModel().getSelectedItem();
-
-        if (selectedCategory == null) {
-            showAlert("Error", "Please select a category to delete.");
-            return;
-        }
-
-        // Delete via datasource
-        if (datasource.deleteCategory(selectedCategory.getId())) {
-            categoryList.remove(selectedCategory); // Remove from the observable list
-            clearFields(); // Clear input fields
-        } else {
-            showAlert("Error", "Could not delete the category. Please try again.");
-        }
+        return true;
     }
 
     private void clearFields() {
         fieldCategoryName.clear();
         fieldCategoryDescription.clear();
-        categoriesTable.getSelectionModel().clearSelection(); // Clear selection in the table
+        categoriesTable.getSelectionModel().clearSelection();
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);

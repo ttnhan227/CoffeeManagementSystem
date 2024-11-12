@@ -28,11 +28,11 @@
                 <padding>
                     <Insets bottom="20.0" top="20.0" />
                 </padding>
-                <Text fontSmoothingType="LCD" styleClass="page-title" text="Orders">
-                    <font>
-                        <Font name="SansSerif Bold Italic" size="43.0" />
-                    </font>
-                </Text>
+<!--                <Text fontSmoothingType="LCD" styleClass="page-title" text="Orders">-->
+<!--                    <font>-->
+<!--                        <Font name="SansSerif Bold Italic" size="43.0" />-->
+<!--                    </font>-->
+<!--                </Text>-->
                 <GridPane alignment="CENTER_RIGHT">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
