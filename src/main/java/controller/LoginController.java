@@ -3,13 +3,12 @@ package controller;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import app.utils.HelperMethods;
 import app.utils.PasswordUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;  // Ensure this line is present
-import javafx.scene.Scene;
+import javafx.scene.Node;
+import javafx.scene.Scene;  // Ensure this line is present
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -65,10 +64,14 @@ public class LoginController {
             return;
         }
 
-
         User user = model.Datasource.getInstance().getUserByUsername(username);
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
             showError("No user found with this username");
+            return;
+        }
+
+        if (user.getStatus() != null && user.getStatus().equalsIgnoreCase("disabled")) {
+            showError("Your account has been disabled. Please contact administrator.");
             return;
         }
 

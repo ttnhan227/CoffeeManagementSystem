@@ -581,14 +581,12 @@ public class Datasource extends Product {
     }
 
     public User getUserByUsername(String username) throws SQLException {
-
         PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM " + TABLE_USERS + " WHERE " + COLUMN_USERS_USERNAME + " = ?");
         preparedStatement.setString(1, username);
         ResultSet results = preparedStatement.executeQuery();
 
         User user = new User();
         if (results.next()) {
-
             user.setId(results.getInt("id"));
             user.setFullname(results.getString("fullname"));
             user.setUsername(results.getString("username"));
@@ -597,8 +595,8 @@ public class Datasource extends Product {
             user.setSalt(results.getString("salt"));
             user.setAdmin(results.getInt("admin"));
             user.setStatus(results.getString("status"));
-
         }
+
         return user;
     }
     public boolean insertNewUser(String fullName, String username, String email, String password, String salt) {
