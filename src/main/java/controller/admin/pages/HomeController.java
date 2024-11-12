@@ -106,7 +106,7 @@ public class HomeController {
     private void loadTable(){
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(10);
-        Text text = new Text("Top 3 best selling products");
+        Text text = new Text("Best selling products");
         text.setFill(Color.RED);
         text.setFont(new Font(30));
         TableView<OrderDetail> tableView = new TableView<>();
