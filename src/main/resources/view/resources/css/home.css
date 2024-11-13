@@ -22,7 +22,7 @@
 }
 
 .chart-plot-background {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.7);
 }
 
 .chart-vertical-grid-lines {
@@ -46,11 +46,12 @@
     -fx-padding: 10 0 10 0;
     -fx-border-width: 1 0 0 0;
     -fx-border-color: #e0e0e0;
-    -fx-background-color: white;
+    -fx-background-color: transparent;
 }
 
 .pagination .pagination-control {
     -fx-padding: 0 0 0 0;
+    -fx-background-color: transparent;
 }
 
 .pagination .pagination-control .button {
@@ -87,14 +88,15 @@
 }
 
 .stat-card {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
-    -fx-background-radius: 10;
+    -fx-background-color: rgba(255, 255, 255, 0.85);
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0, 0, 5);
 }
 
 /* Add new styles for dashboard header */
 .dashboard-header {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-radius: 12;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
     -fx-padding: 20 30;
     -fx-alignment: CENTER;
@@ -109,11 +111,10 @@
 
 /* Improve spacing and alignment */
 .content-box {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+    -fx-background-color: rgba(255, 255, 255, 0.85);
+    -fx-background-radius: 12;
     -fx-padding: 30;
-    -fx-spacing: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
 }
 
 /* Add hover effect to stat cards */
@@ -121,4 +122,19 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 0);
     -fx-translate-y: -2;
     -fx-cursor: hand;
+}
+
+/* Add these new styles */
+.chart-container {
+    -fx-background-color: transparent;
+    -fx-padding: 15;
+}
+
+.chart {
+    -fx-background-color: transparent;
+    -fx-padding: 15;
+}
+
+.chart-content {
+    -fx-background-color: transparent;
 }

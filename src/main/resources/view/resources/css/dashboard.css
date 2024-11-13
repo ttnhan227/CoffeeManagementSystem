@@ -1,3 +1,20 @@
+/* Update the root variables at the top */
+:root {
+    /* Primary Colors */
+    -fx-coffee-dark: #4F321D;
+    -fx-coffee-medium: #8b5e3c;
+    -fx-coffee-light: #d4a574;
+    
+    /* Background Colors */
+    -fx-bg-transparent: rgba(255, 255, 255, 0.85);
+    -fx-bg-transparent-light: rgba(255, 255, 255, 0.65);
+    
+    /* Text Colors */
+    -fx-text-dark: #2c1c14;
+    -fx-text-medium: #5C432F;
+    -fx-text-light: #F5F1EB;
+}
+
 /* General Layout and Background */
 .root, #mainContainer {
     -fx-background-image: url('../img/brand/cute-brown-border-with-coffee-beans-shadow-background.jpg');
@@ -47,12 +64,12 @@
 
 /* Dashboard Cards */
 .dashboard-card {
-    -fx-background-color: white;
+    -fx-background-color: -fx-bg-transparent;
     -fx-padding: 30px;
-    -fx-background-radius: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
-    -fx-border-color: #e0e0e0;
-    -fx-border-radius: 8;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0, 0, 5);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 12;
     -fx-border-width: 1;
     -fx-text-fill: #5C432F; /* Dark brown text */
 }
@@ -166,18 +183,20 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 0);
 }
 
-/* Table styling - keep coffee theme but ensure visibility */
+/* Table styling - Update for better visibility */
 .table-view {
-    -fx-background-color: transparent;
+    -fx-background-color: rgba(255, 255, 255, 0.95);  /* More solid background */
+    -fx-background-radius: 12;
 }
 
 .table-view .column-header-background {
-    -fx-background-color: #8b5e3c;
+    -fx-background-color: #8b5e3c;  /* Solid color for header */
+    -fx-background-radius: 12 12 0 0;
 }
 
 .table-view .column-header {
     -fx-background-color: transparent;
-    -fx-border-width: 0;  /* Remove default border */
+    -fx-border-width: 0;
 }
 
 .table-view .column-header .label {
@@ -186,80 +205,91 @@
     -fx-padding: 12 16;
 }
 
-/* Remove the extra column line */
-.table-view .column-header-background .filler {
-    -fx-background-color: transparent;
-}
-
 /* Table cell and row styling */
 .table-view .table-cell {
-    -fx-border-color: transparent;  /* Remove cell borders */
+    -fx-border-color: transparent;
     -fx-padding: 8 12;
+    -fx-text-fill: #2c1c14;  /* Ensure text is visible */
 }
 
 .table-view .table-row-cell {
-    -fx-background-color: transparent;
-    -fx-border-color: #e0e0e0;  /* Light border between rows */
-    -fx-border-width: 0 0 1 0;  /* Only bottom border */
+    -fx-background-color: rgba(255, 255, 255, 0.8);  /* Slightly transparent but still visible */
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
 }
 
-/* Selection styles remain the same */
+.table-view .table-row-cell:odd {
+    -fx-background-color: rgba(248, 248, 248, 0.9);  /* Alternate row color */
+}
+
+/* Selection styles */
 .table-view .table-row-cell:selected {
-    -fx-background-color: #d4a57450;
-    -fx-text-fill: #5C432F;
+    -fx-background-color: #d4a574;
+    -fx-text-fill: white;
 }
 
 .table-view:focused .table-row-cell:selected {
-    -fx-background-color: #8b5e3c70;
-    -fx-text-fill: #5C432F;
+    -fx-background-color: #8b5e3c;
+    -fx-text-fill: white;
+}
+
+/* Make sure the content area is visible */
+.table-view .virtual-flow {
+    -fx-background-color: transparent;
+}
+
+.table-view .virtual-flow .clipped-container {
+    -fx-background-color: transparent;
+}
+
+.table-view .virtual-flow .sheet {
+    -fx-background-color: transparent;
 }
 
 /* Chart styling */
 .chart {
-    -fx-padding: 20px;
-    -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-border-color: #e0e0e0;
-    -fx-border-radius: 8;
-    -fx-border-width: 1;
+    -fx-background-color: rgba(255, 255, 255, 0.85);
+    -fx-background-radius: 12;
+    -fx-padding: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 8, 0, 0, 0);
 }
 
 .chart-plot-background {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.7);
 }
 
 .chart-vertical-grid-lines {
-    -fx-stroke: #dddddd;
+    -fx-stroke: rgba(221, 221, 221, 0.8);
 }
 
 .chart-horizontal-grid-lines {
-    -fx-stroke: #dddddd;
+    -fx-stroke: rgba(221, 221, 221, 0.8);
 }
 
 /* Bar Chart specific styling */
 .bar-chart {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.85);
 }
 
 .bar-chart .chart-content {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.85);
 }
 
 .bar-chart .plot-content {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.85);
 }
 
 /* Line Chart specific styling */
 .line-chart {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.85);
 }
 
 .line-chart .chart-content {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.85);
 }
 
 .line-chart .plot-content {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.85);
 }
 
 /* Chart Legend styling */
@@ -320,4 +350,69 @@
 .combo-box:showing {
     -fx-border-color: #8b5e3c;
     -fx-border-width: 2;
+}
+
+/* Order table specific styling */
+#orderDetailView {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-radius: 12;
+    -fx-border-color: transparent;
+}
+
+#orderDetailView .column-header-background {
+    -fx-background-color: #8b5e3c;
+    -fx-background-radius: 12 12 0 0;
+    -fx-background-insets: 0;
+}
+
+#orderDetailView .column-header {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-size: 40px;
+}
+
+#orderDetailView .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12 16;
+}
+
+#orderDetailView .table-row-cell {
+    -fx-background-color: rgba(255, 255, 255, 0.8);
+    -fx-table-cell-border-color: transparent;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+}
+
+#orderDetailView .table-row-cell:odd {
+    -fx-background-color: rgba(248, 248, 248, 0.9);
+}
+
+#orderDetailView .table-row-cell:selected {
+    -fx-background-color: #d4a574;
+    -fx-text-fill: white;
+}
+
+/* Remove the extra space at the end */
+#orderDetailView .table-column {
+    -fx-border-width: 0;
+}
+
+#orderDetailView .scroll-bar:horizontal {
+    -fx-opacity: 0;
+    -fx-padding: 0;
+}
+
+#orderDetailView .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+#orderDetailView .scroll-bar:vertical .thumb {
+    -fx-background-color: #8b5e3c;
+    -fx-background-radius: 5;
+}
+
+/* Fix for the last column */
+#orderDetailView .table-column:last-visible {
+    -fx-border-width: 0;
 }

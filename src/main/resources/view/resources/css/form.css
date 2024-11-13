@@ -6,12 +6,9 @@
 
 /* Border Pane for Form */
 .border-pane {
-    -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
-    -fx-border-color: #e0e0e0;
-    -fx-border-radius: 8;
-    -fx-border-width: 1;
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0, 0, 5);
 }
 
 /* GridPane Layout */
@@ -41,29 +38,30 @@
 
 /* TextField Styling */
 .text-field {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.9);
     -fx-background-radius: 8;
     -fx-border-radius: 8;
-    -fx-border-color: #e0e0e0;
+    -fx-border-color: rgba(212, 165, 116, 0.6);
     -fx-border-width: 1;
     -fx-text-fill: #2c1c14;
     -fx-prompt-text-fill: #999999;
     -fx-padding: 12 16;
     -fx-font-size: 14px;
     -fx-max-width: 300px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 4, 0, 0, 1);
 }
 .text-field:focused {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
     -fx-border-color: #d4a574;
-    -fx-border-width: 2;
-    -fx-background-color: #fff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0, 0, 2);
 }
 
 /* TextArea Styling */
 .text-area {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.9);
     -fx-background-radius: 8;
     -fx-border-radius: 8;
-    -fx-border-color: #e0e0e0;
+    -fx-border-color: rgba(212, 165, 116, 0.6);
     -fx-border-width: 1;
     -fx-text-fill: #2c1c14;
     -fx-prompt-text-fill: #999999;
@@ -71,26 +69,29 @@
     -fx-font-size: 14px;
     -fx-max-width: 300px;
     -fx-pref-height: 100px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 4, 0, 0, 1);
 }
 .text-area:focused {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
     -fx-border-color: #d4a574;
-    -fx-border-width: 2;
-    -fx-background-color: #fff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0, 0, 2);
 }
 
 /* ComboBox Styling */
 .combo-box {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.9);
     -fx-background-radius: 8;
     -fx-border-radius: 8;
-    -fx-border-color: #e0e0e0;
+    -fx-border-color: rgba(212, 165, 116, 0.6);
     -fx-border-width: 1;
     -fx-padding: 4px;
     -fx-max-width: 300px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 4, 0, 0, 1);
 }
 .combo-box:focused {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
     -fx-border-color: #d4a574;
-    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0, 0, 2);
 }
 .combo-box .list-cell {
     -fx-padding: 8px;
