@@ -388,36 +388,79 @@ public class ProductsController {
         }
     }
 
-    @FXML
-    boolean areProductInputsValid(String fieldAddProductName, String fieldAddProductDescription, String fieldAddProductPrice, String fieldAddProductQuantity, int productCategoryId) {
-        String errorMessage = "";
+    protected boolean areProductInputsValid(String name, String description, String price, String quantity, int categoryId) {
+        StringBuilder errorMessage = new StringBuilder();
+        boolean isValid = true;
 
-        if (fieldAddProductName == null || fieldAddProductName.length() < 3) {
-            errorMessage += "Please enter a valid name!\n";
-        } else if (Datasource.getInstance().isProductNameExists(fieldAddProductName)) {
-            errorMessage += "A product with this name already exists!\n";
-        }
-
-        if (fieldAddProductDescription == null || fieldAddProductDescription.length() < 5) {
-            errorMessage += "Description is not valid!\n";
-        }
-        if (!HelperMethods.validateProductPrice(fieldAddProductPrice)) {
-            errorMessage += "Price is not valid!\n";
-        }
-        if (!HelperMethods.validateProductQuantity(fieldAddProductQuantity)) {
-            errorMessage += "Not valid quantity!\n";
+        // Check if product name already exists
+        if (Datasource.getInstance().isProductNameExists(name)) {
+            errorMessage.append("- Product name already exists\n");
+            isValid = false;
         }
 
-        if (errorMessage.length() == 0) {
-            return true;
-        } else {
+        // Validate name
+        if (name == null || name.trim().isEmpty()) {
+            errorMessage.append("- Product name is required\n");
+            isValid = false;
+        } else if (name.length() < 3 || name.length() > 50) {
+            errorMessage.append("- Product name must be between 3 and 50 characters\n");
+            isValid = false;
+        }
+
+        // Validate description
+        if (description == null || description.trim().isEmpty()) {
+            errorMessage.append("- Product description is required\n");
+            isValid = false;
+        } else if (description.length() < 10 || description.length() > 500) {
+            errorMessage.append("- Description must be between 10 and 500 characters\n");
+            isValid = false;
+        }
+
+        // Validate price
+        try {
+            double priceValue = Double.parseDouble(price);
+            if (priceValue <= 0) {
+                errorMessage.append("- Price must be greater than 0\n");
+                isValid = false;
+            } else if (priceValue > 300) {
+                errorMessage.append("- Price cannot exceed $300\n");
+                isValid = false;
+            }
+        } catch (NumberFormatException e) {
+            errorMessage.append("- Invalid price format\n");
+            isValid = false;
+        }
+
+        // Validate quantity
+        try {
+            int quantityValue = Integer.parseInt(quantity);
+            if (quantityValue <= 0) {
+                errorMessage.append("- Quantity must be greater than 0\n");
+                isValid = false;
+            } else if (quantityValue > 1000) {
+                errorMessage.append("- Quantity cannot exceed 1000 units\n");
+                isValid = false;
+            }
+        } catch (NumberFormatException e) {
+            errorMessage.append("- Invalid quantity format\n");
+            isValid = false;
+        }
+
+        // Validate category
+        if (categoryId <= 0) {
+            errorMessage.append("- Please select a category\n");
+            isValid = false;
+        }
+
+        if (!isValid) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Invalid Fields");
-            alert.setHeaderText("Please correct invalid fields");
-            alert.setContentText(errorMessage);
+            alert.setTitle("Validation Error");
+            alert.setHeaderText("Please correct the following errors:");
+            alert.setContentText(errorMessage.toString());
             alert.showAndWait();
-            return false;
         }
+
+        return isValid;
     }
 
     @FXML

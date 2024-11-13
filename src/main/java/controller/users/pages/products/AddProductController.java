@@ -96,44 +96,58 @@ public class AddProductController extends ProductsController {
     @FXML
     private void btnAddProductOnAction() {
         Categories category = fieldAddProductCategoryId.getSelectionModel().getSelectedItem();
-        int cat_id = 0;
-        if (category != null) {
-            cat_id = category.getId();
-        }
+        final int cat_id = category != null ? category.getId() : 0;
 
-        assert category != null;
-        if (areProductInputsValid(fieldAddProductName.getText(), fieldAddProductDescription.getText(),
-                fieldAddProductPrice.getText(), fieldAddProductQuantity.getText(), cat_id)) {
+        // Trim input values to remove leading/trailing whitespace
+        final String productName = fieldAddProductName.getText().trim();
+        final String productDescription = fieldAddProductDescription.getText().trim();
+        final String productPrice = fieldAddProductPrice.getText().trim();
+        final String productQuantity = fieldAddProductQuantity.getText().trim();
 
-            String productName = fieldAddProductName.getText();
-            String productDescription = fieldAddProductDescription.getText();
-            double productPrice = Double.parseDouble(fieldAddProductPrice.getText());
-            int productQuantity = Integer.parseInt(fieldAddProductQuantity.getText());
-            int productCategoryId = category.getId();
-            String imagePath = saveImageFile();
-            boolean isEnabled = true;
+        if (areProductInputsValid(productName, productDescription, productPrice, productQuantity, cat_id)) {
+            final double price = Double.parseDouble(productPrice);
+            final int quantity = Integer.parseInt(productQuantity);
+            final String imagePath = saveImageFile();
+
+            if (imagePath == null) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Image Required");
+                alert.setHeaderText(null);
+                alert.setContentText("Please select an image for the product.");
+                alert.showAndWait();
+                return;
+            }
+
+            final boolean isEnabled = true;
 
             Task<Boolean> addProductTask = new Task<Boolean>() {
                 @Override
                 protected Boolean call() {
                     return Datasource.getInstance().insertNewProduct(
-                            productName, productDescription, productPrice,
-                            productQuantity, productCategoryId, imagePath, isEnabled);
+                            productName, productDescription, price,
+                            quantity, cat_id, imagePath, isEnabled);
                 }
             };
 
             addProductTask.setOnSucceeded(e -> {
                 if (addProductTask.valueProperty().get()) {
-                    viewProductResponse.setVisible(true);
-                    System.out.println("Product added!");
+                    Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                    successAlert.setTitle("Success");
+                    successAlert.setHeaderText(null);
+                    successAlert.setContentText("Product added successfully!");
+                    successAlert.showAndWait();
 
-                    // Clear the form
                     clearForm();
 
-                    // Notify parent and refresh
                     if (onProductAdded != null) {
                         onProductAdded.run();
                     }
+                } else {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Error");
+                    errorAlert.setHeaderText(null);
+                    errorAlert.setContentText("Failed to add product. Please try again.");
+                    errorAlert.showAndWait();
                 }
             });
 
