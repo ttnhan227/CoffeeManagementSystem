@@ -1,6 +1,9 @@
 /* General Layout and Background */
 .root, #mainContainer {
-    -fx-background-color: #ffffff;
+    -fx-background-image: url('../img/brand/cute-brown-border-with-coffee-beans-shadow-background.jpg');
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
     -fx-font-family: 'Helvetica Neue', sans-serif;
     -fx-font-size: 14px;
 }
@@ -28,16 +31,14 @@
 
 /* Logout Button */
 .logout-button {
-    -fx-background-color: #ff6b6b;
+    -fx-background-color: rgba(255, 107, 107, 0.9);
     -fx-text-fill: white;
-    -fx-padding: 10px 20px;
-    -fx-background-radius: 8;
-    -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0, 0, 1);
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
 }
 
 .logout-button:hover {
-    -fx-background-color: #ff8585;
+    -fx-background-color: rgba(255, 133, 133, 0.9);
 }
 
 .logout-button:pressed {
@@ -111,10 +112,11 @@
 
 /* Side navigation or menu (if applicable) */
 .nav-bar {
-    -fx-background-color: #8B5A2B;
+    -fx-background-color: rgba(139, 90, 43, 0.95);  /* Semi-transparent brown */
     -fx-width: 250px;
     -fx-padding: 20px;
     -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
 }
 
 .nav-item {
@@ -158,9 +160,10 @@
 
 /* Stat card styling */
 .stat-card {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-padding: 15;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 0);
 }
 
 /* Table styling - keep coffee theme but ensure visibility */
