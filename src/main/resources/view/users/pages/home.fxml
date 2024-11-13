@@ -54,12 +54,17 @@
             </HBox>
 
             <!-- Best Selling Products Table -->
-            <VBox spacing="10" style="-fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+            <VBox spacing="10" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
                 <Label text="Top 3 Best Selling Products" style="-fx-text-fill: #2c3e50;">
                     <font><Font size="24" name="System Bold"/></font>
                 </Label>
-                <TableView fx:id="bestSellingTable" VBox.vgrow="NEVER" style="-fx-background-radius: 5;"
-                           maxHeight="200" minHeight="200" prefHeight="200"/>
+                <TableView fx:id="bestSellingTable" 
+                          styleClass="dashboard-table,table-view"
+                          VBox.vgrow="NEVER" 
+                          style="-fx-background-radius: 5;"
+                          maxHeight="200" 
+                          minHeight="200" 
+                          prefHeight="200"/>
             </VBox>
 
             <!-- Revenue Charts Section -->
@@ -72,13 +77,18 @@
                     <Label text="Year:" style="-fx-text-fill: #666666;">
                         <font><Font size="16"/></font>
                     </Label>
-                    <ComboBox fx:id="yearComboBox" prefWidth="120"/>
+                    <ComboBox fx:id="yearComboBox" 
+                             styleClass="dashboard-combo-box"
+                             prefWidth="120"/>
                 </HBox>
 
                 <HBox spacing="20">
                     <!-- Bar Chart -->
                     <VBox HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 10;">
-                        <BarChart fx:id="revenueBarChart" prefHeight="400" legendVisible="false">
+                        <BarChart fx:id="revenueBarChart" 
+                                 styleClass="dashboard-chart"
+                                 prefHeight="400" 
+                                 legendVisible="false">
                             <xAxis><CategoryAxis side="BOTTOM"/></xAxis>
                             <yAxis><NumberAxis side="LEFT"/></yAxis>
                         </BarChart>
@@ -86,7 +96,10 @@
 
                     <!-- Line Chart -->
                     <VBox HBox.hgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 10;">
-                        <LineChart fx:id="growthLineChart" prefHeight="400" legendVisible="false">
+                        <LineChart fx:id="growthLineChart" 
+                                  styleClass="dashboard-chart"
+                                  prefHeight="400" 
+                                  legendVisible="false">
                             <xAxis><CategoryAxis side="BOTTOM"/></xAxis>
                             <yAxis><NumberAxis side="LEFT"/></yAxis>
                         </LineChart>
