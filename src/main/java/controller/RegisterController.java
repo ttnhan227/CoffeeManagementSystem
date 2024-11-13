@@ -85,14 +85,14 @@ public class RegisterController {
 
         // Validate Full Name
         if (fullName.isEmpty() || !HelperMethods.validateFullName(fullName)) {
-            showError("Full name must contain only letters, start with an uppercase letter, and be 4+ characters.");
+            showError("Full name must start with a capital letter and be 2-50 characters long. Each word should start with a capital letter.");
             highlightErrorField(fullNameField);
             return;
         }
 
         // Validate Username
         if (username.isEmpty() || !HelperMethods.validateUsername(username)) {
-            showError("Username must be 5-30 characters, start with a letter, and contain only letters, numbers, or underscores.");
+            showError("Username must be 3-30 characters long, start with a letter, and contain only letters, numbers, or underscores.");
             highlightErrorField(usernameField);
             return;
         }
@@ -122,7 +122,11 @@ public class RegisterController {
 
         // Validate Password
         if (providedPassword.isEmpty() || !HelperMethods.validatePassword(providedPassword)) {
-            showError("Password must be 6-16 characters long.");
+            showError("Password requirements:\n" +
+                      "• 8-32 characters\n" +
+                      "• At least one uppercase letter\n" +
+                      "• At least one lowercase letter\n" +
+                      "• At least one number");
             highlightErrorField(passwordField);
             return;
         }
