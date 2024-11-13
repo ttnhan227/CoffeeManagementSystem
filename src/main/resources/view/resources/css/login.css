@@ -94,7 +94,7 @@
 .error-label {
     -fx-text-fill: #ff6b6b;
     -fx-font-size: 14px;
-    -fx-padding: 8px;
+    -fx-padding: 12px;
     -fx-background-color: rgba(255, 107, 107, 0.1);
     -fx-background-radius: 5;
     -fx-border-color: #ff6b6b;
@@ -103,8 +103,10 @@
     -fx-alignment: center;
     -fx-text-alignment: center;
     -fx-wrap-text: true;
-    -fx-max-width: 350;
+    -fx-max-width: 400;
     -fx-opacity: 0;
+    -fx-min-height: 50;
+    -fx-line-spacing: 2;
 }
 
 .error-label.visible {

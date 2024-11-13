@@ -1,30 +1,29 @@
 package app.utils;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 public class HelperMethods {
 
     public static boolean validateFullName(String fullName) {
-        Matcher matcher = Pattern.compile("^[A-Z][a-zA-Z]{3,}(?: [A-Z][a-zA-Z]*){0,2}$", Pattern.CASE_INSENSITIVE).matcher(fullName);
-        return matcher.find();
+        return fullName.matches("^[A-Z][a-zA-Z]{1,}(?: [A-Z][a-zA-Z]*|-[A-Z][a-zA-Z]*)*$") && 
+               fullName.length() >= 2 && 
+               fullName.length() <= 50;
     }
 
     public static boolean validateUsername(String username) {
-        Matcher matcher = Pattern.compile("^[A-Za-z]\\w{4,29}$", Pattern.CASE_INSENSITIVE).matcher(username);
-        return matcher.find();
+        return username.matches("^[A-Za-z][A-Za-z0-9_]{2,29}$");
     }
 
     public static boolean validateEmail(String emailStr) {
-        Matcher matcher = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE).matcher(emailStr);
-        return matcher.find();
+        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        return emailStr.matches(emailRegex) && 
+               emailStr.length() >= 5 && 
+               emailStr.length() <= 254;
     }
 
     public static boolean validatePassword(String password) {
-        return password.matches("^.{6,16}$");
+        return password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d@$!%*?&]{8,32}$");
     }
 
 
