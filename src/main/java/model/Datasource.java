@@ -1331,8 +1331,8 @@ public class Datasource extends Product {
                         "FROM orderDetail od " +
                         "JOIN products p ON od.productID = p.id " +
                         "GROUP BY od.productID " +
-                        "ORDER BY total DESC " +
-                        "LIMIT 3";  // Changed to show only top 3 products
+                        "ORDER BY total DESC "; //+
+                        //"LIMIT 3";  // Changed to show only top 3 products
         try (PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
 

@@ -1,19 +1,16 @@
 package controller.admin.pages;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import model.Datasource;
 import model.OrderDetail;
@@ -44,6 +41,9 @@ public class HomeController {
     private BarChart<String, Number> revenueBarChart;
     @FXML
     private LineChart<String, Number> growthLineChart;
+    public VBox revenueVBox;
+    public VBox productVBox;
+    public Pagination pagination;
 
     private Map<Integer, List<Number>> barData;
     private Map<Integer, List<Number>> lineData;
@@ -72,15 +72,16 @@ public class HomeController {
         
         // Set fixed height for the table
         bestSellingTable.setFixedCellSize(50);
-        bestSellingTable.setPrefHeight(200); // Height for 3 rows + header + padding
-        bestSellingTable.setMaxHeight(200); // Prevent table from growing
-        bestSellingTable.setMinHeight(200); // Prevent table from shrinking
+        bestSellingTable.setPrefHeight(400); // Height for 3 rows + header + padding
+        bestSellingTable.setMaxHeight(400); // Prevent table from growing
+        bestSellingTable.setMinHeight(400); // Prevent table from shrinking
         
         // Prevent table from showing empty rows
         bestSellingTable.setStyle(
             "-fx-background-color: transparent;" +
             "-fx-table-cell-border-color: transparent;"
         );
+        loadPage();
     }
 
     private void setupBestSellingTable() {
@@ -343,5 +344,24 @@ public class HomeController {
                 });
             }
         }
+    }
+    private void loadPage(){
+        //productVBox.setVisible(false);
+        revenueVBox.setVisible(false);
+        pagination.setPageFactory(pageIndex -> pageIndex == 0 ? productVBox : revenueVBox);
+        pagination.currentPageIndexProperty().addListener((obs, oldIndex, newIndex) -> {
+            if(newIndex.intValue() == 0){
+                productVBox.setDisable(false);
+                productVBox.setVisible(true);
+            }
+            else{
+                revenueVBox.setDisable(false);
+                revenueVBox.setVisible(true);
+            }
+        });
+//        Platform.runLater(() -> {
+//            productVBox.setDisable(false);
+//            revenueVBox.setDisable(false);
+//        });
     }
 }
