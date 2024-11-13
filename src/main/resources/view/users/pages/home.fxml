@@ -19,7 +19,12 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.users.pages.UserHomeController">
     <!-- Main content container -->
-    <VBox spacing="20" AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="50.0">
+    <VBox spacing="20" AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.bottomAnchor="50.0">
+        <!-- Dashboard Overview Text - Centered with background -->
+        <HBox styleClass="dashboard-header" alignment="CENTER">
+            <Label text="Dashboard Overview" styleClass="dashboard-title"/>
+        </HBox>
+
         <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
             <content>
                 <VBox spacing="30">
