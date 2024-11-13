@@ -24,19 +24,85 @@
             <left>
                 <AnchorPane fx:id="acDashBord">
                     <AnchorPane prefWidth="127.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-<!--                        <Button fx:id="btnRevenue" mnemonicParsing="false" onAction="#btnRevenueOnClick" prefHeight="70.0" prefWidth="127.0" text="Revenue" />-->
-                              <Button fx:id="btnHome" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnHomeOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Home" />
-                              <Button fx:id="btnProducts" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnProductsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Menu" />
-                              <Button fx:id="btnNewOrder" contentDisplay="TOP" mnemonicParsing="false" onAction="#onClickNewOrder" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="New Order" />
-                              <Button fx:id="btnOrders" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnOrdersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Orders" />
-                              <Button fx:id="btnUsers" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnUsersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Employee" />
-                        <Button fx:id="btnCoupon" contentDisplay="TOP" layoutX="10.0" layoutY="265.0" mnemonicParsing="false" onAction="#btnCouponOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Coupon" />
-                        <Button fx:id="btnCustomer" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCustomerOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Customer" />
-                              <Button fx:id="btnSettings" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnSettingsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Settings" />
-                     </children>
-                  </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <children>
+
+
+                                <Button fx:id="btnHome" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnHomeOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Home">
+                                    <graphic>
+                                        <ImageView fitHeight="40.0" fitWidth="40.0">
+                                            <image>
+                                                <Image url="@../resources/img/icon/icon_coffee/home.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnProducts" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnProductsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Menu">
+                                    <graphic>
+                                        <ImageView fitHeight="40.0" fitWidth="40.0">
+                                            <image>
+                                                <Image url="@../resources/img/icon/icon_coffee/menu.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnNewOrder" contentDisplay="TOP" mnemonicParsing="false" onAction="#onClickNewOrder" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="New Order">
+                                    <graphic>
+                                        <ImageView fitHeight="40.0" fitWidth="40.0">
+                                            <image>
+                                                <Image url="@../resources/img/icon/icon_coffee/new_order.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnOrders" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnOrdersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Orders">
+                                    <graphic>
+                                        <ImageView fitHeight="40.0" fitWidth="40.0">
+                                            <image>
+                                                <Image url="@../resources/img/icon/icon_coffee/order.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnUsers" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnUsersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Employee">
+                                    <graphic>
+                                        <ImageView fitHeight="40.0" fitWidth="40.0">
+                                            <image>
+                                                <Image url="@../resources/img/icon/icon_coffee/user.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnCoupon" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCouponOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Coupon">
+                                    <graphic>
+                                        <ImageView fitHeight="40.0" fitWidth="40.0">
+                                            <image>
+                                                <Image url="@../resources/img/icon/icon_coffee/voucher2.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnCustomer" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCustomerOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Customer">
+                                    <graphic>
+                                        <ImageView fitHeight="40.0" fitWidth="40.0">
+                                            <image>
+                                                <Image url="@../resources/img/icon/icon_coffee/customer.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnSettings" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnSettingsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Settings">
+                                    <graphic>
+                                        <ImageView fitHeight="40.0" fitWidth="40.0">
+                                            <image>
+                                                <Image url="@../resources/img/icon/icon_coffee/setting.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </VBox>
+
                     </AnchorPane>
                 </AnchorPane>
             </left>
@@ -62,18 +128,18 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         </rowConstraints>
                         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                               <ImageView fitHeight="47.0" fitWidth="45.0" preserveRatio="true">
-                                   <image>
-                                       <Image url="@../resources/img/brand/pngtree-simple-coffee-shop-logo-png-image_13299684.png" />
-                                   </image>
-                               </ImageView>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Coffee Management System" wrappingWidth="228.810546875">
-                           <font>
-                              <Font name="System Italic" size="17.0" />
-                           </font>
-                        </Text>
-                     </children>
+                            <children>
+                                <ImageView fitHeight="47.0" fitWidth="45.0" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../resources/img/brand/pngtree-simple-coffee-shop-logo-png-image_13299684.png" />
+                                    </image>
+                                </ImageView>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Coffee Management System" wrappingWidth="228.810546875">
+                                    <font>
+                                        <Font name="System Italic" size="17.0" />
+                                    </font>
+                                </Text>
+                            </children>
                         </HBox>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                         </AnchorPane>
