@@ -163,7 +163,7 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
 }
 
-/* Table styling */
+/* Table styling - keep coffee theme but ensure visibility */
 .table-view {
     -fx-background-color: transparent;
 }
@@ -174,12 +174,41 @@
 
 .table-view .column-header {
     -fx-background-color: transparent;
+    -fx-border-width: 0;  /* Remove default border */
 }
 
 .table-view .column-header .label {
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-padding: 12 16;
+}
+
+/* Remove the extra column line */
+.table-view .column-header-background .filler {
+    -fx-background-color: transparent;
+}
+
+/* Table cell and row styling */
+.table-view .table-cell {
+    -fx-border-color: transparent;  /* Remove cell borders */
+    -fx-padding: 8 12;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: #e0e0e0;  /* Light border between rows */
+    -fx-border-width: 0 0 1 0;  /* Only bottom border */
+}
+
+/* Selection styles remain the same */
+.table-view .table-row-cell:selected {
+    -fx-background-color: #d4a57450;
+    -fx-text-fill: #5C432F;
+}
+
+.table-view:focused .table-row-cell:selected {
+    -fx-background-color: #8b5e3c70;
+    -fx-text-fill: #5C432F;
 }
 
 /* Chart styling */
@@ -249,21 +278,43 @@
     -fx-text-fill: #2c3e50;
 }
 
-/* ComboBox styling */
+/* ComboBox styling with coffee theme */
 .combo-box {
     -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 1;
-    -fx-padding: 8;
+    -fx-background-radius: 4;
+    -fx-border-color: #8b5e3c;
+    -fx-border-radius: 4;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #5C432F;
+    -fx-padding: 3 6;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #8b5e3c;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #5C432F;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #d4a57430;
+}
+
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #8b5e3c40;
 }
 
 .combo-box:hover {
-    -fx-border-color: #8B5A2B;
+    -fx-border-color: #a06f47;
 }
 
-.combo-box:focused {
-    -fx-border-color: #d4a574;
+.combo-box:showing {
+    -fx-border-color: #8b5e3c;
     -fx-border-width: 2;
 }
