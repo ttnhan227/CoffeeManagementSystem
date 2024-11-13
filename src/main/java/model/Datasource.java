@@ -1385,6 +1385,24 @@ public class Datasource extends Product {
             return 0;
         }
     }
+
+    // Add this method to check if a product name already exists
+    public boolean isProductNameExists(String name) {
+        String query = "SELECT COUNT(*) FROM " + TABLE_PRODUCTS + 
+                      " WHERE LOWER(" + COLUMN_PRODUCTS_NAME + ") = LOWER(?)";
+                  
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setString(1, name.trim());
+            ResultSet results = statement.executeQuery();
+            
+            if (results.next()) {
+                return results.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+        }
+        return false;
+    }
 }
 
 

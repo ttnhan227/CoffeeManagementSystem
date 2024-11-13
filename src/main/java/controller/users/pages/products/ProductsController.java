@@ -390,12 +390,14 @@ public class ProductsController {
 
     @FXML
     boolean areProductInputsValid(String fieldAddProductName, String fieldAddProductDescription, String fieldAddProductPrice, String fieldAddProductQuantity, int productCategoryId) {
-        System.out.println("TODO: Better validate inputs.");
         String errorMessage = "";
 
         if (fieldAddProductName == null || fieldAddProductName.length() < 3) {
-            errorMessage += "please enter a valid name!\n";
+            errorMessage += "Please enter a valid name!\n";
+        } else if (Datasource.getInstance().isProductNameExists(fieldAddProductName)) {
+            errorMessage += "A product with this name already exists!\n";
         }
+
         if (fieldAddProductDescription == null || fieldAddProductDescription.length() < 5) {
             errorMessage += "Description is not valid!\n";
         }
