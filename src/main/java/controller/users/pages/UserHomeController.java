@@ -1,5 +1,6 @@
 package controller.users.pages;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -50,34 +51,40 @@ public class UserHomeController {
 
     @FXML
     public void initialize() {
-        setupBestSellingTable();
-        getDashboardProdCount();
-        getDashboardOrderCount();
-        getDashboardCustomerCount();
-        loadBestSellingProducts();
-
-        // Initialize revenue charts
-        barData = new HashMap<>();
-        lineData = new HashMap<>();
-        loadData();
-        setupCharts();
-        loadCombobox();
-
-        // Initial chart update
-        updateChart(Year.now().getValue());
-
-        // Set fixed height for the table
-        bestSellingTable.setFixedCellSize(50);
-        bestSellingTable.setPrefHeight(400); // Height for 3 rows + header + padding
-        bestSellingTable.setMaxHeight(400); // Prevent table from growing
-        bestSellingTable.setMinHeight(400); // Prevent table from shrinking
-
-        // Prevent table from showing empty rows
-        bestSellingTable.setStyle(
+        // Run everything in Platform.runLater to ensure FXML is fully loaded
+        Platform.runLater(() -> {
+            setupBestSellingTable();
+            loadBestSellingProducts();
+            
+            // Then load other components
+            getDashboardProdCount();
+            getDashboardOrderCount();
+            getDashboardCustomerCount();
+            
+            // Initialize revenue charts
+            barData = new HashMap<>();
+            lineData = new HashMap<>();
+            loadData();
+            setupCharts();
+            loadCombobox();
+            
+            // Initial chart update
+            updateChart(Year.now().getValue());
+            
+            // Set fixed height for the table
+            bestSellingTable.setFixedCellSize(50);
+            bestSellingTable.setPrefHeight(400);
+            bestSellingTable.setMaxHeight(400);
+            bestSellingTable.setMinHeight(400);
+            
+            // Prevent table from showing empty rows
+            bestSellingTable.setStyle(
                 "-fx-background-color: transparent;" +
-                        "-fx-table-cell-border-color: transparent;"
-        );
-        loadPage();
+                "-fx-table-cell-border-color: transparent;"
+            );
+            
+            loadPage();
+        });
     }
 
     private void setupBestSellingTable() {
@@ -326,23 +333,31 @@ public class UserHomeController {
             }
         }
     }
-    private void loadPage(){
-        //productVBox.setVisible(false);
+    private void loadPage() {
+        // Initially hide both boxes
+        productVBox.setVisible(false);
         revenueVBox.setVisible(false);
-        pagination.setPageFactory(pageIndex -> pageIndex == 0 ? productVBox : revenueVBox);
-        pagination.currentPageIndexProperty().addListener((obs, oldIndex, newIndex) -> {
-            if(newIndex.intValue() == 0){
-                productVBox.setDisable(false);
+        
+        pagination.setPageFactory(pageIndex -> {
+            // Hide both boxes first
+            productVBox.setVisible(false);
+            revenueVBox.setVisible(false);
+            
+            // Show and return the appropriate box
+            if (pageIndex == 0) {
                 productVBox.setVisible(true);
-            }
-            else{
-                revenueVBox.setDisable(false);
+                return productVBox;
+            } else {
                 revenueVBox.setVisible(true);
+                return revenueVBox;
             }
         });
-//        Platform.runLater(() -> {
-//            productVBox.setDisable(false);
-//            revenueVBox.setDisable(false);
-//        });
+
+        // Show initial page
+        Platform.runLater(() -> {
+            productVBox.setVisible(true);
+            productVBox.setDisable(false);
+            revenueVBox.setDisable(false);
+        });
     }
 }

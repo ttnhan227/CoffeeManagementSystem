@@ -53,38 +53,47 @@ public class HomeController {
 
     @FXML
     public void initialize() {
-        setupBestSellingTable();
-        getDashboardProdCount();
-        getDashboardEmployeeCount();
-        getDashboardOrderCount();
-        getDashboardCustomerCount();
-        loadBestSellingProducts();
-        
-        // Initialize revenue charts
-        barData = new HashMap<>();
-        lineData = new HashMap<>();
-        loadData();
-        setupCharts();
-        loadCombobox();
-        
-        // Initial chart update
-        updateChart(Year.now().getValue());
-        
-        // Set fixed height for the table
-        bestSellingTable.setFixedCellSize(50);
-        bestSellingTable.setPrefHeight(400); // Height for 3 rows + header + padding
-        bestSellingTable.setMaxHeight(400); // Prevent table from growing
-        bestSellingTable.setMinHeight(400); // Prevent table from shrinking
-        
-        // Prevent table from showing empty rows
-        bestSellingTable.setStyle(
-            "-fx-background-color: transparent;" +
-            "-fx-table-cell-border-color: transparent;"
-        );
-        loadPage();
+        // First initialize the table columns
+        Platform.runLater(() -> {
+            setupBestSellingTable();
+            loadBestSellingProducts();
+            
+            // Then load other components
+            getDashboardProdCount();
+            getDashboardEmployeeCount();
+            getDashboardOrderCount();
+            getDashboardCustomerCount();
+            
+            // Initialize revenue charts
+            barData = new HashMap<>();
+            lineData = new HashMap<>();
+            loadData();
+            setupCharts();
+            loadCombobox();
+            
+            // Initial chart update
+            updateChart(Year.now().getValue());
+            
+            // Set fixed height for the table
+            bestSellingTable.setFixedCellSize(50);
+            bestSellingTable.setPrefHeight(400); // Height for 3 rows + header + padding
+            bestSellingTable.setMaxHeight(400); // Prevent table from growing
+            bestSellingTable.setMinHeight(400); // Prevent table from shrinking
+            
+            // Prevent table from showing empty rows
+            bestSellingTable.setStyle(
+                "-fx-background-color: transparent;" +
+                "-fx-table-cell-border-color: transparent;"
+            );
+            loadPage();
+        });
     }
 
     private void setupBestSellingTable() {
+        if (bestSellingTable == null) {
+            return; // Exit if table is not yet initialized
+        }
+        
         // Create columns
         TableColumn<OrderDetail, String> productColumn = new TableColumn<>("Product Name");
         productColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
@@ -112,18 +121,20 @@ public class HomeController {
             }
         });
 
+        // Add columns to table
+        bestSellingTable.getColumns().addAll(productColumn, quantityColumn, totalColumn);
+
         // Set column widths
         productColumn.prefWidthProperty().bind(bestSellingTable.widthProperty().multiply(0.4));
         quantityColumn.prefWidthProperty().bind(bestSellingTable.widthProperty().multiply(0.3));
         totalColumn.prefWidthProperty().bind(bestSellingTable.widthProperty().multiply(0.3));
-
-        // Add columns to table
-        bestSellingTable.getColumns().addAll(productColumn, quantityColumn, totalColumn);
-        
-
     }
 
     private void loadBestSellingProducts() {
+        if (bestSellingTable == null) {
+            return; // Exit if table is not yet initialized
+        }
+        
         ObservableList<OrderDetail> products = FXCollections.observableArrayList(
             Datasource.getInstance().getTopThreeProducts()
         );
@@ -345,23 +356,31 @@ public class HomeController {
             }
         }
     }
-    private void loadPage(){
-        //productVBox.setVisible(false);
+    private void loadPage() {
+        // Initially hide both boxes
+        productVBox.setVisible(false);
         revenueVBox.setVisible(false);
-        pagination.setPageFactory(pageIndex -> pageIndex == 0 ? productVBox : revenueVBox);
-        pagination.currentPageIndexProperty().addListener((obs, oldIndex, newIndex) -> {
-            if(newIndex.intValue() == 0){
-                productVBox.setDisable(false);
+        
+        pagination.setPageFactory(pageIndex -> {
+            // Hide both boxes first
+            productVBox.setVisible(false);
+            revenueVBox.setVisible(false);
+            
+            // Show and return the appropriate box
+            if (pageIndex == 0) {
                 productVBox.setVisible(true);
-            }
-            else{
-                revenueVBox.setDisable(false);
+                return productVBox;
+            } else {
                 revenueVBox.setVisible(true);
+                return revenueVBox;
             }
         });
-//        Platform.runLater(() -> {
-//            productVBox.setDisable(false);
-//            revenueVBox.setDisable(false);
-//        });
+
+        // Show initial page
+        Platform.runLater(() -> {
+            productVBox.setVisible(true);
+            productVBox.setDisable(false);
+            revenueVBox.setDisable(false);
+        });
     }
 }
