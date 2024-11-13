@@ -70,8 +70,13 @@
                 <Label text="Top 3 Best Selling Products" style="-fx-text-fill: #2c3e50;">
                     <font><Font size="24" name="System Bold"/></font>
                 </Label>
-                <TableView fx:id="bestSellingTable" VBox.vgrow="NEVER" style="-fx-background-radius: 5;"
-                           maxHeight="200" minHeight="200" prefHeight="200"/>
+                <TableView fx:id="bestSellingTable" 
+                           styleClass="dashboard-table,table-view"
+                           VBox.vgrow="NEVER" 
+                           style="-fx-background-radius: 5;"
+                           maxHeight="200" 
+                           minHeight="200" 
+                           prefHeight="200"/>
             </VBox>
 
             <!-- Revenue Charts Section -->
@@ -84,7 +89,9 @@
                     <Label text="Year:" style="-fx-text-fill: #666666;">
                         <font><Font size="16"/></font>
                     </Label>
-                    <ComboBox fx:id="yearComboBox" prefWidth="120"/>
+                    <ComboBox fx:id="yearComboBox" 
+                              styleClass="dashboard-combo-box"
+                              prefWidth="120"/>
                 </HBox>
 
                 <HBox spacing="20">
