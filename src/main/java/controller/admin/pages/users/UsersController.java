@@ -179,9 +179,6 @@ public class UsersController {
 
             usersContent.getChildren().clear();
             usersContent.getChildren().add(root);
-
-            AddUserController addUserController = fxmlLoader.getController();
-            addUserController.initializeForm();
         } catch (IOException e) {
             e.printStackTrace();
         }

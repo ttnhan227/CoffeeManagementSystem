@@ -1,5 +1,6 @@
 package controller.admin.pages.users;
 
+import app.utils.HelperMethods;
 import app.utils.PasswordUtils;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.sql.SQLException;
 
 public class EditUserController {
 
@@ -61,70 +63,146 @@ public class EditUserController {
         LocalDate dob = fieldEditCustomerDOB.getValue();
         Gender gender = fieldEditCustomerGender.getValue();
         String status = fieldEditCustomerStatus.getValue();
-
         String newPassword = fieldEditCustomerPassword.getText();
         String confirmPassword = fieldEditCustomerConfirmPassword.getText();
 
+        // Clear any previous error styling
+        fieldEditCustomerName.getStyleClass().remove("error");
+        fieldEditCustomerEmail.getStyleClass().remove("error");
+        fieldEditCustomerUsername.getStyleClass().remove("error");
+        fieldEditCustomerPhone.getStyleClass().remove("error");
+        fieldEditCustomerPassword.getStyleClass().remove("error");
+        fieldEditCustomerConfirmPassword.getStyleClass().remove("error");
+
+        // Validate Full Name
+        if (!HelperMethods.validateFullName(fullname)) {
+            viewCustomerResponse.setText("Full name must start with a capital letter and be 2-50 characters long.");
+            viewCustomerResponse.setVisible(true);
+            fieldEditCustomerName.getStyleClass().add("error");
+            return;
+        }
+
+        // Validate Email
+        if (!HelperMethods.validateEmail(email)) {
+            viewCustomerResponse.setText("Please enter a valid email address.");
+            viewCustomerResponse.setVisible(true);
+            fieldEditCustomerEmail.getStyleClass().add("error");
+            return;
+        }
+
+        // Validate Username
+        if (!HelperMethods.validateUsername(username)) {
+            viewCustomerResponse.setText("Username must be 3-30 characters long, start with a letter.");
+            viewCustomerResponse.setVisible(true);
+            fieldEditCustomerUsername.getStyleClass().add("error");
+            return;
+        }
+
+        // Check if username is taken (excluding current user)
+        try {
+            User existingUser = Datasource.getInstance().getUserByUsername(username);
+            if (existingUser != null && existingUser.getUsername() != null 
+                && existingUser.getId() != customerId) {
+                viewCustomerResponse.setText("Username is already taken.");
+                viewCustomerResponse.setVisible(true);
+                fieldEditCustomerUsername.getStyleClass().add("error");
+                return;
+            }
+        } catch (SQLException e) {
+            viewCustomerResponse.setText("Error checking username availability.");
+            viewCustomerResponse.setVisible(true);
+            return;
+        }
+
+        // Check if email is taken (excluding current user)
+        try {
+            User existingUser = Datasource.getInstance().getUserByEmail(email);
+            if (existingUser != null && existingUser.getEmail() != null 
+                && existingUser.getId() != customerId) {
+                viewCustomerResponse.setText("Email is already registered.");
+                viewCustomerResponse.setVisible(true);
+                fieldEditCustomerEmail.getStyleClass().add("error");
+                return;
+            }
+        } catch (SQLException e) {
+            viewCustomerResponse.setText("Error checking email availability.");
+            viewCustomerResponse.setVisible(true);
+            return;
+        }
+
+        // Validate Password if provided
         if (!newPassword.isEmpty() || !confirmPassword.isEmpty()) {
             if (!newPassword.equals(confirmPassword)) {
                 viewCustomerResponse.setText("Passwords do not match!");
                 viewCustomerResponse.setVisible(true);
+                fieldEditCustomerPassword.getStyleClass().add("error");
+                fieldEditCustomerConfirmPassword.getStyleClass().add("error");
+                return;
+            }
+            
+            if (!HelperMethods.validatePassword(newPassword)) {
+                viewCustomerResponse.setText("Password must be 8-32 characters with at least one uppercase letter, one lowercase letter, and one number.");
+                viewCustomerResponse.setVisible(true);
+                fieldEditCustomerPassword.getStyleClass().add("error");
                 return;
             }
         }
 
-        if (areCustomerInputsValid(fullname, email, username, phoneNumber, dob, gender, status)) {
-            Task<Boolean> updateCustomerTask = new Task<Boolean>() {
-                @Override
-                protected Boolean call() {
-                    java.sql.Date sqlDateOfBirth = java.sql.Date.valueOf(dob);
-                    
-                    String hashedPassword = null;
-                    String salt = null;
-                    
-                    if (!newPassword.isEmpty()) {
-                        salt = PasswordUtils.getSalt(30);
-                        hashedPassword = PasswordUtils.generateSecurePassword(newPassword, salt);
-                    }
-
-                    return Datasource.getInstance().updateOneUser(
-                            customerId,
-                            fullname,
-                            username,
-                            email,
-                            status,
-                            sqlDateOfBirth,
-                            phoneNumber,
-                            gender,
-                            hashedPassword,
-                            salt
-                    );
-                }
-            };
-
-            updateCustomerTask.setOnSucceeded(e -> {
-                if (updateCustomerTask.valueProperty().get()) {
-                    viewCustomerResponse.setText("User updated successfully!");
-                    viewCustomerResponse.setVisible(true);
-                    fieldEditCustomerPassword.clear();
-                    fieldEditCustomerConfirmPassword.clear();
-                } else {
-                    viewCustomerResponse.setText("Failed to update user.");
-                    viewCustomerResponse.setVisible(true);
-                }
-            });
-
-            updateCustomerTask.setOnFailed(e -> {
-                Throwable throwable = updateCustomerTask.getException();
-                viewCustomerResponse.setText("Error: " + throwable.getMessage());
-                viewCustomerResponse.setVisible(true);
-            });
-
-            new Thread(updateCustomerTask).start();
-        } else {
-            viewCustomerResponse.setText("Please fill in all fields correctly.");
+        // Validate other required fields
+        if (dob == null || gender == null || status == null || phoneNumber.isEmpty()) {
+            viewCustomerResponse.setText("Please fill in all required fields.");
             viewCustomerResponse.setVisible(true);
+            return;
         }
+
+        // Continue with update if all validations pass
+        Task<Boolean> updateCustomerTask = new Task<Boolean>() {
+            @Override
+            protected Boolean call() {
+                java.sql.Date sqlDateOfBirth = java.sql.Date.valueOf(dob);
+                
+                String hashedPassword = null;
+                String salt = null;
+                
+                if (!newPassword.isEmpty()) {
+                    salt = PasswordUtils.getSalt(30);
+                    hashedPassword = PasswordUtils.generateSecurePassword(newPassword, salt);
+                }
+
+                return Datasource.getInstance().updateOneUser(
+                        customerId,
+                        fullname,
+                        username,
+                        email,
+                        status,
+                        sqlDateOfBirth,
+                        phoneNumber,
+                        gender,
+                        hashedPassword,
+                        salt
+                );
+            }
+        };
+
+        updateCustomerTask.setOnSucceeded(e -> {
+            if (updateCustomerTask.valueProperty().get()) {
+                viewCustomerResponse.setText("User updated successfully!");
+                viewCustomerResponse.setVisible(true);
+                fieldEditCustomerPassword.clear();
+                fieldEditCustomerConfirmPassword.clear();
+            } else {
+                viewCustomerResponse.setText("Failed to update user.");
+                viewCustomerResponse.setVisible(true);
+            }
+        });
+
+        updateCustomerTask.setOnFailed(e -> {
+            Throwable throwable = updateCustomerTask.getException();
+            viewCustomerResponse.setText("Error: " + throwable.getMessage());
+            viewCustomerResponse.setVisible(true);
+        });
+
+        new Thread(updateCustomerTask).start();
     }
 
     public void fillEditingCustomerFields(int customer_id) {

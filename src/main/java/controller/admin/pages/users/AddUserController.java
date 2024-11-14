@@ -4,8 +4,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import model.Datasource;
+import model.User;
 import app.utils.PasswordUtils;
+import app.utils.HelperMethods;
 import java.time.LocalDate;
+import java.sql.SQLException;
 
 public class AddUserController {
 
@@ -36,7 +39,8 @@ public class AddUserController {
     @FXML
     private Text viewCreateUserResponse;
 
-    public void initializeForm() {
+    @FXML
+    public void initialize() {
         // Initialize combo boxes
         fieldCreateUserStatus.getItems().addAll("enabled", "disabled");
         fieldCreateUserGender.getItems().addAll("Male", "Female", "Other");
@@ -44,6 +48,19 @@ public class AddUserController {
         // Set default values
         fieldCreateUserStatus.setValue("enabled");
         fieldCreateUserDOB.setValue(LocalDate.now());
+    }
+
+    private void showError(String message) {
+        viewCreateUserResponse.setText(message);
+        viewCreateUserResponse.setVisible(true);
+    }
+
+    private void highlightErrorField(TextField field) {
+        field.getStyleClass().add("error");
+        field.setOnKeyTyped(e -> {
+            field.getStyleClass().remove("error");
+            viewCreateUserResponse.setVisible(false);
+        });
     }
 
     @FXML
@@ -57,11 +74,74 @@ public class AddUserController {
         String phone = fieldCreateUserPhone.getText();
         String status = fieldCreateUserStatus.getValue();
 
-        // Validate the input
-        if (fullName.isEmpty() || email.isEmpty() || username.isEmpty() ||
-                password.isEmpty() || dob == null || gender == null || phone.isEmpty()) {
-            viewCreateUserResponse.setText("All fields are required.");
-            viewCreateUserResponse.setVisible(true);
+        // Clear previous error styling
+        fieldCreateUserName.getStyleClass().remove("error");
+        fieldCreateUserEmail.getStyleClass().remove("error");
+        fieldCreateUserUsername.getStyleClass().remove("error");
+        fieldCreateUserPassword.getStyleClass().remove("error");
+        fieldCreateUserPhone.getStyleClass().remove("error");
+
+        // Validate Full Name
+        if (fullName.isEmpty() || !HelperMethods.validateFullName(fullName)) {
+            showError("Full name must start with a capital letter and be 2-50 characters long. Each word should start with a capital letter.");
+            highlightErrorField(fieldCreateUserName);
+            return;
+        }
+
+        // Validate Username
+        if (username.isEmpty() || !HelperMethods.validateUsername(username)) {
+            showError("Username must be 3-30 characters long, start with a letter, and contain only letters, numbers, or underscores.");
+            highlightErrorField(fieldCreateUserUsername);
+            return;
+        }
+
+        // Check username availability
+        try {
+            User userByUsername = Datasource.getInstance().getUserByUsername(username);
+            if (userByUsername != null && userByUsername.getUsername() != null) {
+                showError("Username is already taken.");
+                highlightErrorField(fieldCreateUserUsername);
+                return;
+            }
+        } catch (SQLException e) {
+            showError("Error checking username availability.");
+            return;
+        }
+
+        // Validate Email
+        if (email.isEmpty() || !HelperMethods.validateEmail(email)) {
+            showError("Enter a valid email address (e.g., user@example.com).");
+            highlightErrorField(fieldCreateUserEmail);
+            return;
+        }
+
+        // Check email availability
+        try {
+            User userByEmail = Datasource.getInstance().getUserByEmail(email);
+            if (userByEmail != null && userByEmail.getEmail() != null) {
+                showError("Email is already registered.");
+                highlightErrorField(fieldCreateUserEmail);
+                return;
+            }
+        } catch (SQLException e) {
+            showError("Error checking email availability.");
+            return;
+        }
+
+        // Validate Password
+        if (password.isEmpty() || !HelperMethods.validatePassword(password)) {
+            showError("Password requirements:\n" +
+                     "• 8-32 characters\n" +
+                     "• At least one uppercase letter\n" +
+                     "• At least one lowercase letter\n" +
+                     "• At least one number");
+            highlightErrorField(fieldCreateUserPassword);
+            return;
+        }
+
+        // Validate other required fields
+        if (dob == null || gender == null || phone.isEmpty() || status == null) {
+            showError("Please fill in all required fields.");
             return;
         }
 
@@ -69,24 +149,21 @@ public class AddUserController {
         String salt = PasswordUtils.getSalt(30);
         String securePassword = PasswordUtils.generateSecurePassword(password, salt);
 
-        // Use the UserModel to insert the new user into the database
-        Datasource userModel = Datasource.getInstance();
-        boolean success = userModel.insertNewUserForm(
+        // Insert the new user
+        boolean success = Datasource.getInstance().insertNewUserForm(
                 fullName, username, email, securePassword, salt,
                 java.sql.Date.valueOf(dob), gender, phone,
                 status.toLowerCase()
         );
 
         if (success) {
-            viewCreateUserResponse.setText("User created successfully!");
             viewCreateUserResponse.setFill(javafx.scene.paint.Color.GREEN);
+            showError("User created successfully!");
             clearForm();
         } else {
-            viewCreateUserResponse.setText("Failed to create user.");
             viewCreateUserResponse.setFill(javafx.scene.paint.Color.RED);
+            showError("Failed to create user.");
         }
-
-        viewCreateUserResponse.setVisible(true);
     }
 
     private void clearForm() {
@@ -97,6 +174,6 @@ public class AddUserController {
         fieldCreateUserDOB.setValue(LocalDate.now());
         fieldCreateUserGender.setValue(null);
         fieldCreateUserPhone.clear();
-        fieldCreateUserStatus.setValue("Active");
+        fieldCreateUserStatus.setValue("enabled");
     }
 }

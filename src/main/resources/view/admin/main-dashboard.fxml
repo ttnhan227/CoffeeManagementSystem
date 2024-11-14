@@ -56,7 +56,7 @@
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="btnUsers" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnUsersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Employee">
+                                <Button fx:id="btnUsers" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnUsersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Users">
                                     <graphic>
                                         <ImageView fitHeight="40.0" fitWidth="40.0">
                                             <Image url="@../resources/img/icon/icon_coffee/user.png"/>
