@@ -11,15 +11,20 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.*;
 
@@ -151,7 +156,90 @@ public class ViewOrderController implements Initializable {
     }
     @FXML
     public void printOnClick(){
-        Node parentNode = printBtn.getParent();
+        //Node parentNode = printBtn.getParent();
+
+        Stage billPreview = new Stage();
+        billPreview.initModality(Modality.APPLICATION_MODAL);
+        billPreview.setTitle("Bill Review");
+
+        VBox reviewLayout = new VBox();
+        reviewLayout.setAlignment(Pos.CENTER);
+        reviewLayout.setSpacing(5);
+        reviewLayout.setPadding(new Insets(10));
+
+        Label employee_label = new Label("Employee name: " + employeeField.getText());
+        Label customer_label = new Label("Customer name: " + customerField.getText());
+        Label order_label = new Label("Order id: " + orderIdField.getText());
+        Label table_label = new Label("Table id: " + tableIdField.getText());
+        Label capacity_label = new Label("Table capacity: " + tableCapacity.getText());
+        Label coupon_label = new Label("Coupon id: " + couponIdField.getText());
+
+        //Label space_label = new Label("-------------------------------------");
+
+        reviewLayout.getChildren().addAll(employee_label, customer_label, order_label,
+        table_label, capacity_label, coupon_label,
+                new Label("-----------------------------------------------"));
+
+//        GridPane column_title = new GridPane();
+//        column_title.setHgap(20);
+//        column_title.add(new Label("Product name"), 0, 0);
+//        column_title.add(new Label("Category"), 1, 0);
+//        column_title.add(new Label("Price"), 2, 0);
+//        column_title.add(new Label("Quantity"), 3, 0);
+//        column_title.add(new Label("Total"), 4, 0);
+//        column_title.setAlignment(Pos.CENTER);
+
+        //TextFlow textFlow = new TextFlow();
+
+        Text header = new Text(String.format("%-20s %-15s %-10s %-10s %-10s",
+                "Product name", "Category", "Price", "Quantity", "Total"));
+        header.setFont(Font.font("Monospaced"));
+        //textFlow.getChildren().add(header);
+
+        reviewLayout.getChildren().addAll(header,
+                new Label("-----------------------------------------------"));
+
+        for(Product product : productList){
+            int index = productList.indexOf(product);
+            TableColumn<Product, ?> category_column = productTable.getColumns().get(2);
+            TableColumn<Product, ?> quantity_column = productTable.getColumns().get(4);
+            TableColumn<Product, ?> total_column = productTable.getColumns().get(5);
+//            Label product_label = new Label(product.getName() + "    " + category_column.getCellData(index)
+//            + "    " + product.getPrice() + "    " + quantity_column.getCellData(index) + "    "
+//                    + total_column.getCellData(index));
+//            reviewLayout.getChildren().add(product_label);
+//            Label product_name = new Label(product.getName());
+//            Label category_name = new Label("" + category_column.getCellData(index));
+//            Label price_label = new Label("" + product.getPrice());
+//            Label quantity_label = new Label("" + quantity_column.getCellData(index));
+//            Label total_label = new Label("" + total_column.getCellData(index));
+//
+//            GridPane gridPane = new GridPane();
+//            gridPane.setHgap(20);
+//            gridPane.add(product_name, 0, 0);
+//            gridPane.add(category_name, 1, 0);
+//            gridPane.add(price_label, 2, 0);
+//            gridPane.add(quantity_label, 3, 0);
+//            gridPane.add(total_label, 4, 0);
+//            gridPane.setAlignment(Pos.CENTER);
+            Text row = new Text(String.format("%-20s %-15s %-10.2f %-10d %-10.2f",
+                    product.getName(), category_column.getCellData(index), product.getPrice(),
+                    quantity_column.getCellData(index), total_column.getCellData(index)));
+            row.setFont(Font.font("Monospaced"));
+            reviewLayout.getChildren().add(row);
+
+        }
+
+        Label payment_label = new Label("Payment: " + totalText.getText() +
+                " \nDiscount: " + discountText.getText() +
+                "\nPayment after discount: " + finalText.getText());
+        reviewLayout.getChildren().add(new Label("-----------------------------------------------"));
+        reviewLayout.getChildren().add(payment_label);
+
+        Scene previewScene = new Scene(reviewLayout, 800, 600);
+        billPreview.setScene(previewScene);
+
+        billPreview.show();
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save PNG");
@@ -161,7 +249,7 @@ public class ViewOrderController implements Initializable {
 
         if (file != null) {
             // Ensure rendering is complete before taking the snapshot
-            Platform.runLater(() -> saveNodeAsPng(parentNode, file));
+            Platform.runLater(() -> saveNodeAsPng(reviewLayout, file));
         }
     }
 
