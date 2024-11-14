@@ -363,37 +363,28 @@ public class HomeController {
         }
     }
     private void loadPage() {
-        VBox currentContent = productVBox; // Default to first page
+        // Initially hide both boxes
+        productVBox.setVisible(false);
+        revenueVBox.setVisible(false);
         
         pagination.setPageFactory(pageIndex -> {
+            // Hide both boxes first
+            productVBox.setVisible(false);
+            revenueVBox.setVisible(false);
+            
+            // Show and return the appropriate box
             if (pageIndex == 0) {
-                // Remove revenueVBox from parent if it exists
-                if (revenueVBox.getParent() != null) {
-                    ((VBox) revenueVBox.getParent()).getChildren().remove(revenueVBox);
-                }
-                // Add productVBox if it's not already there
-                VBox parent = (VBox) productVBox.getParent();
-                if (parent != null && !parent.getChildren().contains(productVBox)) {
-                    parent.getChildren().add(productVBox);
-                }
+                productVBox.setVisible(true);
                 return productVBox;
             } else {
-                // Remove productVBox from parent if it exists
-                if (productVBox.getParent() != null) {
-                    ((VBox) productVBox.getParent()).getChildren().remove(productVBox);
-                }
-                // Add revenueVBox if it's not already there
-                VBox parent = (VBox) revenueVBox.getParent();
-                if (parent != null && !parent.getChildren().contains(revenueVBox)) {
-                    parent.getChildren().add(revenueVBox);
-                }
+                revenueVBox.setVisible(true);
                 return revenueVBox;
             }
         });
 
-        // Initialize with first page
+        // Show initial page
         Platform.runLater(() -> {
-            pagination.setCurrentPageIndex(0);
+            productVBox.setVisible(true);
             productVBox.setDisable(false);
             revenueVBox.setDisable(false);
         });
