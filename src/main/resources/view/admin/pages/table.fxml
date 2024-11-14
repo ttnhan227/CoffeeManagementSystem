@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.shape.Rectangle?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.admin.pages.tableController">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.GridPane?>
+<AnchorPane prefHeight="800.0" prefWidth="1280.0" styleClass="content-pane" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.admin.pages.tableController">
     <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <VBox spacing="20" alignment="CENTER">
             <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
+                <Insets top="30" right="30" bottom="30" left="30"/>
             </padding>
             
-            <!-- Title -->
-            <Label text="Table Management" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-            
-            <!-- Grid of Tables -->
-            <GridPane fx:id="tableGrid" hgap="20" vgap="20" alignment="CENTER">
-                <padding>
-                    <Insets top="20" right="20" bottom="20" left="20"/>
-                </padding>
-            </GridPane>
+            <!-- Tables Section -->
+            <ScrollPane fitToWidth="true" styleClass="custom-scroll-pane">
+                <GridPane fx:id="tableGrid" hgap="25" vgap="25" alignment="CENTER"
+                          styleClass="tables-grid">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+                </GridPane>
+            </ScrollPane>
         </VBox>
     </StackPane>
 </AnchorPane>
