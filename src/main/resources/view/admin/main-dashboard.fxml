@@ -31,75 +31,67 @@
                                 <Button fx:id="btnHome" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnHomeOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Home">
                                     <graphic>
                                         <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <image>
-                                                <Image url="@../resources/img/icon/icon_coffee/home.png" />
-                                            </image>
+                                            <Image url="@../resources/img/icon/icon_coffee/home.png"/>
                                         </ImageView>
                                     </graphic>
                                 </Button>
                                 <Button fx:id="btnProducts" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnProductsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Menu">
                                     <graphic>
                                         <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <image>
-                                                <Image url="@../resources/img/icon/icon_coffee/menu.png" />
-                                            </image>
+                                            <Image url="@../resources/img/icon/icon_coffee/menu.png"/>
                                         </ImageView>
                                     </graphic>
                                 </Button>
                                 <Button fx:id="btnNewOrder" contentDisplay="TOP" mnemonicParsing="false" onAction="#onClickNewOrder" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="New Order">
                                     <graphic>
                                         <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <image>
-                                                <Image url="@../resources/img/icon/icon_coffee/new_order.png" />
-                                            </image>
+                                            <Image url="@../resources/img/icon/icon_coffee/new_order.png"/>
                                         </ImageView>
                                     </graphic>
                                 </Button>
                                 <Button fx:id="btnOrders" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnOrdersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Orders">
                                     <graphic>
                                         <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <image>
-                                                <Image url="@../resources/img/icon/icon_coffee/order.png" />
-                                            </image>
+                                            <Image url="@../resources/img/icon/icon_coffee/order.png"/>
                                         </ImageView>
                                     </graphic>
                                 </Button>
                                 <Button fx:id="btnUsers" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnUsersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Employee">
                                     <graphic>
                                         <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <image>
-                                                <Image url="@../resources/img/icon/icon_coffee/user.png" />
-                                            </image>
+                                            <Image url="@../resources/img/icon/icon_coffee/user.png"/>
                                         </ImageView>
                                     </graphic>
                                 </Button>
                                 <Button fx:id="btnCoupon" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCouponOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Coupon">
                                     <graphic>
                                         <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <image>
-                                                <Image url="@../resources/img/icon/icon_coffee/voucher2.png" />
-                                            </image>
+                                            <Image url="@../resources/img/icon/icon_coffee/voucher2.png"/>
                                         </ImageView>
                                     </graphic>
                                 </Button>
                                 <Button fx:id="btnCustomer" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCustomerOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Customer">
                                     <graphic>
                                         <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <image>
-                                                <Image url="@../resources/img/icon/icon_coffee/customer.png" />
-                                            </image>
+                                            <Image url="@../resources/img/icon/icon_coffee/customer.png"/>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnTable" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnTableOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Table">
+                                    <graphic>
+                                        <ImageView fitHeight="40.0" fitWidth="40.0">
+                                            <Image url="@../resources/img/icon/icon_coffee/table.png"/>
                                         </ImageView>
                                     </graphic>
                                 </Button>
                                 <Button fx:id="btnSettings" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnSettingsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Settings">
                                     <graphic>
                                         <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <image>
-                                                <Image url="@../resources/img/icon/icon_coffee/setting.png" />
-                                            </image>
+                                            <Image url="@../resources/img/icon/icon_coffee/setting.png"/>
                                         </ImageView>
                                     </graphic>
                                 </Button>
+
                             </children>
                         </VBox>
 

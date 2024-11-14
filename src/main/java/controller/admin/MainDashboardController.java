@@ -44,6 +44,8 @@ public class MainDashboardController implements Initializable {
     @FXML
     public Button btnSettings;
     @FXML
+    public Button btnTable;
+    @FXML
     public Button lblLogOut;
     @FXML
     public AnchorPane dashHead;
@@ -205,6 +207,9 @@ public class MainDashboardController implements Initializable {
 //        //.createLineChart();
 //        //controller.updateChart(2024);
 //    }
+public void btnTableOnClick() {
+    FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/table.fxml");
+}
 
 
 }
