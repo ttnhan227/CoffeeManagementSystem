@@ -24,7 +24,7 @@
                <children>
                   <HBox alignment="CENTER" maxHeight="25.0" minHeight="25.0" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Text fx:id="emName" strokeType="OUTSIDE" strokeWidth="0.0" text="Employee name:" wrappingWidth="120.0">
+                        <Text fx:id="emName" strokeType="OUTSIDE" strokeWidth="0.0" text="User name:" wrappingWidth="120.0">
                            <font>
                               <Font size="15.0" />
                            </font>

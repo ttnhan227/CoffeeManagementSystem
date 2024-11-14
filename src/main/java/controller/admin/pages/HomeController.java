@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -59,6 +60,20 @@ public class HomeController {
     @FXML
     public void initialize() {
         Platform.runLater(() -> {
+            // Find the root AnchorPane
+            Node current = productVBox;
+            while (current != null && !(current instanceof AnchorPane)) {
+                current = current.getParent();
+            }
+            
+            if (current instanceof AnchorPane) {
+                AnchorPane root = (AnchorPane) current;
+                // Set explicit anchors for positioning
+                AnchorPane.setTopAnchor(root, 20.0);
+                AnchorPane.setLeftAnchor(root, 50.0);
+                AnchorPane.setRightAnchor(root, 50.0);
+            }
+            
             setupBestSellingTable();
             loadBestSellingProducts();
             
