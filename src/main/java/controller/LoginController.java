@@ -103,7 +103,6 @@ public class LoginController {
         // Set up the stage for full screen
         dialogStage.setScene(scene);
         dialogStage.setMaximized(true);  // This will make the window maximized
-        dialogStage.setFullScreen(true); // This will make it truly full screen
         dialogStage.show();
     }
 

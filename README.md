@@ -1,4 +1,3 @@
 Coffee Management System App
 
-- first commit
-
+Group3_CoffeeShopManagement Project
