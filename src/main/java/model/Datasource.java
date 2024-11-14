@@ -813,6 +813,9 @@ public class Datasource extends Product {
         conn.setAutoCommit(false);
 
         try {
+            // Debug print
+            System.out.println("Creating order with customer: " + (customer != null ? customer.getId() : "null"));
+            
             String orderSql = "INSERT INTO [order] " +
                     "(employeeID, " +
                     "customerID, " +
@@ -823,26 +826,35 @@ public class Datasource extends Product {
                     "discount, " +
                     "final) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    
             try (PreparedStatement orderStmt = conn.prepareStatement(orderSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
                 orderStmt.setInt(1, UserSessionController.getUserId());
+                
+                // Handle customer and points
                 if (customer != null) {
                     orderStmt.setInt(2, customer.getId());
-                }
-                else{
+                    
+                    // Update points in a separate statement
+                    String updatePointsSql = "UPDATE customer SET points = points + 50 WHERE id = ?";
+                    try (PreparedStatement pointsStmt = conn.prepareStatement(updatePointsSql)) {
+                        pointsStmt.setInt(1, customer.getId());
+                        int pointsUpdated = pointsStmt.executeUpdate();
+                        System.out.println("Points update affected rows: " + pointsUpdated); // Debug print
+                    }
+                } else {
                     orderStmt.setNull(2, java.sql.Types.INTEGER);
                 }
 
+                // Rest of the order creation code...
                 if (coupon != null) {
                     orderStmt.setInt(3, coupon.getId());
-                }
-                else{
+                } else {
                     orderStmt.setNull(3, java.sql.Types.INTEGER);
                 }
 
                 if (table != null) {
                     orderStmt.setInt(4, table.getId());
-                }
-                else{
+                } else {
                     orderStmt.setNull(4, java.sql.Types.INTEGER);
                 }
 
@@ -850,55 +862,57 @@ public class Datasource extends Product {
                 orderStmt.setDouble(6, total);
                 orderStmt.setDouble(7, discount);
                 orderStmt.setDouble(8, fin);
-                orderStmt.executeUpdate();
-                // Get the generated order_id
+                
+                int orderCreated = orderStmt.executeUpdate();
+                System.out.println("Order creation affected rows: " + orderCreated); // Debug print
+
+                // Get the generated order_id and create order details
                 ResultSet rs = orderStmt.getGeneratedKeys();
                 if (rs.next()) {
                     int orderId = rs.getInt(1);
+                    System.out.println("Created order with ID: " + orderId); // Debug print
 
-                    //Insert into OrderDetail table for each product
                     String detailSql = "INSERT INTO orderDetail (orderID, productID, quantity, total) VALUES (?, ?, ?, ?)";
                     String updateProductSql = "UPDATE products SET quantity = quantity - ? WHERE id = ?";
-                    PreparedStatement updateProductStmt = conn.prepareStatement(updateProductSql);
-                    try (PreparedStatement detailStmt = conn.prepareStatement(detailSql)) {
+                    
+                    try (PreparedStatement detailStmt = conn.prepareStatement(detailSql);
+                         PreparedStatement updateProductStmt = conn.prepareStatement(updateProductSql)) {
+                        
                         for (int i = 0; i < productList.size(); i++) {
-                            detailStmt.setInt(1, orderId); // Set the foreign key from Order
-                            detailStmt.setInt(2, productList.get(i).getId()); // Product ID
-                            detailStmt.setInt(3, quantities.get(i)); // quantity
-
+                            // Order details
+                            detailStmt.setInt(1, orderId);
+                            detailStmt.setInt(2, productList.get(i).getId());
+                            detailStmt.setInt(3, quantities.get(i));
+                            
                             double productTotal = productList.get(i).getPrice() * quantities.get(i);
                             DecimalFormat format = new DecimalFormat("#.##");
                             String formattedTotal = format.format(productTotal);
-                            detailStmt.setDouble(4, Double.parseDouble(formattedTotal));// product total
-
-                            try {
-                                updateProductStmt.setInt(1, quantities.get(i)); // Quantity to subtract
-                                updateProductStmt.setInt(2, productList.get(i).getId()); // Product ID to update
-
-                                updateProductStmt.addBatch(); // addbatch
-                            }
-                            catch (SQLException e){
-                                System.out.println(e.getMessage());
-                            }
-
+                            detailStmt.setDouble(4, Double.parseDouble(formattedTotal));
                             detailStmt.addBatch();
-                        }
-                        detailStmt.executeBatch();
-                        updateProductStmt.executeBatch();
-                    }
-                } else {
-                    throw new SQLException("Order ID retrieval failed, no ID returned.");
-                }
-            }
 
-            // Commit the transaction if everything is successful
-            conn.commit();
-        }catch (SQLException e) {
-            // Rollback in case of an error
-            conn.rollback();
-            throw e;
+                            // Update product quantities
+                            updateProductStmt.setInt(1, quantities.get(i));
+                            updateProductStmt.setInt(2, productList.get(i).getId());
+                            updateProductStmt.addBatch();
+                        }
+                        
+                        int[] detailResults = detailStmt.executeBatch();
+                        int[] productResults = updateProductStmt.executeBatch();
+                        
+                        System.out.println("Order details created: " + detailResults.length); // Debug print
+                        System.out.println("Products updated: " + productResults.length); // Debug print
+                    }
+                }
+
+                conn.commit();
+                System.out.println("Transaction committed successfully"); // Debug print
+                
+            } catch (SQLException e) {
+                System.out.println("Error during order creation: " + e.getMessage());
+                conn.rollback();
+                throw e;
+            }
         } finally {
-            // Restore auto-commit
             conn.setAutoCommit(true);
         }
     }
@@ -1463,6 +1477,35 @@ public class Datasource extends Product {
                 return false;
             }
         }
+    }
+
+    public boolean updateCustomerPoints(int customerId, int pointsToAdd) {
+        String sql = "UPDATE customer SET points = points + ? WHERE id = ?";
+        
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, pointsToAdd);
+            statement.setInt(2, customerId);
+            
+            int affectedRows = statement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.out.println("Update points failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public int getCustomerPoints(int customerId) {
+        String sql = "SELECT points FROM customer WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, customerId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("points");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting customer points: " + e.getMessage());
+        }
+        return -1;
     }
 }
 
