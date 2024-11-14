@@ -64,7 +64,16 @@ public class Datasource extends Product {
 
     public boolean open() {
         try {
-            conn = DriverManager.getConnection(CONNECTION_STRING);
+            if (conn != null && !conn.isClosed()) {
+                return true; // Connection already exists and is open
+            }
+            
+            // Set up connection with busy timeout
+            org.sqlite.SQLiteConfig config = new org.sqlite.SQLiteConfig();
+            config.setBusyTimeout(5000); // 5 second timeout
+            config.setJournalMode(org.sqlite.SQLiteConfig.JournalMode.WAL); // Write-Ahead Logging
+            
+            conn = DriverManager.getConnection(CONNECTION_STRING, config.toProperties());
             return true;
         } catch (SQLException e) {
             System.out.println("Couldn't connect to database: " + e.getMessage());
@@ -1402,6 +1411,58 @@ public class Datasource extends Product {
             System.out.println("Query failed: " + e.getMessage());
         }
         return false;
+    }
+
+    public boolean updateTableStatus(int tableId, int newStatus) {
+        // First ensure we have a valid connection
+        if (conn == null) {
+            open();
+        }
+        
+        String sql = "UPDATE \"table\" SET status = ? WHERE id = ?";
+        
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            // Set timeout to avoid infinite waiting
+            statement.setQueryTimeout(30);
+            
+            statement.setInt(1, newStatus);
+            statement.setInt(2, tableId);
+            
+            int affectedRows = statement.executeUpdate();
+            
+            // For debugging
+            System.out.println("Updating table " + tableId + " to status " + newStatus);
+            System.out.println("Affected rows: " + affectedRows);
+            
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            // If we get a BUSY error, try to reconnect and retry once
+            if (e.getMessage().contains("SQLITE_BUSY")) {
+                try {
+                    // Close and reopen connection
+                    close();
+                    open();
+                    
+                    // Retry the update
+                    try (PreparedStatement retryStatement = conn.prepareStatement(sql)) {
+                        retryStatement.setQueryTimeout(30);
+                        retryStatement.setInt(1, newStatus);
+                        retryStatement.setInt(2, tableId);
+                        
+                        int affectedRows = retryStatement.executeUpdate();
+                        return affectedRows > 0;
+                    }
+                } catch (SQLException retryEx) {
+                    System.out.println("Retry failed: " + retryEx.getMessage());
+                    retryEx.printStackTrace();
+                    return false;
+                }
+            } else {
+                System.out.println("Update table status failed: " + e.getMessage());
+                e.printStackTrace();
+                return false;
+            }
+        }
     }
 }
 

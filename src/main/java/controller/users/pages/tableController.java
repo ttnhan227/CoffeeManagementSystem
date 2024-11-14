@@ -1,8 +1,4 @@
-package controller.admin.pages;
-
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
+package controller.users.pages;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,6 +11,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import model.Datasource;
 import model.Table;
+
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class tableController implements Initializable {
     

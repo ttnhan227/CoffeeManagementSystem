@@ -1,9 +1,8 @@
 module app {
     requires javafx.controls;
     requires javafx.fxml;
-    requires java.sql;
-    requires org.slf4j;
-    requires javafx.swing; // Add this line
+    requires javafx.swing;
+    requires org.xerial.sqlitejdbc; // Add this line
 
     // Export the packages you want other modules to access (if any)
     exports app;

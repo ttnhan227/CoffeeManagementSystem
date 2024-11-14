@@ -71,6 +71,13 @@
                                         </ImageView>
                                     </graphic>
                                 </Button>
+                                <Button fx:id="btnTable" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnTableOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Table">
+                                    <graphic>
+                                        <ImageView fitHeight="40.0" fitWidth="40.0">
+                                            <Image url="@../resources/img/icon/icon_coffee/table.png"/>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                             </children>
                         </VBox>
 

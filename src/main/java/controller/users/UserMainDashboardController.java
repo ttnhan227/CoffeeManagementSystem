@@ -38,6 +38,8 @@ public class UserMainDashboardController implements Initializable {
     public AnchorPane dashHead;
     public Button btnNewOrder;
     @FXML
+    public Button btnTable;
+    @FXML
     private StackPane dashContent;
     @FXML
     private Label lblUsrName;
@@ -167,4 +169,8 @@ public class UserMainDashboardController implements Initializable {
         controller.finalText.setText(String.valueOf(order.getFin()));
         controller.discountText.setText(order.getDiscount() + "%");
     }
+    public void btnTableOnClick() {
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/table.fxml");
+    }
+
 }

@@ -109,17 +109,79 @@ public class NewOrderController implements Initializable {
         dateField.setText(formatted_date);
     }
 
-    private void tableComboBoxLoader(){
+    private void tableComboBoxLoader() {
         List<Integer> list = Datasource.getInstance().getAllTableID();
-        ObservableList<Integer> options = FXCollections.observableArrayList(list);
-        tableComboBox.setItems(options);
-        tableComboBox.valueProperty().addListener((obs, oldVal, newVal) ->{
-                if(newVal != null){
-                    order_table = Datasource.getInstance().getOneTable(newVal);
-                    checkTakeAway.setSelected(false);
+        
+        // Create custom cell factory for the ComboBox
+        tableComboBox.setCellFactory(lv -> new ListCell<Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    Table table = Datasource.getInstance().getOneTable(item);
+                    if (table != null) {
+                        String status = table.getStatus() == 1 ? "" : " (Occupied)";
+                        setText("Table " + item + status);
+                        
+                        // Optionally change the text color for occupied tables
+                        if (table.getStatus() == 0) {
+                            setStyle("-fx-text-fill: red;");
+                        } else {
+                            setStyle("-fx-text-fill: black;");
+                        }
+                    } else {
+                        setText("Table " + item);
+                    }
                 }
             }
-        );
+        });
+        
+        // Also update the button cell to show the same format
+        tableComboBox.setButtonCell(new ListCell<Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    Table table = Datasource.getInstance().getOneTable(item);
+                    if (table != null) {
+                        String status = table.getStatus() == 1 ? "" : " (Occupied)";
+                        setText("Table " + item + status);
+                        
+                        // Optionally change the text color for occupied tables
+                        if (table.getStatus() == 0) {
+                            setStyle("-fx-text-fill: red;");
+                        } else {
+                            setStyle("-fx-text-fill: black;");
+                        }
+                    } else {
+                        setText("Table " + item);
+                    }
+                }
+            }
+        });
+
+        ObservableList<Integer> options = FXCollections.observableArrayList(list);
+        tableComboBox.setItems(options);
+        tableComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                order_table = Datasource.getInstance().getOneTable(newVal);
+                if (order_table != null && order_table.getStatus() == 0) {
+                    // Optionally show an alert or warning for occupied tables
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Table Status");
+                    alert.setHeaderText("Table " + newVal + " is currently occupied");
+                    alert.setContentText("Please select another table or wait until it becomes available.");
+                    alert.showAndWait();
+                    tableComboBox.setValue(oldVal); // Revert to previous selection
+                    order_table = oldVal != null ? Datasource.getInstance().getOneTable(oldVal) : null;
+                }
+                checkTakeAway.setSelected(false);
+            }
+        });
     }
 
     @FXML
