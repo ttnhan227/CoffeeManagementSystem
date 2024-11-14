@@ -140,11 +140,18 @@ public class ViewOrderController implements Initializable {
         Label capacity_label = new Label("Table capacity: " + tableCapacity.getText());
         Label coupon_label = new Label("Coupon id: " + couponIdField.getText());
 
+        employee_label.setFont(Font.font("Monospaced"));
+        customer_label.setFont(Font.font("Monospaced"));
+        order_label.setFont(Font.font("Monospaced"));
+        table_label.setFont(Font.font("Monospaced"));
+        capacity_label.setFont(Font.font("Monospaced"));
+        coupon_label.setFont(Font.font("Monospaced"));
+
         //Label space_label = new Label("-------------------------------------");
 
         reviewLayout.getChildren().addAll(employee_label, customer_label, order_label,
                 table_label, capacity_label, coupon_label,
-                new Label("-----------------------------------------------"));
+                new Label("-----------------------------------------------------------"));
 
 //        GridPane column_title = new GridPane();
 //        column_title.setHgap(20);
@@ -157,13 +164,13 @@ public class ViewOrderController implements Initializable {
 
         //TextFlow textFlow = new TextFlow();
 
-        Text header = new Text(String.format("%-20s %-15s %-10s %-10s %-10s",
-                "Product name", "Category", "Price", "Quantity", "Total"));
+        Text header = new Text(String.format("%-30s %-10s %-10s %-10s",
+                "Product name", "Price", "Qty", "Total"));
         header.setFont(Font.font("Monospaced"));
         //textFlow.getChildren().add(header);
 
         reviewLayout.getChildren().addAll(header,
-                new Label("-----------------------------------------------"));
+                new Label("-----------------------------------------------------------"));
 
         for(Product product : productList){
             int index = productList.indexOf(product);
@@ -188,8 +195,8 @@ public class ViewOrderController implements Initializable {
 //            gridPane.add(quantity_label, 3, 0);
 //            gridPane.add(total_label, 4, 0);
 //            gridPane.setAlignment(Pos.CENTER);
-            Text row = new Text(String.format("%-20s %-15s %-10.2f %-10d %-10.2f",
-                    product.getName(), category_column.getCellData(index), product.getPrice(),
+            Text row = new Text(String.format("%-30s %-10.2f %-10d %-10.2f",
+                    product.getName(), product.getPrice(),
                     quantity_column.getCellData(index), total_column.getCellData(index)));
             row.setFont(Font.font("Monospaced"));
             reviewLayout.getChildren().add(row);
@@ -199,7 +206,8 @@ public class ViewOrderController implements Initializable {
         Label payment_label = new Label("Payment: " + totalText.getText() +
                 " \nDiscount: " + discountText.getText() +
                 "\nPayment after discount: " + finalText.getText());
-        reviewLayout.getChildren().add(new Label("-----------------------------------------------"));
+        payment_label.setFont(Font.font("Monospaced"));
+        reviewLayout.getChildren().add(new Label("-----------------------------------------------------------"));
         reviewLayout.getChildren().add(payment_label);
 
         Scene previewScene = new Scene(reviewLayout, 800, 600);
