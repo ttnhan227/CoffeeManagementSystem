@@ -1,140 +1,251 @@
-/* Increase the size of the chart title */
+/* Enhanced stat cards */
+.stat-card {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 15, 0, 0, 8);
+    -fx-padding: 20;
+    -fx-border-radius: 15;
+    -fx-border-color: rgba(0, 0, 0, 0.05);
+    -fx-border-width: 1;
+}
+
+.stat-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 20, 0, 0, 10);
+    -fx-translate-y: -3;
+    -fx-cursor: hand;
+    -fx-background-color: rgba(255, 255, 255, 0.97);
+}
+
+/* Enhanced dashboard header */
+.dashboard-header {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 10, 0, 0, 4);
+    -fx-padding: 25 40;
+}
+
+.dashboard-title {
+    -fx-text-fill: #2c1c14;
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+}
+
+/* Enhanced charts */
+.chart {
+    -fx-padding: 20;
+    -fx-background-color: transparent;
+}
+
+.chart-plot-background {
+    -fx-background-color: rgba(255, 255, 255, 0.8);
+    -fx-background-radius: 10;
+}
+
 .chart-title {
-    -fx-font-size: 24px;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: #2c1c14;
 }
 
-/* Increase the font size for axis labels */
-.axis-label {
-    -fx-font-size: 14px;
-    -fx-text-fill: #666666;
-}
-
-/* Increase the font size for tick labels */
-.axis-tick-mark {
-    -fx-font-size: 16px;  /* Adjust to desired size */
+.axis {
+    -fx-tick-label-fill: #666666;
+    -fx-tick-label-font-size: 12px;
 }
 
 .chart-legend {
     -fx-background-color: transparent;
-    -fx-padding: 12px;
+    -fx-padding: 15;
 }
 
-.chart-plot-background {
-    -fx-background-color: rgba(255, 255, 255, 0.7);
-}
-
-.chart-vertical-grid-lines {
-    -fx-stroke: #e0e0e0;
-}
-
-.chart-horizontal-grid-lines {
-    -fx-stroke: #e0e0e0;
-}
-
-.default-color0 { 
-    -fx-background-color: #8b5e3c;
-}
-
-.default-color1 {
-    -fx-background-color: #d4a574;
-}
-
-/* Add these new styles */
-.pagination {
-    -fx-padding: 10 0 10 0;
-    -fx-border-width: 1 0 0 0;
-    -fx-border-color: #e0e0e0;
+/* Enhanced table styling */
+.table-view {
     -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-table-cell-border-color: transparent;
+    -fx-max-width: 1200px;
+    -fx-min-width: 800px;
 }
 
-.pagination .pagination-control {
-    -fx-padding: 0 0 0 0;
-    -fx-background-color: transparent;
-}
-
-.pagination .pagination-control .button {
+.table-view .column-header {
     -fx-background-color: #8b5e3c;
     -fx-text-fill: white;
-    -fx-background-radius: 5;
+    -fx-font-weight: bold;
+    -fx-padding: 15 10;
+    -fx-alignment: CENTER;
+    -fx-font-size: 14px;
 }
 
-.pagination .pagination-control .button:hover {
-    -fx-background-color: #d4a574;
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-alignment: CENTER;
 }
 
-.pagination .page {
+.table-view .table-column {
+    -fx-alignment: CENTER;
+    -fx-padding: 10 15;
+}
+
+.table-view .table-column#productNameColumn {
+    -fx-pref-width: 50%;
+    -fx-max-width: 600px;
+    -fx-alignment: CENTER-LEFT;
+}
+
+.table-view .table-column#quantityColumn {
+    -fx-pref-width: 25%;
+    -fx-max-width: 300px;
+}
+
+.table-view .table-column#totalColumn {
+    -fx-pref-width: 25%;
+    -fx-max-width: 300px;
+    -fx-alignment: CENTER-RIGHT;
+}
+
+.table-view .table-row-cell {
     -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 10 5;
+    -fx-cell-size: 45px;
 }
 
+.table-view .table-row-cell:odd {
+    -fx-background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: rgba(139, 94, 60, 0.1);
+}
+
+/* Table cell styling */
+.table-view .table-cell {
+    -fx-border-color: transparent;
+    -fx-padding: 10 15;
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 13px;
+}
+
+/* Enhanced scroll pane */
 .scroll-pane {
     -fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
 }
 
 .scroll-pane > .viewport {
     -fx-background-color: transparent;
 }
 
-.scroll-pane .scroll-bar:vertical {
+.scroll-bar:vertical {
     -fx-background-color: transparent;
-    -fx-padding: 0 0 0 5;
 }
 
-.scroll-pane .scroll-bar:vertical .thumb {
+.scroll-bar:vertical .thumb {
     -fx-background-color: #8b5e3c;
     -fx-background-radius: 5;
 }
 
-.stat-card {
-    -fx-background-color: rgba(255, 255, 255, 0.85);
-    -fx-background-radius: 12;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0, 0, 5);
-}
-
-/* Add new styles for dashboard header */
-.dashboard-header {
-    -fx-background-color: rgba(255, 255, 255, 0.95);
-    -fx-background-radius: 12;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
-    -fx-padding: 20 30;
-    -fx-alignment: CENTER;
-}
-
-.dashboard-title {
-    -fx-text-fill: #2c3e50;
-    -fx-font-size: 32px;
-    -fx-font-weight: bold;
-    -fx-text-alignment: CENTER;
-}
-
-/* Improve spacing and alignment */
+/* Content box enhancement */
 .content-box {
-    -fx-background-color: rgba(255, 255, 255, 0.85);
-    -fx-background-radius: 12;
-    -fx-padding: 30;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 15, 0, 0, 8);
+    -fx-padding: 35;
+    -fx-border-radius: 15;
+    -fx-border-color: rgba(0, 0, 0, 0.05);
+    -fx-border-width: 1;
 }
 
-/* Add hover effect to stat cards */
-.stat-card:hover {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 0);
-    -fx-translate-y: -2;
-    -fx-cursor: hand;
+/* Enhanced combo box */
+.combo-box {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: rgba(0, 0, 0, 0.1);
+    -fx-padding: 5;
 }
 
-/* Add these new styles */
-.chart-container {
-    -fx-background-color: transparent;
+.combo-box:hover {
+    -fx-border-color: #8b5e3c;
+}
+
+/* Enhanced pagination */
+.pagination {
     -fx-padding: 15;
 }
 
-.chart {
-    -fx-background-color: transparent;
-    -fx-padding: 15;
+.pagination .pagination-control .button {
+    -fx-background-color: #8b5e3c;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-padding: 8 15;
 }
 
-.chart-content {
+.pagination .pagination-control .button:hover {
+    -fx-background-color: #a57a5c;
+}
+
+/* Chart series colors */
+.default-color0.chart-series-line { -fx-stroke: #8b5e3c; }
+.default-color1.chart-series-line { -fx-stroke: #d4a574; }
+.default-color0.chart-line-symbol { -fx-background-color: #8b5e3c, white; }
+.default-color1.chart-line-symbol { -fx-background-color: #d4a574, white; }
+
+.default-color0.chart-bar { -fx-bar-fill: #8b5e3c; }
+.default-color1.chart-bar { -fx-bar-fill: #d4a574; }
+
+/* Chart value labels */
+.chart-value-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* Axis styling */
+.axis-label {
+    -fx-text-fill: #666666;
+}
+
+.axis-tick-mark {
+    -fx-stroke: #e0e0e0;
+}
+
+.axis-minor-tick-mark {
+    -fx-stroke: #e0e0e0;
+}
+
+/* Analytics specific styling */
+.analytics-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 10 0 15 0;
+}
+
+.analytics-card {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 15, 0, 0, 8);
+    -fx-padding: 20;
+}
+
+/* Pie Chart styling */
+.chart-pie {
+    -fx-border-color: derive(-fx-pie-color, 1%);
+    -fx-border-width: 1px;
+}
+
+.chart-pie-label-line {
+    -fx-stroke: #8b5e3c;
+    -fx-fill: #8b5e3c;
+}
+
+.chart-pie-label {
+    -fx-fill: #2c3e50;
+    -fx-font-size: 12px;
+}
+
+/* Legend styling */
+.chart-legend {
     -fx-background-color: transparent;
+    -fx-padding: 10px;
 }

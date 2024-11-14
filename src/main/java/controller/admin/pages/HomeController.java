@@ -12,8 +12,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import model.Customer;
 import model.Datasource;
 import model.OrderDetail;
+import model.Product;
+import model.Order;
 
 import java.text.NumberFormat;
 import java.time.Year;
@@ -41,6 +44,8 @@ public class HomeController {
     private BarChart<String, Number> revenueBarChart;
     @FXML
     private LineChart<String, Number> growthLineChart;
+    @FXML
+    private PieChart categoryPerformanceChart;
     public VBox revenueVBox;
     public VBox productVBox;
     public Pagination pagination;
@@ -53,7 +58,6 @@ public class HomeController {
 
     @FXML
     public void initialize() {
-        // First initialize the table columns
         Platform.runLater(() -> {
             setupBestSellingTable();
             loadBestSellingProducts();
@@ -74,38 +78,33 @@ public class HomeController {
             // Initial chart update
             updateChart(Year.now().getValue());
             
-            // Set fixed height for the table
-            bestSellingTable.setFixedCellSize(50);
-            bestSellingTable.setPrefHeight(400); // Height for 3 rows + header + padding
-            bestSellingTable.setMaxHeight(400); // Prevent table from growing
-            bestSellingTable.setMinHeight(400); // Prevent table from shrinking
+            // Set up table properties
+            setupTableProperties();
             
-            // Prevent table from showing empty rows
-            bestSellingTable.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-table-cell-border-color: transparent;"
-            );
+            // Initialize category performance chart
+            setupSalesAnalytics();
+            
             loadPage();
         });
     }
 
     private void setupBestSellingTable() {
         if (bestSellingTable == null) {
-            return; // Exit if table is not yet initialized
+            return;
         }
         
         // Create columns
         TableColumn<OrderDetail, String> productColumn = new TableColumn<>("Product Name");
         productColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        productColumn.setStyle("-fx-alignment: CENTER-LEFT;");
+        productColumn.setId("productNameColumn");
 
         TableColumn<OrderDetail, Integer> quantityColumn = new TableColumn<>("Quantity Sold");
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        quantityColumn.setStyle("-fx-alignment: CENTER;");
+        quantityColumn.setId("quantityColumn");
 
         TableColumn<OrderDetail, Double> totalColumn = new TableColumn<>("Total Revenue");
         totalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
-        totalColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
+        totalColumn.setId("totalColumn");
 
         // Format the total revenue column to show currency
         totalColumn.setCellFactory(tc -> new TableCell<OrderDetail, Double>() {
@@ -124,10 +123,17 @@ public class HomeController {
         // Add columns to table
         bestSellingTable.getColumns().addAll(productColumn, quantityColumn, totalColumn);
 
-        // Set column widths
-        productColumn.prefWidthProperty().bind(bestSellingTable.widthProperty().multiply(0.4));
-        quantityColumn.prefWidthProperty().bind(bestSellingTable.widthProperty().multiply(0.3));
-        totalColumn.prefWidthProperty().bind(bestSellingTable.widthProperty().multiply(0.3));
+        // Center the table in its container
+        bestSellingTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        
+        // Prevent table selection
+        bestSellingTable.setSelectionModel(null);
+        
+        // Set table size constraints
+        bestSellingTable.setMinHeight(300);
+        bestSellingTable.setMaxHeight(400);
+        bestSellingTable.setMinWidth(800);
+        bestSellingTable.setMaxWidth(1200);
     }
 
     private void loadBestSellingProducts() {
@@ -357,30 +363,86 @@ public class HomeController {
         }
     }
     private void loadPage() {
-        // Initially hide both boxes
-        productVBox.setVisible(false);
-        revenueVBox.setVisible(false);
+        VBox currentContent = productVBox; // Default to first page
         
         pagination.setPageFactory(pageIndex -> {
-            // Hide both boxes first
-            productVBox.setVisible(false);
-            revenueVBox.setVisible(false);
-            
-            // Show and return the appropriate box
             if (pageIndex == 0) {
-                productVBox.setVisible(true);
+                // Remove revenueVBox from parent if it exists
+                if (revenueVBox.getParent() != null) {
+                    ((VBox) revenueVBox.getParent()).getChildren().remove(revenueVBox);
+                }
+                // Add productVBox if it's not already there
+                VBox parent = (VBox) productVBox.getParent();
+                if (parent != null && !parent.getChildren().contains(productVBox)) {
+                    parent.getChildren().add(productVBox);
+                }
                 return productVBox;
             } else {
-                revenueVBox.setVisible(true);
+                // Remove productVBox from parent if it exists
+                if (productVBox.getParent() != null) {
+                    ((VBox) productVBox.getParent()).getChildren().remove(productVBox);
+                }
+                // Add revenueVBox if it's not already there
+                VBox parent = (VBox) revenueVBox.getParent();
+                if (parent != null && !parent.getChildren().contains(revenueVBox)) {
+                    parent.getChildren().add(revenueVBox);
+                }
                 return revenueVBox;
             }
         });
 
-        // Show initial page
+        // Initialize with first page
         Platform.runLater(() -> {
-            productVBox.setVisible(true);
+            pagination.setCurrentPageIndex(0);
             productVBox.setDisable(false);
             revenueVBox.setDisable(false);
+        });
+    }
+
+    private void setupTableProperties() {
+        bestSellingTable.setFixedCellSize(50);
+        bestSellingTable.setPrefHeight(400);
+        bestSellingTable.setMaxHeight(400);
+        bestSellingTable.setMinHeight(400);
+        bestSellingTable.setStyle(
+            "-fx-background-color: transparent;" +
+            "-fx-table-cell-border-color: transparent;"
+        );
+    }
+
+    private void setupSalesAnalytics() {
+        Map<String, Double> categoryRevenue = new HashMap<>();
+        List<OrderDetail> allOrders = Datasource.getInstance().getTopThreeProducts();
+        
+        for (OrderDetail order : allOrders) {
+            Product product = Datasource.getInstance().searchOneProductById(order.getProductID());
+            String categoryName = Datasource.getInstance().getCategoryName(product.getCategory_id());
+            categoryRevenue.merge(categoryName, order.getTotal(), Double::sum);
+        }
+        
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+        categoryRevenue.forEach((category, revenue) -> {
+            pieChartData.add(new PieChart.Data(category, revenue));
+        });
+        
+        categoryPerformanceChart.setData(pieChartData);
+        
+        // Add percentage labels
+        double total = categoryRevenue.values().stream().mapToDouble(Double::doubleValue).sum();
+        pieChartData.forEach(data -> {
+            double percentage = (data.getPieValue() / total) * 100;
+            String text = String.format("%s\n%.1f%%", data.getName(), percentage);
+            data.setName(text);
+        });
+        
+        // Add tooltips
+        categoryPerformanceChart.getData().forEach(data -> {
+            Tooltip tooltip = new Tooltip(String.format(
+                "Category: %s\nRevenue: $%.2f",
+                data.getName().split("\n")[0],
+                data.getPieValue()
+            ));
+            Tooltip.install(data.getNode(), tooltip);
         });
     }
 }
