@@ -99,7 +99,11 @@ public class LoginController {
         } else {
             scene = new Scene(FXMLLoader.load(getClass().getResource("/view/admin/main-dashboard.fxml")));
         }
+        
+        // Set up the stage for full screen
         dialogStage.setScene(scene);
+        dialogStage.setMaximized(true);  // This will make the window maximized
+        dialogStage.setFullScreen(true); // This will make it truly full screen
         dialogStage.show();
     }
 
