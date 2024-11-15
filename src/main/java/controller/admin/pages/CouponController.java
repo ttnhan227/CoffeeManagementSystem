@@ -1,21 +1,5 @@
 package controller.admin.pages;
 
-import app.utils.HelperMethods;
-import controller.admin.MainDashboardController;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
-import javafx.util.StringConverter;
-import model.Coupon;
-import model.Datasource;
-import model.Order;
-
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -24,19 +8,35 @@ import java.time.format.DateTimeParseException;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+import app.utils.HelperMethods;
+import controller.admin.MainDashboardController;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.StringConverter;
+import model.Coupon;
+import model.Datasource;
+
 public class CouponController implements Initializable {
 
     public DatePicker expiryPicker;
     public TextField discountField;
     public Button generateBtn;
     public Label statusLabel;
-    public Pagination pagination;
-    public VBox discountVBox;
-    private TableView<Coupon> tableView = new TableView<>();
-    private TableColumn<Coupon, Integer> idColumn = new TableColumn<>("ID");
-    private TableColumn<Coupon, Integer> discountColumn = new TableColumn<>("Discount(%)");
-    private TableColumn<Coupon, String> dateColumn = new TableColumn<>("Expiry");
-    private  VBox vbox = new VBox();
+    public TableView<Coupon> tableView = new TableView<>();
+    public TableColumn<Coupon, Integer> idColumn = new TableColumn<>("ID");
+    public TableColumn<Coupon, Integer> discountColumn = new TableColumn<>("Discount(%)");
+    public TableColumn<Coupon, String> dateColumn = new TableColumn<>("Expiry");
+    @FXML
+    private TextField searchField;
 
     private ObservableList<Coupon> list;
     private ObservableList<Coupon> filteredList = FXCollections.observableArrayList();
@@ -49,7 +49,8 @@ public class CouponController implements Initializable {
         statusLabel.setText("");
         loadDatePicker();
         loadTableView();
-        pagination.setPageFactory(pageIndex -> pageIndex == 0 ? discountVBox : vbox);
+        
+        searchField.textProperty().addListener((obs, oldText, newText) -> applyFilter(newText));
     }
 
     private void loadDatePicker(){
@@ -146,7 +147,6 @@ public class CouponController implements Initializable {
 //            filteredList.addAll(list);
 //            tableView.setItems(filteredList);
             applyFilter("");
-            pagination.setCurrentPageIndex(1);
         } catch (NumberFormatException e) {
             statusLabel.setText("Discount must be a valid integer.");
         } catch (SQLException e) {
@@ -170,29 +170,19 @@ public class CouponController implements Initializable {
     }
 
     private void loadTableView(){
-        vbox.setSpacing(10);
-        vbox.setAlignment(Pos.CENTER);
         list = FXCollections.observableArrayList(Datasource.getInstance().getAllCoupon());
         filteredList.addAll(list);
+        
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         discountColumn.setCellValueFactory(new PropertyValueFactory<>("discount"));
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("expiry"));
-        idColumn.setMinWidth(200);
-        discountColumn.setMinWidth(200);
-        dateColumn.setMinWidth(200);
-        tableView.getColumns().add(idColumn);
-        tableView.getColumns().add(discountColumn);
-        tableView.getColumns().add(dateColumn);
+        
+        idColumn.prefWidthProperty().bind(tableView.widthProperty().multiply(0.33));
+        discountColumn.prefWidthProperty().bind(tableView.widthProperty().multiply(0.33));
+        dateColumn.prefWidthProperty().bind(tableView.widthProperty().multiply(0.33));
+        
+        tableView.getColumns().addAll(idColumn, discountColumn, dateColumn);
         tableView.setItems(filteredList);
-
-        TextField searchField = new TextField();
-        searchField.setPromptText("Search by id");
-        searchField.textProperty().addListener((obs, oldText, newText) -> applyFilter(newText));
-        searchField.setMinWidth(150);
-        searchField.setMaxWidth(200);
-
-        vbox.getChildren().add(searchField);
-        vbox.getChildren().add(tableView);
     }
 
     private void applyFilter(String search){
