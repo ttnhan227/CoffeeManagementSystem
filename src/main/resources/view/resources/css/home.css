@@ -242,10 +242,169 @@
 .chart-pie-label {
     -fx-fill: #2c3e50;
     -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 2, 0, 0, 0);
 }
 
-/* Legend styling */
 .chart-legend {
-    -fx-background-color: transparent;
+    -fx-background-color: rgba(255, 255, 255, 0.9);
     -fx-padding: 10px;
+    -fx-background-radius: 5;
 }
+
+.chart-legend-item {
+    -fx-text-fill: #2c3e50;
+}
+
+/* Override any conflicting dashboard styles */
+.content-pane {
+    -fx-background-color: transparent !important;
+}
+
+.custom-scroll-pane {
+    -fx-background: transparent !important;
+    -fx-background-color: transparent !important;
+}
+
+.custom-scroll-pane > .viewport {
+    -fx-background-color: transparent !important;
+}
+
+/* Make sure our styles take precedence */
+.chart-pie-label {
+    -fx-fill: #2c3e50 !important;  /* Force dark text color */
+    -fx-font-size: 12px !important;
+    -fx-font-weight: bold !important;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.9), 3, 0, 0, 0) !important; /* Stronger white glow */
+}
+
+.chart-pie-label-line {
+    -fx-stroke: #8b5e3c !important;
+    -fx-fill: #8b5e3c !important;
+}
+
+.chart-legend {
+    -fx-background-color: rgba(255, 255, 255, 0.95) !important;
+    -fx-padding: 10px !important;
+    -fx-background-radius: 5 !important;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 0) !important;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #2c3e50 !important;
+    -fx-font-weight: bold !important;
+}
+
+/* Rest of your existing styles... */
+
+/* Add specific styles for the revenue charts container */
+.chart-container {
+    -fx-background-color: rgba(255, 255, 255, 0.95) !important;
+    -fx-background-radius: 10 !important;
+    -fx-padding: 10 !important;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 0) !important;
+}
+
+/* Make charts more visible */
+.chart {
+    -fx-background-color: rgba(255, 255, 255, 0.95) !important;
+    -fx-background-radius: 10 !important;
+    -fx-padding: 15 !important;
+}
+
+.chart-plot-background {
+    -fx-background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Ensure content boxes are properly styled */
+.content-box {
+    -fx-background-color: rgba(255, 255, 255, 0.95) !important;
+    -fx-background-radius: 15 !important;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 5) !important;
+    -fx-padding: 35 !important;
+}
+
+/* Add these to ensure chart text visibility */
+.chart-pie-label {
+    -fx-fill: #2c3e50 !important;
+    -fx-font-size: 14px !important;
+    -fx-font-weight: bold !important;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,1), 4, 0, 0, 0) !important;
+}
+
+.chart-pie-label-line {
+    -fx-stroke: #8b5e3c !important;
+    -fx-stroke-width: 2px !important;
+}
+
+.chart-legend {
+    -fx-background-color: rgba(255, 255, 255, 0.95) !important;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 0) !important;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #2c3e50 !important;
+    -fx-font-weight: bold !important;
+}
+
+/* Chart container styles */
+.chart-container {
+    -fx-background-color: rgba(255, 255, 255, 0.95) !important;
+    -fx-padding: 15 !important;
+    -fx-background-radius: 10 !important;
+}
+
+/* Dashboard container styles */
+.dashboard-container {
+    -fx-background-color: transparent !important;
+    -fx-padding: 20 !important;
+}
+
+/* ScrollPane styles */
+.custom-scroll-pane {
+    -fx-background: transparent !important;
+    -fx-background-color: transparent !important;
+}
+
+.custom-scroll-pane > .viewport {
+    -fx-background-color: transparent !important;
+}
+
+/* Pie Chart and Legend styling */
+.chart-pie-label {
+    -fx-fill: #2c3e50 !important;
+    -fx-font-size: 13px !important;
+    -fx-font-weight: bold !important;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 3, 0, 0, 0) !important;
+}
+
+.chart-pie-label-line {
+    -fx-stroke: #8b5e3c !important;
+    -fx-stroke-width: 1.5px !important;
+}
+
+.chart-legend {
+    -fx-background-color: transparent !important;
+    -fx-padding: 8px !important;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #2c3e50 !important;
+    -fx-font-weight: normal !important;
+    -fx-font-size: 12px !important;
+}
+
+.chart-legend-item-symbol {
+    -fx-background-radius: 4px !important;
+    -fx-padding: 5px !important;
+}
+
+.chart-pie {
+    -fx-border-color: transparent !important;
+}
+
+/* Remove any duplicate styles that might be causing conflicts */
+.default-color0.chart-pie { -fx-pie-color: #8b5e3c; }
+.default-color1.chart-pie { -fx-pie-color: #d4a574; }
+.default-color2.chart-pie { -fx-pie-color: #c38e60; }
+.default-color3.chart-pie { -fx-pie-color: #a57a5c; }

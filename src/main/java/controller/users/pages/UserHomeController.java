@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
@@ -14,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import model.Datasource;
 import model.OrderDetail;
+import model.Product;
 
 import java.text.NumberFormat;
 import java.time.Year;
@@ -39,9 +41,8 @@ public class UserHomeController {
     private BarChart<String, Number> revenueBarChart;
     @FXML
     private LineChart<String, Number> growthLineChart;
-    public VBox revenueVBox;
-    public VBox productVBox;
-    public Pagination pagination;
+    @FXML
+    private PieChart categoryPerformanceChart;
 
     private Map<Integer, List<Number>> barData;
     private Map<Integer, List<Number>> lineData;
@@ -51,7 +52,6 @@ public class UserHomeController {
 
     @FXML
     public void initialize() {
-        // Run everything in Platform.runLater to ensure FXML is fully loaded
         Platform.runLater(() -> {
             setupBestSellingTable();
             loadBestSellingProducts();
@@ -83,7 +83,7 @@ public class UserHomeController {
                 "-fx-table-cell-border-color: transparent;"
             );
             
-            loadPage();
+            setupSalesAnalytics();
         });
     }
 
@@ -91,15 +91,15 @@ public class UserHomeController {
         // Create columns
         TableColumn<OrderDetail, String> productColumn = new TableColumn<>("Product Name");
         productColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        productColumn.setStyle("-fx-alignment: CENTER-LEFT;");
+        productColumn.setId("productNameColumn");  // Important for CSS styling
 
         TableColumn<OrderDetail, Integer> quantityColumn = new TableColumn<>("Quantity Sold");
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        quantityColumn.setStyle("-fx-alignment: CENTER;");
+        productColumn.setId("quantityColumn");  // Important for CSS styling
 
         TableColumn<OrderDetail, Double> totalColumn = new TableColumn<>("Total Revenue");
         totalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
-        totalColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
+        productColumn.setId("totalColumn");  // Important for CSS styling
 
         // Format the total revenue column to show currency
         totalColumn.setCellFactory(tc -> new TableCell<OrderDetail, Double>() {
@@ -115,15 +115,23 @@ public class UserHomeController {
             }
         });
 
-        // Set column widths
-        productColumn.prefWidthProperty().bind(bestSellingTable.widthProperty().multiply(0.4));
-        quantityColumn.prefWidthProperty().bind(bestSellingTable.widthProperty().multiply(0.3));
-        totalColumn.prefWidthProperty().bind(bestSellingTable.widthProperty().multiply(0.3));
-
         // Add columns to table
         bestSellingTable.getColumns().addAll(productColumn, quantityColumn, totalColumn);
 
+        // Center the table in its container
+        bestSellingTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        
+        // Prevent table selection
+        bestSellingTable.setSelectionModel(null);
+        
+        // Set table size constraints
+        bestSellingTable.setMinHeight(300);
+        bestSellingTable.setMaxHeight(400);
+        bestSellingTable.setMinWidth(800);
+        bestSellingTable.setMaxWidth(1200);
 
+        // Apply CSS styling
+        bestSellingTable.getStyleClass().add("table-view");
     }
 
     private void loadBestSellingProducts() {
@@ -189,6 +197,10 @@ public class UserHomeController {
         barYAxis.setLabel("Revenue ($)");
         revenueBarChart.setTitle("Monthly Revenue");
         barYAxis.setTickUnit(500);
+        
+        // Add style classes to bar chart
+        revenueBarChart.getStyleClass().add("chart");
+        revenueBarChart.lookup(".chart-plot-background").setStyle("-fx-background-color: transparent;");
 
         // Setup Line Chart
         CategoryAxis lineXAxis = (CategoryAxis) growthLineChart.getXAxis();
@@ -197,9 +209,25 @@ public class UserHomeController {
         lineYAxis.setLabel("Cumulative Revenue ($)");
         growthLineChart.setTitle("Cumulative Revenue Growth");
         lineYAxis.setTickUnit(500);
+        
+        // Add style classes to line chart
+        growthLineChart.getStyleClass().add("chart");
+        growthLineChart.lookup(".chart-plot-background").setStyle("-fx-background-color: transparent;");
 
-        // Apply CSS
-        revenueBarChart.getStylesheets().add(getClass().getResource("/view/resources/css/home.css").toExternalForm());
+        // Setup Pie Chart
+        categoryPerformanceChart.getStyleClass().add("chart");
+        categoryPerformanceChart.setLegendSide(Side.RIGHT);
+
+        // Apply CSS to all charts
+        String cssPath = getClass().getResource("/view/resources/css/home.css").toExternalForm();
+        revenueBarChart.getStylesheets().add(cssPath);
+        growthLineChart.getStylesheets().add(cssPath);
+        categoryPerformanceChart.getStylesheets().add(cssPath);
+
+        // Style the chart containers
+        revenueBarChart.getParent().getStyleClass().add("chart-container");
+        growthLineChart.getParent().getStyleClass().add("chart-container");
+        categoryPerformanceChart.getParent().getStyleClass().add("chart-container");
     }
 
     private void loadCombobox() {
@@ -333,31 +361,40 @@ public class UserHomeController {
             }
         }
     }
-    private void loadPage() {
-        // Initially hide both boxes
-        productVBox.setVisible(false);
-        revenueVBox.setVisible(false);
-        
-        pagination.setPageFactory(pageIndex -> {
-            // Hide both boxes first
-            productVBox.setVisible(false);
-            revenueVBox.setVisible(false);
-            
-            // Show and return the appropriate box
-            if (pageIndex == 0) {
-                productVBox.setVisible(true);
-                return productVBox;
-            } else {
-                revenueVBox.setVisible(true);
-                return revenueVBox;
-            }
-        });
 
-        // Show initial page
-        Platform.runLater(() -> {
-            productVBox.setVisible(true);
-            productVBox.setDisable(false);
-            revenueVBox.setDisable(false);
+    private void setupSalesAnalytics() {
+        Map<String, Double> categoryRevenue = new HashMap<>();
+        List<OrderDetail> allOrders = Datasource.getInstance().getTopThreeProducts();
+        
+        for (OrderDetail order : allOrders) {
+            Product product = Datasource.getInstance().searchOneProductById(order.getProductID());
+            String categoryName = Datasource.getInstance().getCategoryName(product.getCategory_id());
+            categoryRevenue.merge(categoryName, order.getTotal(), Double::sum);
+        }
+        
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+        categoryRevenue.forEach((category, revenue) -> {
+            pieChartData.add(new PieChart.Data(category, revenue));
+        });
+        
+        categoryPerformanceChart.setData(pieChartData);
+        
+        // Add percentage labels
+        double total = categoryRevenue.values().stream().mapToDouble(Double::doubleValue).sum();
+        pieChartData.forEach(data -> {
+            double percentage = (data.getPieValue() / total) * 100;
+            String text = String.format("%s\n%.1f%%", data.getName(), percentage);
+            data.setName(text);
+        });
+        
+        // Add tooltips
+        categoryPerformanceChart.getData().forEach(data -> {
+            Tooltip tooltip = new Tooltip(String.format(
+                "Category: %s\nRevenue: $%.2f",
+                data.getName().split("\n")[0],
+                data.getPieValue()
+            ));
+            Tooltip.install(data.getNode(), tooltip);
         });
     }
 }

@@ -47,9 +47,6 @@ public class HomeController {
     private LineChart<String, Number> growthLineChart;
     @FXML
     private PieChart categoryPerformanceChart;
-    public VBox revenueVBox;
-    public VBox productVBox;
-    public Pagination pagination;
 
     private Map<Integer, List<Number>> barData;
     private Map<Integer, List<Number>> lineData;
@@ -60,20 +57,6 @@ public class HomeController {
     @FXML
     public void initialize() {
         Platform.runLater(() -> {
-            // Find the root AnchorPane
-            Node current = productVBox;
-            while (current != null && !(current instanceof AnchorPane)) {
-                current = current.getParent();
-            }
-            
-            if (current instanceof AnchorPane) {
-                AnchorPane root = (AnchorPane) current;
-                // Set explicit anchors for positioning
-                AnchorPane.setTopAnchor(root, 20.0);
-                AnchorPane.setLeftAnchor(root, 50.0);
-                AnchorPane.setRightAnchor(root, 50.0);
-            }
-            
             setupBestSellingTable();
             loadBestSellingProducts();
             
@@ -98,8 +81,6 @@ public class HomeController {
             
             // Initialize category performance chart
             setupSalesAnalytics();
-            
-            loadPage();
         });
     }
 
@@ -242,8 +223,11 @@ public class HomeController {
         growthLineChart.setTitle("Cumulative Revenue Growth");
         lineYAxis.setTickUnit(500);
 
-        // Apply CSS
-        revenueBarChart.getStylesheets().add(getClass().getResource("/view/resources/css/home.css").toExternalForm());
+        // Apply CSS to both charts
+        String cssPath = getClass().getResource("/view/resources/css/home.css").toExternalForm();
+        revenueBarChart.getStylesheets().add(cssPath);
+        growthLineChart.getStylesheets().add(cssPath);
+        categoryPerformanceChart.getStylesheets().add(cssPath);
     }
 
     private void loadCombobox() {
@@ -376,33 +360,6 @@ public class HomeController {
                 });
             }
         }
-    }
-    private void loadPage() {
-        // Initially hide both boxes
-        productVBox.setVisible(false);
-        revenueVBox.setVisible(false);
-        
-        pagination.setPageFactory(pageIndex -> {
-            // Hide both boxes first
-            productVBox.setVisible(false);
-            revenueVBox.setVisible(false);
-            
-            // Show and return the appropriate box
-            if (pageIndex == 0) {
-                productVBox.setVisible(true);
-                return productVBox;
-            } else {
-                revenueVBox.setVisible(true);
-                return revenueVBox;
-            }
-        });
-
-        // Show initial page
-        Platform.runLater(() -> {
-            productVBox.setVisible(true);
-            productVBox.setDisable(false);
-            revenueVBox.setDisable(false);
-        });
     }
 
     private void setupTableProperties() {

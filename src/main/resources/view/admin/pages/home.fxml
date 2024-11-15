@@ -7,190 +7,175 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.geometry.Insets?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane prefHeight="800.0" prefWidth="1280.0" 
+            xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.admin.pages.HomeController"
-            style="-fx-background-color: transparent;">
+            styleClass="content-pane">
             
-    <!-- Center container -->
-    <StackPane AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
-               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-               
-        <!-- Main content container with padding -->
-        <VBox spacing="20" alignment="TOP_CENTER" maxWidth="1400">
-            <padding>
-                <Insets top="10" bottom="50" left="20" right="20"/>
-            </padding>
-            
-            <!-- Dashboard Header -->
-            <HBox styleClass="dashboard-header" alignment="CENTER">
-                <Label text="Dashboard Overview" styleClass="dashboard-title"/>
-            </HBox>
+    <ScrollPane fitToWidth="true" styleClass="custom-scroll-pane"
+                AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <StackPane alignment="TOP_CENTER">
+            <VBox spacing="30" styleClass="dashboard-container" maxWidth="1600" alignment="TOP_CENTER">
+                <padding>
+                    <Insets top="20" bottom="20" left="20" right="20"/>
+                </padding>
+                
+                <!-- Dashboard Header -->
+                <HBox styleClass="dashboard-header-container" alignment="CENTER">
+                    <Label text="Dashboard Overview" styleClass="dashboard-header"/>
+                </HBox>
 
-            <!-- Scrollable Content -->
-            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" 
-                      VBox.vgrow="ALWAYS" maxWidth="1400">
-                <content>
-                    <VBox spacing="30" alignment="TOP_CENTER">
-                        <!-- Products Page -->
-                        <VBox fx:id="productVBox" spacing="30" style="-fx-padding: 30;">
-                            <!-- Stats Cards -->
-                            <HBox spacing="20" alignment="CENTER">
-                                <!-- Total Products -->
-                                <StackPane styleClass="stat-card" minWidth="250">
-                                    <Rectangle arcHeight="20" arcWidth="20" height="180" 
-                                             style="-fx-fill: transparent;" width="300"/>
-                                    <VBox alignment="CENTER" spacing="15">
-                                        <Label text="Total Products" style="-fx-text-fill: #666666;">
-                                            <font>
-                                                <Font size="20"/>
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="productsCount" text="0" style="-fx-text-fill: #2c3e50;">
-                                            <font>
-                                                <Font name="System Bold" size="40"/>
-                                            </font>
-                                        </Label>
-                                    </VBox>
-                                </StackPane>
-                                
-                                <!-- Total Users -->
-                                <StackPane styleClass="stat-card" minWidth="250">
-                                    <Rectangle arcHeight="20" arcWidth="20" height="180" 
-                                             style="-fx-fill: transparent;" width="300"/>
-                                    <VBox alignment="CENTER" spacing="15">
-                                        <Label text="Total Users" style="-fx-text-fill: #666666;">
-                                            <font>
-                                                <Font size="20"/>
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="employeesCount" text="0" style="-fx-text-fill: #2c3e50;">
-                                            <font>
-                                                <Font name="System Bold" size="40"/>
-                                            </font>
-                                        </Label>
-                                    </VBox>
-                                </StackPane>
-                                
-                                <!-- Total Orders -->
-                                <StackPane styleClass="stat-card" minWidth="250">
-                                    <Rectangle arcHeight="20" arcWidth="20" height="180" 
-                                             style="-fx-fill: transparent;" width="300"/>
-                                    <VBox alignment="CENTER" spacing="15">
-                                        <Label text="Total Orders" style="-fx-text-fill: #666666;">
-                                            <font>
-                                                <Font size="20"/>
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="ordersCount" text="0" style="-fx-text-fill: #2c3e50;">
-                                            <font>
-                                                <Font name="System Bold" size="40"/>
-                                            </font>
-                                        </Label>
-                                    </VBox>
-                                </StackPane>
-                                
-                                <!-- Total Customers -->
-                                <StackPane styleClass="stat-card" minWidth="250">
-                                    <Rectangle arcHeight="20" arcWidth="20" height="180" 
-                                             style="-fx-fill: transparent;" width="300"/>
-                                    <VBox alignment="CENTER" spacing="15">
-                                        <Label text="Total Customers" style="-fx-text-fill: #666666;">
-                                            <font>
-                                                <Font size="20"/>
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="customersCount" text="0" style="-fx-text-fill: #2c3e50;">
-                                            <font>
-                                                <Font name="System Bold" size="40"/>
-                                            </font>
-                                        </Label>
-                                    </VBox>
-                                </StackPane>
+                <!-- Stats Cards -->
+                <HBox spacing="25" alignment="CENTER">
+                    <!-- Total Products -->
+                    <StackPane styleClass="stat-card" minWidth="300">
+                        <Rectangle arcHeight="20" arcWidth="20" height="180" 
+                                 style="-fx-fill: transparent;" width="300"/>
+                        <VBox alignment="CENTER" spacing="15">
+                            <Label text="Total Products" style="-fx-text-fill: #666666;">
+                                <font>
+                                    <Font size="20"/>
+                                </font>
+                            </Label>
+                            <Label fx:id="productsCount" text="0" style="-fx-text-fill: #2c3e50;">
+                                <font>
+                                    <Font name="System Bold" size="40"/>
+                                </font>
+                            </Label>
+                        </VBox>
+                    </StackPane>
+                    
+                    <!-- Total Users -->
+                    <StackPane styleClass="stat-card" minWidth="300">
+                        <Rectangle arcHeight="20" arcWidth="20" height="180" 
+                                 style="-fx-fill: transparent;" width="300"/>
+                        <VBox alignment="CENTER" spacing="15">
+                            <Label text="Total Users" style="-fx-text-fill: #666666;">
+                                <font>
+                                    <Font size="20"/>
+                                </font>
+                            </Label>
+                            <Label fx:id="employeesCount" text="0" style="-fx-text-fill: #2c3e50;">
+                                <font>
+                                    <Font name="System Bold" size="40"/>
+                                </font>
+                            </Label>
+                        </VBox>
+                    </StackPane>
+                    
+                    <!-- Total Orders -->
+                    <StackPane styleClass="stat-card" minWidth="300">
+                        <Rectangle arcHeight="20" arcWidth="20" height="180" 
+                                 style="-fx-fill: transparent;" width="300"/>
+                        <VBox alignment="CENTER" spacing="15">
+                            <Label text="Total Orders" style="-fx-text-fill: #666666;">
+                                <font>
+                                    <Font size="20"/>
+                                </font>
+                            </Label>
+                            <Label fx:id="ordersCount" text="0" style="-fx-text-fill: #2c3e50;">
+                                <font>
+                                    <Font name="System Bold" size="40"/>
+                                </font>
+                            </Label>
+                        </VBox>
+                    </StackPane>
+                    
+                    <!-- Total Customers -->
+                    <StackPane styleClass="stat-card" minWidth="300">
+                        <Rectangle arcHeight="20" arcWidth="20" height="180" 
+                                 style="-fx-fill: transparent;" width="300"/>
+                        <VBox alignment="CENTER" spacing="15">
+                            <Label text="Total Customers" style="-fx-text-fill: #666666;">
+                                <font>
+                                    <Font size="20"/>
+                                </font>
+                            </Label>
+                            <Label fx:id="customersCount" text="0" style="-fx-text-fill: #2c3e50;">
+                                <font>
+                                    <Font name="System Bold" size="40"/>
+                                </font>
+                            </Label>
+                        </VBox>
+                    </StackPane>
+                </HBox>
+                
+                <!-- Main Content Area -->
+                <HBox spacing="25">
+                    <!-- Left Side - Revenue and Products -->
+                    <VBox spacing="25" HBox.hgrow="ALWAYS" maxWidth="1000">
+                        <!-- Revenue Analysis -->
+                        <VBox spacing="25" styleClass="content-box">
+                            <HBox alignment="CENTER" spacing="15">
+                                <Label text="Revenue Analysis" style="-fx-text-fill: #2c3e50;">
+                                    <font>
+                                        <Font name="System Bold" size="28"/>
+                                    </font>
+                                </Label>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="Year:" style="-fx-text-fill: #666666;">
+                                    <font>
+                                        <Font size="18"/>
+                                    </font>
+                                </Label>
+                                <ComboBox fx:id="yearComboBox" prefWidth="120"/>
                             </HBox>
                             
-                            <!-- Analysis Section -->
-                            <HBox spacing="20">
-                                <!-- Best Selling Products -->
-                                <VBox spacing="15" styleClass="content-box" HBox.hgrow="ALWAYS">
-                                    <Label text="Products Analysis" style="-fx-text-fill: #2c3e50;">
-                                        <font>
-                                            <Font name="System Bold" size="28"/>
-                                        </font>
-                                    </Label>
-                                    <TableView fx:id="bestSellingTable" styleClass="table-view" VBox.vgrow="NEVER"/>
+                            <!-- Charts -->
+                            <HBox spacing="25">
+                                <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                                    <BarChart fx:id="revenueBarChart" legendVisible="false" 
+                                             prefHeight="450">
+                                        <xAxis>
+                                            <CategoryAxis side="BOTTOM"/>
+                                        </xAxis>
+                                        <yAxis>
+                                            <NumberAxis side="LEFT"/>
+                                        </yAxis>
+                                    </BarChart>
                                 </VBox>
                                 
-                                <!-- Category Performance -->
-                                <VBox spacing="15" styleClass="content-box" HBox.hgrow="ALWAYS">
-                                    <Label text="Category Performance" style="-fx-text-fill: #2c3e50;">
-                                        <font>
-                                            <Font name="System Bold" size="28"/>
-                                        </font>
-                                    </Label>
-                                    <PieChart fx:id="categoryPerformanceChart" legendVisible="true" 
-                                             VBox.vgrow="ALWAYS"/>
+                                <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                                    <LineChart fx:id="growthLineChart" legendVisible="false" 
+                                              prefHeight="450">
+                                        <xAxis>
+                                            <CategoryAxis side="BOTTOM"/>
+                                        </xAxis>
+                                        <yAxis>
+                                            <NumberAxis side="LEFT"/>
+                                        </yAxis>
+                                    </LineChart>
                                 </VBox>
                             </HBox>
                         </VBox>
-                        
-                        <!-- Revenue Page -->
-                        <VBox fx:id="revenueVBox" spacing="30" style="-fx-padding: 30;" visible="false">
-                            <VBox spacing="25" styleClass="content-box">
-                                <!-- Revenue Header -->
-                                <HBox alignment="CENTER" spacing="15">
-                                    <Label text="Revenue Analysis" style="-fx-text-fill: #2c3e50;">
-                                        <font>
-                                            <Font name="System Bold" size="28"/>
-                                        </font>
-                                    </Label>
-                                    <Region HBox.hgrow="ALWAYS"/>
-                                    <Label text="Year:" style="-fx-text-fill: #666666;">
-                                        <font>
-                                            <Font size="18"/>
-                                        </font>
-                                    </Label>
-                                    <ComboBox fx:id="yearComboBox" prefWidth="120"/>
-                                </HBox>
-                                
-                                <!-- Charts -->
-                                <HBox spacing="25">
-                                    <!-- Bar Chart -->
-                                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
-                                        <BarChart fx:id="revenueBarChart" legendVisible="false" 
-                                                 prefHeight="450">
-                                            <xAxis>
-                                                <CategoryAxis side="BOTTOM"/>
-                                            </xAxis>
-                                            <yAxis>
-                                                <NumberAxis side="LEFT"/>
-                                            </yAxis>
-                                        </BarChart>
-                                    </VBox>
-                                    
-                                    <!-- Line Chart -->
-                                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
-                                        <LineChart fx:id="growthLineChart" legendVisible="false" 
-                                                  prefHeight="450">
-                                            <xAxis>
-                                                <CategoryAxis side="BOTTOM"/>
-                                            </xAxis>
-                                            <yAxis>
-                                                <NumberAxis side="LEFT"/>
-                                            </yAxis>
-                                        </LineChart>
-                                    </VBox>
-                                </HBox>
-                            </VBox>
+
+                        <!-- Best Selling Products -->
+                        <VBox spacing="15" styleClass="content-box">
+                            <Label text="Product Analysis" style="-fx-text-fill: #2c3e50;">
+                                <font>
+                                    <Font name="System Bold" size="28"/>
+                                </font>
+                            </Label>
+                            <TableView fx:id="bestSellingTable" styleClass="table-view" VBox.vgrow="NEVER"/>
                         </VBox>
                     </VBox>
-                </content>
-            </ScrollPane>
-        </VBox>
-    </StackPane>
-    
-    <!-- Pagination -->
-    <Pagination fx:id="pagination" maxPageIndicatorCount="2" pageCount="2"
-                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                AnchorPane.bottomAnchor="0.0"
-                styleClass="pagination"/>
+                    
+                    <!-- Right Side - Category Performance -->
+                    <VBox spacing="15" styleClass="content-box" HBox.hgrow="ALWAYS" minWidth="500">
+                        <Label text="Category Analysis" style="-fx-text-fill: #2c3e50;">
+                            <font>
+                                <Font name="System Bold" size="28"/>
+                            </font>
+                        </Label>
+                        <PieChart fx:id="categoryPerformanceChart" legendVisible="true" 
+                                 VBox.vgrow="ALWAYS" minHeight="600"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+            <padding>
+                <Insets left="30" right="30"/>
+            </padding>
+        </StackPane>
+    </ScrollPane>
 </AnchorPane>
