@@ -128,7 +128,7 @@ public class MainDashboardController implements Initializable {
         applyScaleEffect(btnProducts);
         applyScaleEffect(btnUsers);
         applyScaleEffect(btnOrders);
-        applyScaleEffect(btnSettings);
+//        applyScaleEffect(btnSettings);
         applyScaleEffect(lblLogOut);
         applyScaleEffect(btnNewOrder);
         applyScaleEffect(btnCustomer);

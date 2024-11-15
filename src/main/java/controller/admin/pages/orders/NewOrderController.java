@@ -670,25 +670,53 @@ public class NewOrderController implements Initializable {
     }
 
     private void setupCustomerSearch() {
+        // Create a single ContextMenu instance that we'll reuse
+        ContextMenu contextMenu = new ContextMenu();
+        
         customerNameField.setOnKeyReleased(event -> {
             String searchText = customerNameField.getText().trim();
-            if (!searchText.isEmpty()) {
-                List<Customer> customers = Datasource.getInstance().searchCustomers(searchText, Datasource.ORDER_BY_NONE);
-                if (customers != null && !customers.isEmpty()) {
-                    // Show suggestions in a popup
-                    ContextMenu contextMenu = new ContextMenu();
-                    for (Customer c : customers) {
-                        MenuItem item = new MenuItem(c.getName() + " - " + c.getContact_info());
-                        item.setOnAction(e -> {
-                            customerNameField.setText(c.getName());
-                            customer = c;
-                            contextMenu.hide();
-                        });
-                        contextMenu.getItems().add(item);
-                    }
-                    customerNameField.setContextMenu(contextMenu);
+            
+            // Clear existing items
+            contextMenu.getItems().clear();
+            
+            // Hide the context menu if search text is empty
+            if (searchText.isEmpty()) {
+                contextMenu.hide();
+                return;
+            }
+            
+            List<Customer> customers = Datasource.getInstance().searchCustomers(searchText, Datasource.ORDER_BY_NONE);
+            if (customers != null && !customers.isEmpty()) {
+                for (Customer c : customers) {
+                    MenuItem item = new MenuItem(c.getName() + " - " + c.getContact_info());
+                    item.setOnAction(e -> {
+                        customerNameField.setText(c.getName());
+                        customer = c;
+                        contextMenu.hide();
+                    });
+                    contextMenu.getItems().add(item);
+                }
+                
+                // Only show if not already showing
+                if (!contextMenu.isShowing()) {
                     contextMenu.show(customerNameField, Side.BOTTOM, 0, 0);
                 }
+            } else {
+                contextMenu.hide();
+            }
+        });
+        
+        // Hide context menu when focus is lost
+        customerNameField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                contextMenu.hide();
+            }
+        });
+        
+        // Prevent the TextField from showing its own dropdown
+        customerNameField.setOnMouseClicked(event -> {
+            if (!contextMenu.isShowing() && !customerNameField.getText().trim().isEmpty()) {
+                contextMenu.show(customerNameField, Side.BOTTOM, 0, 0);
             }
         });
     }

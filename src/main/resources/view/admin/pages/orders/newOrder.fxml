@@ -61,7 +61,7 @@
                               <Insets right="5.0" />
                            </HBox.margin>
                         </Text>
-                        <TextField fx:id="customerNameField">
+                        <TextField fx:id="customerNameField" promptText="Enter customer name">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>

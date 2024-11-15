@@ -84,13 +84,13 @@
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="btnSettings" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnSettingsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Settings">
-                                    <graphic>
-                                        <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <Image url="@../resources/img/icon/icon_coffee/setting.png"/>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
+<!--                                <Button fx:id="btnSettings" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnSettingsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Settings">-->
+<!--                                    <graphic>-->
+<!--                                        <ImageView fitHeight="40.0" fitWidth="40.0">-->
+<!--                                            <Image url="@../resources/img/icon/icon_coffee/setting.png"/>-->
+<!--                                        </ImageView>-->
+<!--                                    </graphic>-->
+<!--                                </Button>-->
 
                             </children>
                         </VBox>
