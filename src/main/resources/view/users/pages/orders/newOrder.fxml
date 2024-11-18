@@ -61,7 +61,7 @@
                               <Insets right="5.0" />
                            </HBox.margin>
                         </Text>
-                        <TextField fx:id="customerNameField">
+                        <TextField fx:id="customerNameField" promptText="Enter customer name">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
@@ -135,11 +135,6 @@
                               <Insets right="5.0" />
                            </HBox.margin>
                         </TextField>
-                        <Button mnemonicParsing="false" onAction="#onClickSearch" text="search">
-                           <font>
-                              <Font size="13.0" />
-                           </font>
-                        </Button>
                      </children>
                   </HBox>
                   <HBox fx:id="productHBox" alignment="CENTER" maxHeight="30.0" prefHeight="100.0" prefWidth="200.0">
@@ -250,7 +245,6 @@
                   <Insets />
                </StackPane.margin>
             </VBox>
-            <ListView fx:id="suggestionList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="350.0" translateX="-45.0" translateY="-70.0" />
          </children>
       </StackPane>
    </children>

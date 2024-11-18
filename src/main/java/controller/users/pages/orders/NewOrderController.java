@@ -95,7 +95,6 @@ public class NewOrderController implements Initializable {
         paymentBoxLoader();
         checkBoxLoader();
         setupCustomerSearch();
-
     }
 
     private void userNameAndDateLoader(){
@@ -110,17 +109,79 @@ public class NewOrderController implements Initializable {
         dateField.setText(formatted_date);
     }
 
-    private void tableComboBoxLoader(){
+    private void tableComboBoxLoader() {
         List<Integer> list = Datasource.getInstance().getAllTableID();
-        ObservableList<Integer> options = FXCollections.observableArrayList(list);
-        tableComboBox.setItems(options);
-        tableComboBox.valueProperty().addListener((obs, oldVal, newVal) ->{
-                if(newVal != null){
-                    order_table = Datasource.getInstance().getOneTable(newVal);
-                    checkTakeAway.setSelected(false);
+
+        // Create custom cell factory for the ComboBox
+        tableComboBox.setCellFactory(lv -> new ListCell<Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    Table table = Datasource.getInstance().getOneTable(item);
+                    if (table != null) {
+                        String status = table.getStatus() == 1 ? "" : " (Occupied)";
+                        setText("Table " + item + status);
+
+                        // Optionally change the text color for occupied tables
+                        if (table.getStatus() == 0) {
+                            setStyle("-fx-text-fill: red;");
+                        } else {
+                            setStyle("-fx-text-fill: black;");
+                        }
+                    } else {
+                        setText("Table " + item);
+                    }
                 }
             }
-        );
+        });
+
+        // Also update the button cell to show the same format
+        tableComboBox.setButtonCell(new ListCell<Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    Table table = Datasource.getInstance().getOneTable(item);
+                    if (table != null) {
+                        String status = table.getStatus() == 1 ? "" : " (Occupied)";
+                        setText("Table " + item + status);
+
+                        // Optionally change the text color for occupied tables
+                        if (table.getStatus() == 0) {
+                            setStyle("-fx-text-fill: red;");
+                        } else {
+                            setStyle("-fx-text-fill: black;");
+                        }
+                    } else {
+                        setText("Table " + item);
+                    }
+                }
+            }
+        });
+
+        ObservableList<Integer> options = FXCollections.observableArrayList(list);
+        tableComboBox.setItems(options);
+        tableComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                order_table = Datasource.getInstance().getOneTable(newVal);
+                if (order_table != null && order_table.getStatus() == 0) {
+                    // Optionally show an alert or warning for occupied tables
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Table Status");
+                    alert.setHeaderText("Table " + newVal + " is currently occupied");
+                    alert.setContentText("Please select another table or wait until it becomes available.");
+                    alert.showAndWait();
+                    tableComboBox.setValue(oldVal); // Revert to previous selection
+                    order_table = oldVal != null ? Datasource.getInstance().getOneTable(oldVal) : null;
+                }
+                checkTakeAway.setSelected(false);
+            }
+        });
     }
 
     @FXML
@@ -197,61 +258,98 @@ public class NewOrderController implements Initializable {
         } ));
     }
 
-    private void suggestionListLoader(){
-        suggestionList.setVisible(false); // Initially hide the suggestions list
-        //suggestionList.setPrefHeight(100); // Set a preferred height for the suggestion list
-        suggestionList.prefWidthProperty().bind(searchField.widthProperty()); // Bind width to searchField
-        //suggestionList.setItems(suggestions);
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            searchHBox.getChildren().remove(invalid);
-            if (newValue.isEmpty()) {
-                suggestionList.setVisible(false);
-            } else {
-                // Filter suggestions
-                List<String> filteredSuggestions = suggestions.stream()
-                        .filter(s -> s.toLowerCase().contains(newValue.toLowerCase()))
-                        .toList();
-                ObservableList<String> inputList = FXCollections.observableArrayList(filteredSuggestions);
-               // Integer value = quantitySpinner.getValue();
-                if (!filteredSuggestions.isEmpty()) {
-                    suggestionList.setItems(inputList);
-                    suggestionList.setVisible(true);
-                } else {
-                    suggestionList.setVisible(false);
+    private void suggestionListLoader() {
+        // Create a single ContextMenu instance that we'll reuse
+        ContextMenu contextMenu = new ContextMenu();
+
+        searchField.setOnKeyReleased(event -> {
+            String searchText = searchField.getText().trim();
+
+            // Clear existing items
+            contextMenu.getItems().clear();
+
+            // Hide the context menu if search text is empty
+            if (searchText.isEmpty()) {
+                contextMenu.hide();
+                return;
+            }
+
+            // Get all products including disabled ones
+            List<Product> products = Datasource.getInstance().searchProducts(searchText, Datasource.ORDER_BY_NONE, true);
+
+            if (products != null && !products.isEmpty()) {
+                for (Product product : products) {
+                    // Create menu item with status indication
+                    String itemText = product.getName();
+                    if (product.isDisabled()) {
+                        itemText += " (Unavailable)";
+                    }
+
+                    MenuItem item = new MenuItem(itemText);
+
+                    // Style disabled products differently
+                    if (product.isDisabled()) {
+                        item.setStyle("-fx-text-fill: #999999;"); // Gray out disabled products
+                    }
+
+                    item.setOnAction(e -> {
+                        if (product.isDisabled()) {
+                            // Show warning for disabled products
+                            invalid.setText("This product is currently unavailable");
+                            invalid.setFill(Color.RED);
+                            searchHBox.getChildren().add(invalid);
+                            searchField.setText("");
+                        } else {
+                            searchField.setText(product.getName());
+                            contextMenu.hide();
+                            onClickSearch();
+                        }
+                    });
+                    contextMenu.getItems().add(item);
                 }
 
-                // Update position of the suggestion list to be directly below the searchField
-                //suggestionList.setTranslateX(searchField.getLayoutX());
-                //suggestionList.setTranslateY(searchField.getLayoutY() + searchField.getHeight());
+                // Only show if not already showing
+                if (!contextMenu.isShowing()) {
+                    contextMenu.show(searchField, Side.BOTTOM, 0, 0);
+                }
+            } else {
+                contextMenu.hide();
             }
         });
 
-        // Handle selection from the suggestions list
-        suggestionList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                searchField.setText(newValue);
-                searchField.positionCaret(searchField.getText().length());
-                suggestionList.setVisible(false);// Hide suggestions after selection
+        // Hide context menu when focus is lost
+        searchField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                contextMenu.hide();
+            }
+        });
 
-                Platform.runLater(() -> {
-                    suggestionList.getSelectionModel().clearSelection();
-                    onClickSearch();
-                });
+        // Prevent the TextField from showing its own dropdown
+        searchField.setOnMouseClicked(event -> {
+            if (!contextMenu.isShowing() && !searchField.getText().trim().isEmpty()) {
+                contextMenu.show(searchField, Side.BOTTOM, 0, 0);
             }
         });
     }
 
     @FXML
-    private void onClickSearch(){
-        if(productHBox.getChildren().contains(invalid) || productHBox.getChildren().contains(noStock)){
+    private void onClickSearch() {
+        if (productHBox.getChildren().contains(invalid) || productHBox.getChildren().contains(noStock)) {
             productHBox.getChildren().remove(invalid);
             productHBox.getChildren().remove(noStock);
         }
         String searchName = searchField.getText();
-        //Product product = new Product();
         tempProduct = Datasource.getInstance().searchOneProductByName(searchName);
-        if(tempProduct != null && !tempProduct.isDisabled()){
-            if(tempProduct.getQuantity() == 0){
+        if (tempProduct != null) {
+            if (tempProduct.isDisabled()) {
+                invalid.setText("This product is currently unavailable");
+                invalid.setFill(Color.RED);
+                searchHBox.getChildren().add(invalid);
+                searchField.setText("");
+                return;
+            }
+
+            if (tempProduct.getQuantity() == 0) {
                 invalid.setText("Product has no stock remain");
                 invalid.setFill(Color.RED);
                 searchHBox.getChildren().add(invalid);
@@ -263,23 +361,21 @@ public class NewOrderController implements Initializable {
             SpinnerValueFactory<Integer> spinnerValue = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, tempProduct.getQuantity(), 1);
             quantitySpinner.setValueFactory(spinnerValue);
             searchField.setText("");
-            //return;
-        }
-        else if(tempProduct == null || tempProduct.isDisabled()){
-            invalid.setText("No product found or product is disabled");
+        } else {
+            invalid.setText("No product found");
             invalid.setFill(Color.RED);
             searchHBox.getChildren().add(invalid);
-            //return;
         }
     }
 
     private void productDetailLoader(){
-        if(tempProduct == null){
+        if(tempProduct == null){ // Add this initial check
             SpinnerValueFactory<Integer> spinnerValue = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,999,0);
             quantitySpinner.setValueFactory(spinnerValue);
             totalField.setText("0");
             quantitySpinner.setDisable(true);
         }
+
         quantitySpinner.valueProperty().addListener(new ChangeListener<Integer>() {
             @Override
             public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
@@ -296,10 +392,6 @@ public class NewOrderController implements Initializable {
                     totalField.setText(formattedValue);
                     quantitySpinner.setDisable(false);
                 }
-//                if(productHBox.getChildren().contains(invalid) || productHBox.getChildren().contains(noStock)){
-//                    productHBox.getChildren().remove(invalid);
-//                    productHBox.getChildren().remove(noStock);
-//                }
             }
         });
     }
@@ -358,7 +450,7 @@ public class NewOrderController implements Initializable {
         idField.setText("");
         productNameField.setText("");
         SpinnerValueFactory<Integer> spinnerValue = new SpinnerValueFactory.ListSpinnerValueFactory<>(
-                javafx.collections.FXCollections.observableArrayList(0));
+                FXCollections.observableArrayList(0));
         quantitySpinner.setValueFactory(spinnerValue);
         totalField.setText("0");
         orderDetailView.refresh();
@@ -375,7 +467,6 @@ public class NewOrderController implements Initializable {
                 editButton.setOnAction(e -> {
                     Product product = getTableView().getItems().get(getIndex());
                     System.out.println("Edit: " + product.getName());
-                    //quantitySpinner.getValueFactory().setValue(quantities.get(getIndex()));
                     searchField.setText(product.getName());
                     onClickSearch();
                     Platform.runLater(() -> {
@@ -384,7 +475,6 @@ public class NewOrderController implements Initializable {
                         productList.remove(getIndex());
                         quantities.remove(getIndex());
                     });
-
                 });
 
                 // Set the action for the Delete button
@@ -411,8 +501,8 @@ public class NewOrderController implements Initializable {
                 }
             }
         });
-        actionColumn.setMinWidth(200);
-        actionColumn.setPrefWidth(300);
+        actionColumn.setMinWidth(200);  // Changed from 100
+        actionColumn.setPrefWidth(300); // Changed from 150
         actionColumn.setMaxWidth(5000);
         orderDetailView.getColumns().add(actionColumn);
     }
@@ -548,6 +638,15 @@ public class NewOrderController implements Initializable {
             System.out.println("No product !");
         }
     }
+
+    private void changeToOrderView(){
+        mainDashboardController.btnOrdersOnClick(new ActionEvent());
+    }
+
+    public void setMainDashboardController(UserMainDashboardController controller){
+        this.mainDashboardController = controller;
+    }
+
     @FXML
     private void handleAddNewCustomer() {
         Dialog<Customer> dialog = new Dialog<>();
@@ -584,13 +683,13 @@ public class NewOrderController implements Initializable {
                     HelperMethods.alertBox("All fields must be filled", null, "Validation Error");
                     return null;
                 }
-                
+
                 boolean success = Datasource.getInstance().insertNewCustomer(
-                    nameField.getText(),
-                    addressField.getText(),
-                    contactField.getText()
+                        nameField.getText(),
+                        addressField.getText(),
+                        contactField.getText()
                 );
-                
+
                 if (success) {
                     Customer newCustomer = Datasource.getInstance().getLastInsertedCustomer();
                     if (newCustomer != null) {
@@ -606,37 +705,57 @@ public class NewOrderController implements Initializable {
 
         dialog.showAndWait();
     }
-     private void setupCustomerSearch() {
+
+    private void setupCustomerSearch() {
+        // Create a single ContextMenu instance that we'll reuse
+        ContextMenu contextMenu = new ContextMenu();
+
         customerNameField.setOnKeyReleased(event -> {
             String searchText = customerNameField.getText().trim();
-            if (!searchText.isEmpty()) {
-                List<Customer> customers = Datasource.getInstance().searchCustomers(searchText, Datasource.ORDER_BY_NONE);
-                if (customers != null && !customers.isEmpty()) {
-                    // Show suggestions in a popup
-                    ContextMenu contextMenu = new ContextMenu();
-                    for (Customer c : customers) {
-                        MenuItem item = new MenuItem(c.getName() + " - " + c.getContact_info());
-                        item.setOnAction(e -> {
-                            customerNameField.setText(c.getName());
-                            customer = c;
-                            contextMenu.hide();
-                        });
-                        contextMenu.getItems().add(item);
-                    }
-                    customerNameField.setContextMenu(contextMenu);
+
+            // Clear existing items
+            contextMenu.getItems().clear();
+
+            // Hide the context menu if search text is empty
+            if (searchText.isEmpty()) {
+                contextMenu.hide();
+                return;
+            }
+
+            List<Customer> customers = Datasource.getInstance().searchCustomers(searchText, Datasource.ORDER_BY_NONE);
+            if (customers != null && !customers.isEmpty()) {
+                for (Customer c : customers) {
+                    MenuItem item = new MenuItem(c.getName() + " - " + c.getContact_info());
+                    item.setOnAction(e -> {
+                        customerNameField.setText(c.getName());
+                        customer = c;
+                        contextMenu.hide();
+                    });
+                    contextMenu.getItems().add(item);
+                }
+
+                // Only show if not already showing
+                if (!contextMenu.isShowing()) {
                     contextMenu.show(customerNameField, Side.BOTTOM, 0, 0);
                 }
+            } else {
+                contextMenu.hide();
             }
         });
-    }
 
+        // Hide context menu when focus is lost
+        customerNameField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                contextMenu.hide();
+            }
+        });
 
-    private void changeToOrderView(){
-        mainDashboardController.btnOrdersOnClick(new ActionEvent());
-    }
-
-    public void setMainDashboardController(UserMainDashboardController controller){
-        this.mainDashboardController = controller;
+        // Prevent the TextField from showing its own dropdown
+        customerNameField.setOnMouseClicked(event -> {
+            if (!contextMenu.isShowing() && !customerNameField.getText().trim().isEmpty()) {
+                contextMenu.show(customerNameField, Side.BOTTOM, 0, 0);
+            }
+        });
     }
 }
 
