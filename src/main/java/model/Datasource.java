@@ -614,6 +614,12 @@ public class Datasource extends Product {
             return false;
         }
 
+        // Check if email already exists
+        if (isEmailExists(email)) {
+            System.out.println("Email already exists: " + email);
+            return false;
+        }
+
         String sql = "INSERT INTO " + TABLE_USERS + " ("
                 + COLUMN_USERS_FULLNAME + ", "
                 + COLUMN_USERS_USERNAME + ", "
@@ -628,8 +634,8 @@ public class Datasource extends Product {
             statement.setString(1, fullName);
             statement.setString(2, username);
             statement.setString(3, email);
-            statement.setString(4, password);  // Hash the password before storing
-            statement.setString(5, salt);  // Store the salt
+            statement.setString(4, password);
+            statement.setString(5, salt);
 
             statement.executeUpdate();
             return true;
@@ -1506,6 +1512,24 @@ public class Datasource extends Product {
             System.out.println("Error getting customer points: " + e.getMessage());
         }
         return -1;
+    }
+
+    // Add this new method to check if an email already exists
+    public boolean isEmailExists(String email) {
+        String query = "SELECT COUNT(*) FROM " + TABLE_USERS + 
+                      " WHERE LOWER(" + COLUMN_USERS_EMAIL + ") = LOWER(?)";
+              
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setString(1, email.trim());
+            ResultSet results = statement.executeQuery();
+            
+            if (results.next()) {
+                return results.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+        }
+        return false;
     }
 }
 

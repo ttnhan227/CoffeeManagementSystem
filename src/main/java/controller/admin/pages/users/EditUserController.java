@@ -114,7 +114,6 @@ public class EditUserController {
             return;
         }
 
-        // Check if email is taken (excluding current user)
         try {
             User existingUser = Datasource.getInstance().getUserByEmail(email);
             if (existingUser != null && existingUser.getEmail() != null 

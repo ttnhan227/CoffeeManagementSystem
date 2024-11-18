@@ -1,14 +1,18 @@
 package controller.admin.pages.users;
 
+import java.sql.SQLException;
+import java.time.LocalDate;
+
+import app.utils.HelperMethods;
+import app.utils.PasswordUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import model.Datasource;
 import model.User;
-import app.utils.PasswordUtils;
-import app.utils.HelperMethods;
-import java.time.LocalDate;
-import java.sql.SQLException;
 
 public class AddUserController {
 
@@ -115,16 +119,10 @@ public class AddUserController {
             return;
         }
 
-        // Check email availability
-        try {
-            User userByEmail = Datasource.getInstance().getUserByEmail(email);
-            if (userByEmail != null && userByEmail.getEmail() != null) {
-                showError("Email is already registered.");
-                highlightErrorField(fieldCreateUserEmail);
-                return;
-            }
-        } catch (SQLException e) {
-            showError("Error checking email availability.");
+        // Check if email exists using the new method
+        if (Datasource.getInstance().isEmailExists(email)) {
+            showError("Email is already registered.");
+            highlightErrorField(fieldCreateUserEmail);
             return;
         }
 

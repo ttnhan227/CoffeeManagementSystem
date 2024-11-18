@@ -112,9 +112,8 @@ public class RegisterController {
             return;
         }
 
-        // Check email availability
-        User userByEmail = Datasource.getInstance().getUserByEmail(email);
-        if (userByEmail != null && userByEmail.getEmail() != null) {
+        // Check if email exists
+        if (Datasource.getInstance().isEmailExists(email)) {
             showError("Email is already registered.");
             highlightErrorField(emailField);
             return;
