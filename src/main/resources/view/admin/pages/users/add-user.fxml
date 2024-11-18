@@ -7,7 +7,7 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controller.admin.pages.users.AddUserController"
-            prefHeight="600.0" prefWidth="600.0"
+            prefHeight="600.0" prefWidth="800.0"
             stylesheets="@edit-user.css">
 
     <Text text="Create New User" layoutX="20.0" layoutY="20.0">
@@ -16,38 +16,69 @@
         </font>
     </Text>
 
-    <Label text="Full Name:" layoutX="20.0" layoutY="60.0"/>
-    <TextField fx:id="fieldCreateUserName" layoutX="150.0" layoutY="60.0" prefWidth="400.0"/>
-    <Text fx:id="nameError" layoutX="150.0" layoutY="90.0" fill="red" visible="false"/>
+    <VBox spacing="20" layoutX="20.0" layoutY="40.0">
+        <!-- Full Name -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Full Name:" prefWidth="120"/>
+            <TextField fx:id="fieldCreateUserName" prefWidth="400.0"/>
+            <Text fx:id="nameError" fill="red" visible="false"/>
+        </HBox>
 
-    <Label text="Email:" layoutX="20.0" layoutY="100.0"/>
-    <TextField fx:id="fieldCreateUserEmail" layoutX="150.0" layoutY="100.0" prefWidth="400.0"/>
-    <Text fx:id="emailError" layoutX="150.0" layoutY="130.0" fill="red" visible="false"/>
+        <!-- Email -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Email:" prefWidth="120"/>
+            <TextField fx:id="fieldCreateUserEmail" prefWidth="400.0"/>
+            <Text fx:id="emailError" fill="red" visible="false"/>
+        </HBox>
 
-    <Label text="Username:" layoutX="20.0" layoutY="140.0"/>
-    <TextField fx:id="fieldCreateUserUsername" layoutX="150.0" layoutY="140.0" prefWidth="400.0"/>
-    <Text fx:id="usernameError" layoutX="150.0" layoutY="170.0" fill="red" visible="false"/>
+        <!-- Username -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Username:" prefWidth="120"/>
+            <TextField fx:id="fieldCreateUserUsername" prefWidth="400.0"/>
+            <Text fx:id="usernameError" fill="red" visible="false"/>
+        </HBox>
 
-    <Label text="Password:" layoutX="20.0" layoutY="180.0"/>
-    <PasswordField fx:id="fieldCreateUserPassword" layoutX="150.0" layoutY="180.0" prefWidth="400.0"/>
-    <Text fx:id="passwordError" layoutX="150.0" layoutY="210.0" fill="red" visible="false"/>
+        <!-- Password -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Password:" prefWidth="120"/>
+            <PasswordField fx:id="fieldCreateUserPassword" prefWidth="400.0"/>
+            <Text fx:id="passwordError" fill="red" visible="false"/>
+        </HBox>
 
-    <Label text="Date of Birth:" layoutX="20.0" layoutY="220.0"/>
-    <DatePicker fx:id="fieldCreateUserDOB" layoutX="150.0" layoutY="220.0" prefWidth="400.0"/>
-    <Text fx:id="dobError" layoutX="150.0" layoutY="250.0" fill="red" visible="false"/>
+        <!-- Date of Birth -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Date of Birth:" prefWidth="120"/>
+            <DatePicker fx:id="fieldCreateUserDOB" prefWidth="400.0"/>
+            <Text fx:id="dobError" fill="red" visible="false"/>
+        </HBox>
 
-    <Label text="Gender:" layoutX="20.0" layoutY="260.0"/>
-    <ComboBox fx:id="fieldCreateUserGender" layoutX="150.0" layoutY="260.0" prefWidth="400.0"/>
-    <Text fx:id="genderError" layoutX="150.0" layoutY="290.0" fill="red" visible="false"/>
+        <!-- Gender -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Gender:" prefWidth="120"/>
+            <ComboBox fx:id="fieldCreateUserGender" prefWidth="400.0"/>
+            <Text fx:id="genderError" fill="red" visible="false"/>
+        </HBox>
 
-    <Label text="Phone Number:" layoutX="20.0" layoutY="300.0"/>
-    <TextField fx:id="fieldCreateUserPhone" layoutX="150.0" layoutY="300.0" prefWidth="400.0"/>
-    <Text fx:id="phoneError" layoutX="150.0" layoutY="330.0" fill="red" visible="false"/>
+        <!-- Phone Number -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Phone Number:" prefWidth="120"/>
+            <TextField fx:id="fieldCreateUserPhone" prefWidth="400.0"/>
+            <Text fx:id="phoneError" fill="red" visible="false"/>
+        </HBox>
 
-    <Label text="Status:" layoutX="20.0" layoutY="340.0"/>
-    <ComboBox fx:id="fieldCreateUserStatus" layoutX="150.0" layoutY="340.0" prefWidth="400.0"/>
-    <Text fx:id="statusError" layoutX="150.0" layoutY="370.0" fill="red" visible="false"/>
+        <!-- Status -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Status:" prefWidth="120"/>
+            <ComboBox fx:id="fieldCreateUserStatus" prefWidth="400.0"/>
+            <Text fx:id="statusError" fill="red" visible="false"/>
+        </HBox>
 
-    <Button text="Create User" layoutX="150.0" layoutY="400.0" onAction="#btnCreateUserOnAction"/>
-
+        <!-- Create Button -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <padding>
+                <javafx.geometry.Insets left="120"/>
+            </padding>
+            <Button text="Create User" onAction="#btnCreateUserOnAction"/>
+        </HBox>
+    </VBox>
 </AnchorPane>
