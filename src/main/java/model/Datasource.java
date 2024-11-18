@@ -751,11 +751,14 @@ public class Datasource extends Product {
         }
     }
 
-    public Product searchOneProductByName(String searchName){
-        String query = "SELECT * FROM products WHERE name = '" + searchName + "'";
+    public Product searchOneProductByName(String searchName) {
+        String query = "SELECT * FROM products WHERE name = ?";
         Product product = new Product();
-        try (Statement statement = conn.createStatement();
-             ResultSet results = statement.executeQuery(query)){
+        
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, searchName);
+            ResultSet results = stmt.executeQuery();
+            
             if (results.next()) {
                 product.setId(results.getInt("id"));
                 product.setName(results.getString("name"));
@@ -766,13 +769,11 @@ public class Datasource extends Product {
                 product.setImage(results.getString("image"));
                 product.setDisabled(results.getBoolean("active"));
                 return product;
-            }
-            else{
+            } else {
                 System.out.println("No product found with search name");
                 return null;
             }
-
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }

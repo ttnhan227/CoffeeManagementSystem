@@ -258,74 +258,111 @@ public class NewOrderController implements Initializable {
         } ));
     }
 
-    private void suggestionListLoader(){
-        suggestionList.setVisible(false); // Initially hide the suggestions list
-        //suggestionList.setPrefHeight(100); // Set a preferred height for the suggestion list
-        suggestionList.prefWidthProperty().bind(searchField.widthProperty()); // Bind width to searchField
-        //suggestionList.setItems(suggestions);
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            searchHBox.getChildren().remove(invalid);
-            if (newValue.isEmpty()) {
-                suggestionList.setVisible(false);
-            } else {
-                // Filter suggestions
-                List<String> filteredSuggestions = suggestions.stream()
-                        .filter(s -> s.toLowerCase().contains(newValue.toLowerCase()))
-                        .toList();
-                ObservableList<String> inputList = FXCollections.observableArrayList(filteredSuggestions);
-
-                if (!filteredSuggestions.isEmpty()) {
-                    suggestionList.setItems(inputList);
-                    suggestionList.setVisible(true);
-                } else {
-                    suggestionList.setVisible(false);
+    private void suggestionListLoader() {
+        // Create a single ContextMenu instance that we'll reuse
+        ContextMenu contextMenu = new ContextMenu();
+        
+        searchField.setOnKeyReleased(event -> {
+            String searchText = searchField.getText().trim();
+            
+            // Clear existing items
+            contextMenu.getItems().clear();
+            
+            // Hide the context menu if search text is empty
+            if (searchText.isEmpty()) {
+                contextMenu.hide();
+                return;
+            }
+            
+            // Get all products including disabled ones
+            List<Product> products = Datasource.getInstance().searchProducts(searchText, Datasource.ORDER_BY_NONE, true);
+            
+            if (products != null && !products.isEmpty()) {
+                for (Product product : products) {
+                    // Create menu item with status indication
+                    String itemText = product.getName();
+                    if (product.isDisabled()) {
+                        itemText += " (Unavailable)";
+                    }
+                    
+                    MenuItem item = new MenuItem(itemText);
+                    
+                    // Style disabled products differently
+                    if (product.isDisabled()) {
+                        item.setStyle("-fx-text-fill: #999999;"); // Gray out disabled products
+                    }
+                    
+                    item.setOnAction(e -> {
+                        if (product.isDisabled()) {
+                            // Show warning for disabled products
+                            invalid.setText("This product is currently unavailable");
+                            invalid.setFill(Color.RED);
+                            searchHBox.getChildren().add(invalid);
+                            searchField.setText("");
+                        } else {
+                            searchField.setText(product.getName());
+                            contextMenu.hide();
+                            onClickSearch();
+                        }
+                    });
+                    contextMenu.getItems().add(item);
                 }
-
-                // Update position of the suggestion list to be directly below the searchField
-                //suggestionList.setTranslateX(searchField.getLayoutX());
-                //suggestionList.setTranslateY(searchField.getLayoutY() + searchField.getHeight());
+                
+                // Only show if not already showing
+                if (!contextMenu.isShowing()) {
+                    contextMenu.show(searchField, Side.BOTTOM, 0, 0);
+                }
+            } else {
+                contextMenu.hide();
             }
         });
-
-        // Handle selection from the suggestions list
-        suggestionList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                searchField.setText(newValue);
-                searchField.positionCaret(searchField.getText().length());
-                suggestionList.setVisible(false);// Hide suggestions after selection
-
-                Platform.runLater(() -> {
-                    suggestionList.getSelectionModel().clearSelection();
-                    onClickSearch();
-                });
+        
+        // Hide context menu when focus is lost
+        searchField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                contextMenu.hide();
+            }
+        });
+        
+        // Prevent the TextField from showing its own dropdown
+        searchField.setOnMouseClicked(event -> {
+            if (!contextMenu.isShowing() && !searchField.getText().trim().isEmpty()) {
+                contextMenu.show(searchField, Side.BOTTOM, 0, 0);
             }
         });
     }
 
     @FXML
-    private void onClickSearch(){
-        if(productHBox.getChildren().contains(invalid) || productHBox.getChildren().contains(noStock)){
+    private void onClickSearch() {
+        if (productHBox.getChildren().contains(invalid) || productHBox.getChildren().contains(noStock)) {
             productHBox.getChildren().remove(invalid);
             productHBox.getChildren().remove(noStock);
         }
         String searchName = searchField.getText();
         tempProduct = Datasource.getInstance().searchOneProductByName(searchName);
-        if(tempProduct != null && !tempProduct.isDisabled()){
-            if(tempProduct.getQuantity() == 0){
+        if (tempProduct != null) {
+            if (tempProduct.isDisabled()) {
+                invalid.setText("This product is currently unavailable");
+                invalid.setFill(Color.RED);
+                searchHBox.getChildren().add(invalid);
+                searchField.setText("");
+                return;
+            }
+            
+            if (tempProduct.getQuantity() == 0) {
                 invalid.setText("Product has no stock remain");
                 invalid.setFill(Color.RED);
                 searchHBox.getChildren().add(invalid);
                 return;
             }
-            quantitySpinner.setDisable(false); // Add this line
+            quantitySpinner.setDisable(false);
             idField.setText(String.valueOf(tempProduct.getId()));
             productNameField.setText(tempProduct.getName());
             SpinnerValueFactory<Integer> spinnerValue = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, tempProduct.getQuantity(), 1);
             quantitySpinner.setValueFactory(spinnerValue);
-            searchField.setText(""); // Add this line
-        }
-        else if(tempProduct == null || tempProduct.isDisabled()){
-            invalid.setText("No product found or product is disabled");
+            searchField.setText("");
+        } else {
+            invalid.setText("No product found");
             invalid.setFill(Color.RED);
             searchHBox.getChildren().add(invalid);
         }
