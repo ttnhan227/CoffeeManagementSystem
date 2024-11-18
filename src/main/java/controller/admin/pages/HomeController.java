@@ -10,8 +10,11 @@ import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import model.Customer;
 import model.Datasource;
@@ -376,36 +379,43 @@ public class HomeController {
     private void setupSalesAnalytics() {
         Map<String, Double> categoryRevenue = new HashMap<>();
         List<OrderDetail> allOrders = Datasource.getInstance().getTopThreeProducts();
-        
+
         for (OrderDetail order : allOrders) {
             Product product = Datasource.getInstance().searchOneProductById(order.getProductID());
             String categoryName = Datasource.getInstance().getCategoryName(product.getCategory_id());
             categoryRevenue.merge(categoryName, order.getTotal(), Double::sum);
         }
-        
+
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         categoryRevenue.forEach((category, revenue) -> {
             pieChartData.add(new PieChart.Data(category, revenue));
         });
-        
+
         categoryPerformanceChart.setData(pieChartData);
-        
-        // Add percentage labels
+
+        // Improve label visibility
         double total = categoryRevenue.values().stream().mapToDouble(Double::doubleValue).sum();
-        pieChartData.forEach(data -> {
-            double percentage = (data.getPieValue() / total) * 100;
-            String text = String.format("%s\n%.1f%%", data.getName(), percentage);
-            data.setName(text);
-        });
         
-        // Add tooltips
+        categoryPerformanceChart.setLabelLineLength(25);  // Increased line length
+        categoryPerformanceChart.setLabelsVisible(true);
+        
+        // Style the pie chart data
         categoryPerformanceChart.getData().forEach(data -> {
-            Tooltip tooltip = new Tooltip(String.format(
-                "Category: %s\nRevenue: $%.2f",
-                data.getName().split("\n")[0],
-                data.getPieValue()
-            ));
-            Tooltip.install(data.getNode(), tooltip);
+            double percentage = data.getPieValue() / total * 100;
+            String text = String.format("%s\n%.1f%%", data.getName().split("\n")[0], percentage);
+            data.setName(text);
+
+            // Add hover effect and tooltip
+            Node slice = data.getNode();
+            Tooltip tooltip = new Tooltip(String.format("%s: $%.2f", 
+                data.getName().split("\n")[0], data.getPieValue()));
+            Tooltip.install(slice, tooltip);
+            
+            // Brighten slice on hover
+            slice.setOnMouseEntered(e -> 
+                slice.setStyle("-fx-opacity: 0.8;"));
+            slice.setOnMouseExited(e -> 
+                slice.setStyle("-fx-opacity: 1;"));
         });
     }
 }

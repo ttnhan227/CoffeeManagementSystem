@@ -5,17 +5,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
+import model.Customer;
 import model.Datasource;
 import model.OrderDetail;
 import model.Product;
+import model.Order;
 
 import java.text.NumberFormat;
 import java.time.Year;
@@ -31,6 +36,7 @@ public class UserHomeController {
     public Label productsCount;
     @FXML
     public Label customersCount;
+
     @FXML
     public Label ordersCount;
     @FXML
@@ -55,51 +61,47 @@ public class UserHomeController {
         Platform.runLater(() -> {
             setupBestSellingTable();
             loadBestSellingProducts();
-            
+
             // Then load other components
             getDashboardProdCount();
             getDashboardOrderCount();
             getDashboardCustomerCount();
-            
+
             // Initialize revenue charts
             barData = new HashMap<>();
             lineData = new HashMap<>();
             loadData();
             setupCharts();
             loadCombobox();
-            
+
             // Initial chart update
             updateChart(Year.now().getValue());
-            
-            // Set fixed height for the table
-            bestSellingTable.setFixedCellSize(50);
-            bestSellingTable.setPrefHeight(400);
-            bestSellingTable.setMaxHeight(400);
-            bestSellingTable.setMinHeight(400);
-            
-            // Prevent table from showing empty rows
-            bestSellingTable.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-table-cell-border-color: transparent;"
-            );
-            
+
+            // Set up table properties
+            setupTableProperties();
+
+            // Initialize category performance chart
             setupSalesAnalytics();
         });
     }
 
     private void setupBestSellingTable() {
+        if (bestSellingTable == null) {
+            return;
+        }
+
         // Create columns
         TableColumn<OrderDetail, String> productColumn = new TableColumn<>("Product Name");
         productColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        productColumn.setId("productNameColumn");  // Important for CSS styling
+        productColumn.setId("productNameColumn");
 
         TableColumn<OrderDetail, Integer> quantityColumn = new TableColumn<>("Quantity Sold");
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        productColumn.setId("quantityColumn");  // Important for CSS styling
+        quantityColumn.setId("quantityColumn");
 
         TableColumn<OrderDetail, Double> totalColumn = new TableColumn<>("Total Revenue");
         totalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
-        productColumn.setId("totalColumn");  // Important for CSS styling
+        totalColumn.setId("totalColumn");
 
         // Format the total revenue column to show currency
         totalColumn.setCellFactory(tc -> new TableCell<OrderDetail, Double>() {
@@ -120,21 +122,22 @@ public class UserHomeController {
 
         // Center the table in its container
         bestSellingTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        
+
         // Prevent table selection
         bestSellingTable.setSelectionModel(null);
-        
+
         // Set table size constraints
         bestSellingTable.setMinHeight(300);
         bestSellingTable.setMaxHeight(400);
         bestSellingTable.setMinWidth(800);
         bestSellingTable.setMaxWidth(1200);
-
-        // Apply CSS styling
-        bestSellingTable.getStyleClass().add("table-view");
     }
 
     private void loadBestSellingProducts() {
+        if (bestSellingTable == null) {
+            return; // Exit if table is not yet initialized
+        }
+
         ObservableList<OrderDetail> products = FXCollections.observableArrayList(
                 Datasource.getInstance().getTopThreeProducts()
         );
@@ -158,6 +161,7 @@ public class UserHomeController {
 
         new Thread(getDashProdCount).start();
     }
+
 
     public void getDashboardOrderCount() {
         Task<Integer> getDashOrderCount = new Task<Integer>() {
@@ -197,10 +201,6 @@ public class UserHomeController {
         barYAxis.setLabel("Revenue ($)");
         revenueBarChart.setTitle("Monthly Revenue");
         barYAxis.setTickUnit(500);
-        
-        // Add style classes to bar chart
-        revenueBarChart.getStyleClass().add("chart");
-        revenueBarChart.lookup(".chart-plot-background").setStyle("-fx-background-color: transparent;");
 
         // Setup Line Chart
         CategoryAxis lineXAxis = (CategoryAxis) growthLineChart.getXAxis();
@@ -209,25 +209,12 @@ public class UserHomeController {
         lineYAxis.setLabel("Cumulative Revenue ($)");
         growthLineChart.setTitle("Cumulative Revenue Growth");
         lineYAxis.setTickUnit(500);
-        
-        // Add style classes to line chart
-        growthLineChart.getStyleClass().add("chart");
-        growthLineChart.lookup(".chart-plot-background").setStyle("-fx-background-color: transparent;");
 
-        // Setup Pie Chart
-        categoryPerformanceChart.getStyleClass().add("chart");
-        categoryPerformanceChart.setLegendSide(Side.RIGHT);
-
-        // Apply CSS to all charts
+        // Apply CSS to both charts
         String cssPath = getClass().getResource("/view/resources/css/home.css").toExternalForm();
         revenueBarChart.getStylesheets().add(cssPath);
         growthLineChart.getStylesheets().add(cssPath);
         categoryPerformanceChart.getStylesheets().add(cssPath);
-
-        // Style the chart containers
-        revenueBarChart.getParent().getStyleClass().add("chart-container");
-        growthLineChart.getParent().getStyleClass().add("chart-container");
-        categoryPerformanceChart.getParent().getStyleClass().add("chart-container");
     }
 
     private void loadCombobox() {
@@ -362,39 +349,57 @@ public class UserHomeController {
         }
     }
 
+    private void setupTableProperties() {
+        bestSellingTable.setFixedCellSize(50);
+        bestSellingTable.setPrefHeight(400);
+        bestSellingTable.setMaxHeight(400);
+        bestSellingTable.setMinHeight(400);
+        bestSellingTable.setStyle(
+                "-fx-background-color: transparent;" +
+                        "-fx-table-cell-border-color: transparent;"
+        );
+    }
+
     private void setupSalesAnalytics() {
         Map<String, Double> categoryRevenue = new HashMap<>();
         List<OrderDetail> allOrders = Datasource.getInstance().getTopThreeProducts();
-        
+
         for (OrderDetail order : allOrders) {
             Product product = Datasource.getInstance().searchOneProductById(order.getProductID());
             String categoryName = Datasource.getInstance().getCategoryName(product.getCategory_id());
             categoryRevenue.merge(categoryName, order.getTotal(), Double::sum);
         }
-        
+
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         categoryRevenue.forEach((category, revenue) -> {
             pieChartData.add(new PieChart.Data(category, revenue));
         });
-        
+
         categoryPerformanceChart.setData(pieChartData);
-        
-        // Add percentage labels
+
+        // Improve label visibility
         double total = categoryRevenue.values().stream().mapToDouble(Double::doubleValue).sum();
-        pieChartData.forEach(data -> {
-            double percentage = (data.getPieValue() / total) * 100;
-            String text = String.format("%s\n%.1f%%", data.getName(), percentage);
-            data.setName(text);
-        });
-        
-        // Add tooltips
+
+        categoryPerformanceChart.setLabelLineLength(25);  // Increased line length
+        categoryPerformanceChart.setLabelsVisible(true);
+
+        // Style the pie chart data
         categoryPerformanceChart.getData().forEach(data -> {
-            Tooltip tooltip = new Tooltip(String.format(
-                "Category: %s\nRevenue: $%.2f",
-                data.getName().split("\n")[0],
-                data.getPieValue()
-            ));
-            Tooltip.install(data.getNode(), tooltip);
+            double percentage = data.getPieValue() / total * 100;
+            String text = String.format("%s\n%.1f%%", data.getName().split("\n")[0], percentage);
+            data.setName(text);
+
+            // Add hover effect and tooltip
+            Node slice = data.getNode();
+            Tooltip tooltip = new Tooltip(String.format("%s: $%.2f",
+                    data.getName().split("\n")[0], data.getPieValue()));
+            Tooltip.install(slice, tooltip);
+
+            // Brighten slice on hover
+            slice.setOnMouseEntered(e ->
+                    slice.setStyle("-fx-opacity: 0.8;"));
+            slice.setOnMouseExited(e ->
+                    slice.setStyle("-fx-opacity: 1;"));
         });
     }
 }
