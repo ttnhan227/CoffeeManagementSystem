@@ -44,3 +44,5 @@ build/
 ### Mac OS ###
 repomix-output.txt
 repomix-output.txt
+src/main/java/app/db/store_manager.sqlite-shm
+src/main/java/app/db/store_manager.sqlite-wal
