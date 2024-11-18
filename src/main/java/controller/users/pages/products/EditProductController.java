@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import model.Categories;
@@ -38,6 +39,9 @@ public class EditProductController extends ProductsController {
 
     private Runnable onProductEdited;
 
+    @FXML private VBox alertContainer;
+    @FXML private Label alertMessage;
+
     public void setOnProductEdited(Runnable callback) {
         this.onProductEdited = callback;
     }
@@ -46,16 +50,44 @@ public class EditProductController extends ProductsController {
     private void initialize() {
         fieldEditProductCategoryId.setItems(FXCollections.observableArrayList(Datasource.getInstance().getProductCategories(Datasource.ORDER_BY_ASC)));
 
-        TextFormatter<Double> textFormatterDouble = formatDoubleField();
-        TextFormatter<Integer> textFormatterInt = formatIntField();
-        fieldEditProductPrice.setTextFormatter(textFormatterDouble);
-        fieldEditProductQuantity.setTextFormatter(textFormatterInt);
+        // Update price formatter to allow exactly 100
+        TextFormatter<Double> priceFormatter = new TextFormatter<>(change -> {
+            if (change.getControlNewText().isEmpty()) {
+                return change;
+            }
+            try {
+                double value = Double.parseDouble(change.getControlNewText());
+                return value >= 0 && value <= 100.0 ? change : null;
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        });
+
+        // Update quantity formatter to allow exactly 1000
+        TextFormatter<Integer> quantityFormatter = new TextFormatter<>(change -> {
+            if (change.getControlNewText().isEmpty()) {
+                return change;
+            }
+            try {
+                int value = Integer.parseInt(change.getControlNewText());
+                return value >= 0 && value <= 1000 ? change : null;
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        });
+
+        fieldEditProductPrice.setTextFormatter(priceFormatter);
+        fieldEditProductQuantity.setTextFormatter(quantityFormatter);
 
         // Initialize image view with placeholder
         productImageView.setFitHeight(200);
         productImageView.setFitWidth(200);
         productImageView.setPreserveRatio(true);
         productImageView.setImage(DEFAULT_IMAGE);
+
+        // Initialize alert container
+        alertContainer.setManaged(false);
+        alertContainer.setVisible(false);
     }
 
     @FXML
@@ -131,22 +163,12 @@ public class EditProductController extends ProductsController {
 
             editProductTask.setOnSucceeded(e -> {
                 if (editProductTask.valueProperty().get()) {
-                    Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-                    successAlert.setTitle("Success");
-                    successAlert.setHeaderText(null);
-                    successAlert.setContentText("Product updated successfully!");
-                    successAlert.showAndWait();
-
-                    // Notify parent and refresh
+                    displayAlert("Product updated successfully!", "success");
                     if (onProductEdited != null) {
                         onProductEdited.run();
                     }
                 } else {
-                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                    errorAlert.setTitle("Error");
-                    errorAlert.setHeaderText(null);
-                    errorAlert.setContentText("Failed to update product. Please try again.");
-                    errorAlert.showAndWait();
+                    displayAlert("Failed to update product. Please try again.", "error");
                 }
             });
 
@@ -158,78 +180,61 @@ public class EditProductController extends ProductsController {
     protected boolean areProductInputsValidForEdit(String name, String description,
                                                    String price, String quantity, int categoryId, boolean isNameUnchanged) {
 
-        StringBuilder errorMessage = new StringBuilder();
-        boolean isValid = true;
-
         // Check if product name already exists (only if name has changed)
         if (!isNameUnchanged && Datasource.getInstance().isProductNameExists(name)) {
-            errorMessage.append("- Product name already exists\n");
-            isValid = false;
+            displayAlert("Product name already exists.", "error");
+            return false;
         }
 
         // Validate name
         if (name == null || name.trim().isEmpty()) {
-            errorMessage.append("- Product name is required\n");
-            isValid = false;
+            displayAlert("Product name is required.", "error");
+            return false;
         } else if (name.length() < 3 || name.length() > 50) {
-            errorMessage.append("- Product name must be between 3 and 50 characters\n");
-            isValid = false;
+            displayAlert("Product name must be between 3 and 50 characters.", "error");
+            return false;
         }
 
         // Validate description
         if (description == null || description.trim().isEmpty()) {
-            errorMessage.append("- Product description is required\n");
-            isValid = false;
+            displayAlert("Product description is required.", "error");
+            return false;
         } else if (description.length() < 10 || description.length() > 500) {
-            errorMessage.append("- Description must be between 10 and 500 characters\n");
-            isValid = false;
+            displayAlert("Description must be between 10 and 500 characters.", "error");
+            return false;
         }
 
         // Validate price
         try {
             double priceValue = Double.parseDouble(price);
-            if (priceValue <= 0) {
-                errorMessage.append("- Price must be greater than 0\n");
-                isValid = false;
-            } else if (priceValue > 300) {
-                errorMessage.append("- Price cannot exceed $300\n");
-                isValid = false;
+            if (priceValue <= 0 || priceValue > 100) {
+                displayAlert("Price must be between $0.01 and $100.00.", "error");
+                return false;
             }
         } catch (NumberFormatException e) {
-            errorMessage.append("- Invalid price format\n");
-            isValid = false;
+            displayAlert("Invalid price format.", "error");
+            return false;
         }
 
         // Validate quantity
         try {
             int quantityValue = Integer.parseInt(quantity);
-            if (quantityValue <= 0) {
-                errorMessage.append("- Quantity must be greater than 0\n");
-                isValid = false;
-            } else if (quantityValue > 1000) {
-                errorMessage.append("- Quantity cannot exceed 1000 units\n");
-                isValid = false;
+            if (quantityValue <= 0 || quantityValue > 1000) {
+                displayAlert("Quantity must be between 1 and 1000.", "error");
+                return false;
             }
         } catch (NumberFormatException e) {
-            errorMessage.append("- Invalid quantity format\n");
-            isValid = false;
+            displayAlert("Invalid quantity format.", "error");
+            return false;
         }
 
         // Validate category
         if (categoryId <= 0) {
-            errorMessage.append("- Please select a category\n");
-            isValid = false;
+            displayAlert("Please select a category.", "error");
+            return false;
         }
 
-        if (!isValid) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Validation Error");
-            alert.setHeaderText("Please correct the following errors:");
-            alert.setContentText(errorMessage.toString());
-            alert.showAndWait();
-        }
-
-        return isValid;
+        return true;
     }
 
     private String getCurrentImagePath(int productId) {
@@ -313,5 +318,39 @@ public class EditProductController extends ProductsController {
         fieldEditProductCategoryId.getSelectionModel().clearSelection();
         productImageView.setImage(DEFAULT_IMAGE);
         selectedImageFile = null;
+    }
+
+    @Override
+    protected void displayAlert(String message, String type) {
+        alertMessage.setText(message);
+        alertContainer.getStyleClass().removeAll("success", "error", "warning");
+        alertContainer.getStyleClass().add(type.toLowerCase());
+        alertContainer.setManaged(true);
+        alertContainer.setVisible(true);
+
+        // Add listeners to text input fields only
+        fieldEditProductName.setOnKeyPressed(e -> hideAlert());
+        fieldEditProductPrice.setOnKeyPressed(e -> hideAlert());
+        fieldEditProductQuantity.setOnKeyPressed(e -> hideAlert());
+        fieldEditProductDescription.setOnKeyPressed(e -> hideAlert());
+        fieldEditProductCategoryId.setOnAction(e -> hideAlert());
+
+        // Add a listener to the image selection process
+        productImageView.imageProperty().addListener((obs, oldImg, newImg) -> hideAlert());
+    }
+
+    private void hideAlert() {
+        alertContainer.setManaged(false);
+        alertContainer.setVisible(false);
+
+        // Remove listeners from text input fields
+        fieldEditProductName.setOnKeyPressed(null);
+        fieldEditProductPrice.setOnKeyPressed(null);
+        fieldEditProductQuantity.setOnKeyPressed(null);
+        fieldEditProductDescription.setOnKeyPressed(null);
+        fieldEditProductCategoryId.setOnAction(null);
+
+        // Remove the image listener
+        productImageView.imageProperty().removeListener(change -> {});
     }
 }

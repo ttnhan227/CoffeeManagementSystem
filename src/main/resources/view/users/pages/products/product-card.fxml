@@ -29,7 +29,7 @@
         </HBox>
         <HBox styleClass="product-actions">
             <Button fx:id="editButton" mnemonicParsing="false" styleClass="button primary small" text="Edit" />
-<!--            <Button fx:id="deleteButton" mnemonicParsing="false" styleClass="button danger small" text="Delete" />-->
+            <!--            <Button fx:id="deleteButton" mnemonicParsing="false" styleClass="button danger small" text="Delete" />-->
             <Button fx:id="toggleStatusButton" mnemonicParsing="false" styleClass="button secondary small" text="Toggle Status" />
         </HBox>
     </VBox>

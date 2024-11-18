@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import model.Categories;
@@ -15,6 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 
 public class AddProductController extends ProductsController {
 
@@ -33,6 +36,9 @@ public class AddProductController extends ProductsController {
 
     private Runnable onProductAdded;
 
+    @FXML private VBox alertContainer;
+    @FXML private Label alertMessage;
+
     public void setOnProductAdded(Runnable callback) {
         this.onProductAdded = callback;
     }
@@ -42,16 +48,44 @@ public class AddProductController extends ProductsController {
         fieldAddProductCategoryId.setItems(FXCollections.observableArrayList(
                 Datasource.getInstance().getProductCategories(Datasource.ORDER_BY_ASC)));
 
-        TextFormatter<Double> textFormatterDouble = formatDoubleField();
-        TextFormatter<Integer> textFormatterInt = formatIntField();
-        fieldAddProductPrice.setTextFormatter(textFormatterDouble);
-        fieldAddProductQuantity.setTextFormatter(textFormatterInt);
+        // Update price formatter to allow exactly 100
+        TextFormatter<Double> priceFormatter = new TextFormatter<>(change -> {
+            if (change.getControlNewText().isEmpty()) {
+                return change;
+            }
+            try {
+                double value = Double.parseDouble(change.getControlNewText());
+                return value >= 0 && value <= 100.0 ? change : null;
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        });
+
+        // Update quantity formatter to allow exactly 1000
+        TextFormatter<Integer> quantityFormatter = new TextFormatter<>(change -> {
+            if (change.getControlNewText().isEmpty()) {
+                return change;
+            }
+            try {
+                int value = Integer.parseInt(change.getControlNewText());
+                return value >= 0 && value <= 1000 ? change : null;
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        });
+
+        fieldAddProductPrice.setTextFormatter(priceFormatter);
+        fieldAddProductQuantity.setTextFormatter(quantityFormatter);
 
         // Initialize image view with placeholder
         productImageView.setFitHeight(200);
         productImageView.setFitWidth(200);
         productImageView.setPreserveRatio(true);
         productImageView.setImage(DEFAULT_IMAGE);
+
+        // Initialize alert container
+        alertContainer.setManaged(false);
+        alertContainer.setVisible(false);
     }
 
     @FXML
@@ -93,6 +127,40 @@ public class AddProductController extends ProductsController {
         }
     }
 
+    @Override
+    protected void displayAlert(String message, String type) {
+        alertMessage.setText(message);
+        alertContainer.getStyleClass().removeAll("success", "error", "warning");
+        alertContainer.getStyleClass().add(type.toLowerCase());
+        alertContainer.setManaged(true);
+        alertContainer.setVisible(true);
+
+        // Add listeners to text input fields only
+        fieldAddProductName.setOnKeyPressed(e -> hideAlert());
+        fieldAddProductPrice.setOnKeyPressed(e -> hideAlert());
+        fieldAddProductQuantity.setOnKeyPressed(e -> hideAlert());
+        fieldAddProductDescription.setOnKeyPressed(e -> hideAlert());
+        fieldAddProductCategoryId.setOnAction(e -> hideAlert());
+
+        // Add a listener to the image selection process instead of the button
+        productImageView.imageProperty().addListener((obs, oldImg, newImg) -> hideAlert());
+    }
+
+    private void hideAlert() {
+        alertContainer.setManaged(false);
+        alertContainer.setVisible(false);
+
+        // Remove listeners from text input fields only
+        fieldAddProductName.setOnKeyPressed(null);
+        fieldAddProductPrice.setOnKeyPressed(null);
+        fieldAddProductQuantity.setOnKeyPressed(null);
+        fieldAddProductDescription.setOnKeyPressed(null);
+        fieldAddProductCategoryId.setOnAction(null);
+
+        // Remove the image listener
+        productImageView.imageProperty().removeListener(change -> {});
+    }
+
     @FXML
     private void btnAddProductOnAction() {
         Categories category = fieldAddProductCategoryId.getSelectionModel().getSelectedItem();
@@ -110,11 +178,7 @@ public class AddProductController extends ProductsController {
             final String imagePath = saveImageFile();
 
             if (imagePath == null) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Image Required");
-                alert.setHeaderText(null);
-                alert.setContentText("Please select an image for the product.");
-                alert.showAndWait();
+                displayAlert("Please select an image for the product.", "warning");
                 return;
             }
 
@@ -131,23 +195,13 @@ public class AddProductController extends ProductsController {
 
             addProductTask.setOnSucceeded(e -> {
                 if (addProductTask.valueProperty().get()) {
-                    Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-                    successAlert.setTitle("Success");
-                    successAlert.setHeaderText(null);
-                    successAlert.setContentText("Product added successfully!");
-                    successAlert.showAndWait();
-
+                    displayAlert("Product added successfully!", "success");
                     clearForm();
-
                     if (onProductAdded != null) {
                         onProductAdded.run();
                     }
                 } else {
-                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                    errorAlert.setTitle("Error");
-                    errorAlert.setHeaderText(null);
-                    errorAlert.setContentText("Failed to add product. Please try again.");
-                    errorAlert.showAndWait();
+                    displayAlert("Failed to add product. Please try again.", "error");
                 }
             });
 
