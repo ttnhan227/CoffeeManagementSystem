@@ -17,10 +17,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.util.StringConverter;
 import model.Coupon;
 import model.Datasource;
@@ -174,6 +177,37 @@ public class CouponController implements Initializable {
         filteredList.addAll(list);
         
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        idColumn.setCellFactory(column -> new TableCell<>() {
+            private final TextField textField = new TextField();
+            
+            {
+                textField.setEditable(false);
+                textField.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
+                
+                textField.setOnMouseClicked(event -> {
+                    if (event.getClickCount() == 2) {
+                        final Clipboard clipboard = Clipboard.getSystemClipboard();
+                        final ClipboardContent content = new ClipboardContent();
+                        content.putString(textField.getText());
+                        clipboard.setContent(content);
+
+                        textField.selectAll();
+                    }
+                });
+            }
+            
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    textField.setText(String.valueOf(item));
+                    setGraphic(textField);
+                }
+            }
+        });
+        
         discountColumn.setCellValueFactory(new PropertyValueFactory<>("discount"));
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("expiry"));
         
