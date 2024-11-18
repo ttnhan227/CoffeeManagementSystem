@@ -2,15 +2,20 @@ package controller.admin.pages.users;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.Period;
 
 import app.utils.HelperMethods;
 import app.utils.PasswordUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
+import javafx.stage.StageStyle;
 import model.Datasource;
 import model.User;
 
@@ -51,7 +56,20 @@ public class AddUserController {
 
         // Set default values
         fieldCreateUserStatus.setValue("enabled");
-        fieldCreateUserDOB.setValue(LocalDate.now());
+        fieldCreateUserDOB.setValue(null);
+        
+        // Add listener to clear error styling on date selection
+        fieldCreateUserDOB.setOnAction(e -> {
+            fieldCreateUserDOB.getStyleClass().remove("error");
+            viewCreateUserResponse.setVisible(false);
+        });
+
+        // Add listener for phone number validation while typing
+        fieldCreateUserPhone.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                fieldCreateUserPhone.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
     }
 
     private void showError(String message) {
@@ -63,6 +81,14 @@ public class AddUserController {
         field.getStyleClass().add("error");
         field.setOnKeyTyped(e -> {
             field.getStyleClass().remove("error");
+            viewCreateUserResponse.setVisible(false);
+        });
+    }
+
+    private void highlightErrorDatePicker(DatePicker datePicker) {
+        datePicker.getStyleClass().add("error");
+        datePicker.setOnAction(e -> {
+            datePicker.getStyleClass().remove("error");
             viewCreateUserResponse.setVisible(false);
         });
     }
@@ -84,6 +110,7 @@ public class AddUserController {
         fieldCreateUserUsername.getStyleClass().remove("error");
         fieldCreateUserPassword.getStyleClass().remove("error");
         fieldCreateUserPhone.getStyleClass().remove("error");
+        fieldCreateUserDOB.getStyleClass().remove("error");
 
         // Validate Full Name
         if (fullName.isEmpty() || !HelperMethods.validateFullName(fullName)) {
@@ -137,8 +164,36 @@ public class AddUserController {
             return;
         }
 
+        // Validate Date of Birth
+        if (dob == null) {
+            showError("Please select a date of birth.");
+            fieldCreateUserDOB.getStyleClass().add("error");
+            return;
+        }
+
+        // Calculate age
+        Period age = Period.between(dob, LocalDate.now());
+        if (age.getYears() < 18) {
+            showError("User must be at least 18 years old.");
+            fieldCreateUserDOB.getStyleClass().add("error");
+            return;
+        }
+
+        // Validate Phone Number (numbers only)
+        if (!phone.matches("\\d+")) {
+            showError("Phone number must contain numbers only.");
+            highlightErrorField(fieldCreateUserPhone);
+            return;
+        }
+
+        if (phone.length() < 10 || phone.length() > 15) {
+            showError("Phone number must be between 10 and 15 digits.");
+            highlightErrorField(fieldCreateUserPhone);
+            return;
+        }
+
         // Validate other required fields
-        if (dob == null || gender == null || phone.isEmpty() || status == null) {
+        if (gender == null || status == null) {
             showError("Please fill in all required fields.");
             return;
         }
@@ -155,8 +210,7 @@ public class AddUserController {
         );
 
         if (success) {
-            viewCreateUserResponse.setFill(javafx.scene.paint.Color.GREEN);
-            showError("User created successfully!");
+            showModernAlert("Success", "User created successfully!");
             clearForm();
         } else {
             viewCreateUserResponse.setFill(javafx.scene.paint.Color.RED);
@@ -173,5 +227,63 @@ public class AddUserController {
         fieldCreateUserGender.setValue(null);
         fieldCreateUserPhone.clear();
         fieldCreateUserStatus.setValue("enabled");
+    }
+
+    private void showModernAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        
+        DialogPane dialogPane = alert.getDialogPane();
+        
+        // Apply styles directly
+        String css = 
+            ".dialog-pane {" +
+            "    -fx-background-color: white;" +
+            "    -fx-padding: 20px;" +
+            "    -fx-border-radius: 5px;" +
+            "    -fx-background-radius: 5px;" +
+            "    -fx-border-color: #e0e0e0;" +
+            "    -fx-border-width: 1px;" +
+            "    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);" +
+            "}" +
+            ".dialog-pane > *.button-bar > *.container {" +
+            "    -fx-background-color: white;" +
+            "}" +
+            ".dialog-pane > *.label.content {" +
+            "    -fx-font-size: 14px;" +
+            "    -fx-padding: 10px 0 15px 0;" +
+            "}" +
+            ".dialog-pane:header *.header-panel {" +
+            "    -fx-background-color: white;" +
+            "}" +
+            ".dialog-pane *.button {" +
+            "    -fx-background-color: #2196F3;" +
+            "    -fx-text-fill: white;" +
+            "    -fx-background-radius: 4px;" +
+            "    -fx-padding: 8px 20px;" +
+            "    -fx-cursor: hand;" +
+            "}" +
+            ".dialog-pane *.button:hover {" +
+            "    -fx-background-color: #1976D2;" +
+            "}" +
+            ".dialog-pane *.button:pressed {" +
+            "    -fx-background-color: #0D47A1;" +
+            "}" +
+            ".dialog-pane > *.graphic-container {" +
+            "    -fx-padding: 0;" +
+            "}" +
+            ".dialog-pane > *.header-panel > *.label {" +
+            "    -fx-font-size: 18px;" +
+            "    -fx-font-weight: bold;" +
+            "}";
+
+        dialogPane.setStyle(css);
+        dialogPane.getStyleClass().add("dialog-pane");
+        dialogPane.setMinHeight(Region.USE_PREF_SIZE);
+        alert.initStyle(StageStyle.UNDECORATED);
+        
+        alert.showAndWait();
     }
 }

@@ -16,6 +16,11 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.sql.SQLException;
+import java.time.Period;
+import javafx.scene.control.Alert;
+import javafx.scene.control.DialogPane;
+import javafx.scene.layout.Region;
+import javafx.stage.StageStyle;
 
 public class EditUserController {
 
@@ -154,6 +159,38 @@ public class EditUserController {
             return;
         }
 
+        // Validate Date of Birth (must be 18+ years old)
+        if (dob == null) {
+            viewCustomerResponse.setText("Please select a date of birth.");
+            viewCustomerResponse.setVisible(true);
+            fieldEditCustomerDOB.getStyleClass().add("error");
+            return;
+        }
+
+        // Calculate age
+        Period age = Period.between(dob, LocalDate.now());
+        if (age.getYears() < 18) {
+            viewCustomerResponse.setText("User must be at least 18 years old.");
+            viewCustomerResponse.setVisible(true);
+            fieldEditCustomerDOB.getStyleClass().add("error");
+            return;
+        }
+
+        // Validate Phone Number (numbers only)
+        if (!phoneNumber.matches("\\d+")) {
+            viewCustomerResponse.setText("Phone number must contain numbers only.");
+            viewCustomerResponse.setVisible(true);
+            fieldEditCustomerPhone.getStyleClass().add("error");
+            return;
+        }
+
+        if (phoneNumber.length() < 10 || phoneNumber.length() > 15) {
+            viewCustomerResponse.setText("Phone number must be between 10 and 15 digits.");
+            viewCustomerResponse.setVisible(true);
+            fieldEditCustomerPhone.getStyleClass().add("error");
+            return;
+        }
+
         // Continue with update if all validations pass
         Task<Boolean> updateCustomerTask = new Task<Boolean>() {
             @Override
@@ -185,8 +222,7 @@ public class EditUserController {
 
         updateCustomerTask.setOnSucceeded(e -> {
             if (updateCustomerTask.valueProperty().get()) {
-                viewCustomerResponse.setText("User updated successfully!");
-                viewCustomerResponse.setVisible(true);
+                showModernAlert("Success", "User updated successfully!");
                 fieldEditCustomerPassword.clear();
                 fieldEditCustomerConfirmPassword.clear();
             } else {
@@ -212,7 +248,7 @@ public class EditUserController {
             }
         };
 
-        fillCustomerTask.setOnSucceeded(e -> {
+        fillCustomerTask.setOnSucceeded(e -> {  
             List<User> users = fillCustomerTask.getValue();
             if (users != null && !users.isEmpty()) {
                 User user = users.get(0);
@@ -280,5 +316,63 @@ public class EditUserController {
                 dob != null &&
                 gender != null &&
                 status != null;
+    }
+
+    private void showModernAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        
+        DialogPane dialogPane = alert.getDialogPane();
+        
+        // Apply styles directly
+        String css = 
+            ".dialog-pane {" +
+            "    -fx-background-color: white;" +
+            "    -fx-padding: 20px;" +
+            "    -fx-border-radius: 5px;" +
+            "    -fx-background-radius: 5px;" +
+            "    -fx-border-color: #e0e0e0;" +
+            "    -fx-border-width: 1px;" +
+            "    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);" +
+            "}" +
+            ".dialog-pane > *.button-bar > *.container {" +
+            "    -fx-background-color: white;" +
+            "}" +
+            ".dialog-pane > *.label.content {" +
+            "    -fx-font-size: 14px;" +
+            "    -fx-padding: 10px 0 15px 0;" +
+            "}" +
+            ".dialog-pane:header *.header-panel {" +
+            "    -fx-background-color: white;" +
+            "}" +
+            ".dialog-pane *.button {" +
+            "    -fx-background-color: #2196F3;" +
+            "    -fx-text-fill: white;" +
+            "    -fx-background-radius: 4px;" +
+            "    -fx-padding: 8px 20px;" +
+            "    -fx-cursor: hand;" +
+            "}" +
+            ".dialog-pane *.button:hover {" +
+            "    -fx-background-color: #1976D2;" +
+            "}" +
+            ".dialog-pane *.button:pressed {" +
+            "    -fx-background-color: #0D47A1;" +
+            "}" +
+            ".dialog-pane > *.graphic-container {" +
+            "    -fx-padding: 0;" +
+            "}" +
+            ".dialog-pane > *.header-panel > *.label {" +
+            "    -fx-font-size: 18px;" +
+            "    -fx-font-weight: bold;" +
+            "}";
+
+        dialogPane.setStyle(css);
+        dialogPane.getStyleClass().add("dialog-pane");
+        dialogPane.setMinHeight(Region.USE_PREF_SIZE);
+        alert.initStyle(StageStyle.UNDECORATED);
+        
+        alert.showAndWait();
     }
 }
