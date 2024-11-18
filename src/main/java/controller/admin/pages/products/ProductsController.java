@@ -395,78 +395,66 @@ public class ProductsController {
     }
 
     protected boolean areProductInputsValid(String name, String description, String price, String quantity, int categoryId) {
-        StringBuilder errorMessage = new StringBuilder();
-        boolean isValid = true;
-
-        // Check if product name already exists
-        if (Datasource.getInstance().isProductNameExists(name)) {
-            errorMessage.append("- Product name already exists\n");
-            isValid = false;
-        }
-
         // Validate name
         if (name == null || name.trim().isEmpty()) {
-            errorMessage.append("- Product name is required\n");
-            isValid = false;
+            displayAlert("Product name is required.", "error");
+            return false;
         } else if (name.length() < 3 || name.length() > 50) {
-            errorMessage.append("- Product name must be between 3 and 50 characters\n");
-            isValid = false;
+            displayAlert("Product name must be between 3 and 50 characters.", "error");
+            return false;
+        }
+
+        // Check if product name exists
+        if (Datasource.getInstance().isProductNameExists(name)) {
+            displayAlert("Product name already exists.", "error");
+            return false;
         }
 
         // Validate description
         if (description == null || description.trim().isEmpty()) {
-            errorMessage.append("- Product description is required\n");
-            isValid = false;
+            displayAlert("Product description is required.", "error");
+            return false;
         } else if (description.length() < 10 || description.length() > 500) {
-            errorMessage.append("- Description must be between 10 and 500 characters\n");
-            isValid = false;
+            displayAlert("Description must be between 10 and 500 characters.", "error");
+            return false;
         }
 
         // Validate price
         try {
             double priceValue = Double.parseDouble(price);
-            if (priceValue <= 0) {
-                errorMessage.append("- Price must be greater than 0\n");
-                isValid = false;
-            } else if (priceValue > 300) {
-                errorMessage.append("- Price cannot exceed $300\n");
-                isValid = false;
+            if (priceValue <= 0 || priceValue > 100) { // Changed to > instead of >=
+                displayAlert("Price must be between $0.01 and $100.00.", "error");
+                return false;
             }
         } catch (NumberFormatException e) {
-            errorMessage.append("- Invalid price format\n");
-            isValid = false;
+            displayAlert("Invalid price format.", "error");
+            return false;
         }
 
         // Validate quantity
         try {
             int quantityValue = Integer.parseInt(quantity);
-            if (quantityValue <= 0) {
-                errorMessage.append("- Quantity must be greater than 0\n");
-                isValid = false;
-            } else if (quantityValue > 1000) {
-                errorMessage.append("- Quantity cannot exceed 1000 units\n");
-                isValid = false;
+            if (quantityValue <= 0 || quantityValue > 1000) { // Changed to > instead of >=
+                displayAlert("Quantity must be between 1 and 1000.", "error");
+                return false;
             }
         } catch (NumberFormatException e) {
-            errorMessage.append("- Invalid quantity format\n");
-            isValid = false;
+            displayAlert("Invalid quantity format.", "error");
+            return false;
         }
 
         // Validate category
         if (categoryId <= 0) {
-            errorMessage.append("- Please select a category\n");
-            isValid = false;
+            displayAlert("Please select a category.", "error");
+            return false;
         }
 
-        if (!isValid) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Validation Error");
-            alert.setHeaderText("Please correct the following errors:");
-            alert.setContentText(errorMessage.toString());
-            alert.showAndWait();
-        }
+        return true;
+    }
 
-        return isValid;
+    // Add this method to be used by child classes
+    protected void displayAlert(String message, String type) {
+        // This will be overridden in child classes
     }
 
     @FXML

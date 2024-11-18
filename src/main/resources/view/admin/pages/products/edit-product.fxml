@@ -13,11 +13,17 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
+<?import javafx.geometry.Insets?>
 
 <AnchorPane prefHeight="200.0" prefWidth="400.0" styleClass="root" stylesheets="@../../../resources/css/form.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.admin.pages.products.EditProductController">
     <children>
         <VBox alignment="CENTER" spacing="40" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
             <Text fx:id="viewProductName" styleClass="heading-text" text="Edit Product" />
+
+            <!-- Alert Container -->
+            <VBox fx:id="alertContainer" managed="false" visible="false" styleClass="alert-container">
+                <Label fx:id="alertMessage" styleClass="alert-message" wrapText="true" />
+            </VBox>
 
             <BorderPane styleClass="border-pane" VBox.vgrow="ALWAYS">
                 <center>

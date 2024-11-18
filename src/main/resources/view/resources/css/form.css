@@ -136,3 +136,39 @@
     -fx-max-width: 300px;
     -fx-max-height: 300px;
 }
+
+/* Alert Styling */
+.alert-container {
+    -fx-padding: 12px 20px;
+    -fx-background-radius: 8px;
+    -fx-max-width: 600px;
+    -fx-min-height: 40px;
+    -fx-alignment: center-left;
+}
+
+.alert-container.success {
+    -fx-background-color: #E8F5E9;
+    -fx-border-color: #81C784;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+.alert-container.error {
+    -fx-background-color: #FFEBEE;
+    -fx-border-color: #E57373;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+.alert-container.warning {
+    -fx-background-color: #FFF3E0;
+    -fx-border-color: #FFB74D;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+.alert-message {
+    -fx-text-fill: #2c1c14;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
