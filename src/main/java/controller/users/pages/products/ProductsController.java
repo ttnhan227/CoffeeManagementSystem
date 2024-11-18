@@ -286,6 +286,12 @@ public class ProductsController {
 
     @FXML
     private void btnProductsSearchOnAction() {
+        // If search field is empty, refresh the product list
+        if (fieldProductsSearch.getText().trim().isEmpty()) {
+            listProducts();
+            return;
+        }
+
         Task<ObservableList<Product>> searchProductsTask = new Task<ObservableList<Product>>() {
             @Override
             protected ObservableList<Product> call() {
