@@ -43,7 +43,19 @@ public class EditUserController {
     @FXML
     private ComboBox<String> fieldEditCustomerStatus;
     @FXML
-    private Text viewCustomerResponse;
+    private Text nameError;
+    @FXML
+    private Text emailError;
+    @FXML
+    private Text usernameError;
+    @FXML
+    private Text phoneError;
+    @FXML
+    private Text dobError;
+    @FXML
+    private Text passwordError;
+    @FXML
+    private Text confirmPasswordError;
     @FXML
     private TextField fieldEditCustomerId;
     @FXML
@@ -60,6 +72,15 @@ public class EditUserController {
 
         // Populate the gender combo box with enum values
         fieldEditCustomerGender.setItems(FXCollections.observableArrayList(Gender.values()));
+
+        // Initialize error texts as invisible
+        nameError.setVisible(false);
+        emailError.setVisible(false);
+        usernameError.setVisible(false);
+        phoneError.setVisible(false);
+        dobError.setVisible(false);
+        passwordError.setVisible(false);
+        confirmPasswordError.setVisible(false);
     }
 
     @FXML
@@ -75,6 +96,9 @@ public class EditUserController {
         String newPassword = fieldEditCustomerPassword.getText();
         String confirmPassword = fieldEditCustomerConfirmPassword.getText();
 
+        // Clear all previous error messages
+        clearErrors();
+
         // Clear any previous error styling
         fieldEditCustomerName.getStyleClass().remove("error");
         fieldEditCustomerEmail.getStyleClass().remove("error");
@@ -85,72 +109,73 @@ public class EditUserController {
 
         // Validate Full Name
         if (!HelperMethods.validateFullName(fullname)) {
-            viewCustomerResponse.setText("Full name must start with a capital letter and be 2-50 characters long.");
-            viewCustomerResponse.setVisible(true);
+            nameError.setText("Full name must start with a capital letter and be 2-50 characters long.");
+            nameError.setVisible(true);
             fieldEditCustomerName.getStyleClass().add("error");
             return;
         }
 
         // Validate Email
         if (!HelperMethods.validateEmail(email)) {
-            viewCustomerResponse.setText("Please enter a valid email address.");
-            viewCustomerResponse.setVisible(true);
+            emailError.setText("Please enter a valid email address.");
+            emailError.setVisible(true);
             fieldEditCustomerEmail.getStyleClass().add("error");
             return;
         }
 
         // Validate Username
         if (!HelperMethods.validateUsername(username)) {
-            viewCustomerResponse.setText("Username must be 3-30 characters long, start with a letter.");
-            viewCustomerResponse.setVisible(true);
+            usernameError.setText("Username must be 3-30 characters long, start with a letter.");
+            usernameError.setVisible(true);
             fieldEditCustomerUsername.getStyleClass().add("error");
             return;
         }
 
-        // Check if username is taken (excluding current user)
+        // Check username availability
         try {
             User existingUser = Datasource.getInstance().getUserByUsername(username);
             if (existingUser != null && existingUser.getUsername() != null 
                 && existingUser.getId() != customerId) {
-                viewCustomerResponse.setText("Username is already taken.");
-                viewCustomerResponse.setVisible(true);
+                usernameError.setText("Username is already taken.");
+                usernameError.setVisible(true);
                 fieldEditCustomerUsername.getStyleClass().add("error");
                 return;
             }
         } catch (SQLException e) {
-            viewCustomerResponse.setText("Error checking username availability.");
-            viewCustomerResponse.setVisible(true);
+            usernameError.setText("Error checking username availability.");
+            usernameError.setVisible(true);
             return;
         }
 
+        // Check email availability
         try {
             User existingUser = Datasource.getInstance().getUserByEmail(email);
             if (existingUser != null && existingUser.getEmail() != null 
                 && existingUser.getId() != customerId) {
-                viewCustomerResponse.setText("Email is already registered.");
-                viewCustomerResponse.setVisible(true);
+                emailError.setText("Email is already registered.");
+                emailError.setVisible(true);
                 fieldEditCustomerEmail.getStyleClass().add("error");
                 return;
             }
         } catch (SQLException e) {
-            viewCustomerResponse.setText("Error checking email availability.");
-            viewCustomerResponse.setVisible(true);
+            emailError.setText("Error checking email availability.");
+            emailError.setVisible(true);
             return;
         }
 
         // Validate Password if provided
         if (!newPassword.isEmpty() || !confirmPassword.isEmpty()) {
             if (!newPassword.equals(confirmPassword)) {
-                viewCustomerResponse.setText("Passwords do not match!");
-                viewCustomerResponse.setVisible(true);
+                confirmPasswordError.setText("Passwords do not match!");
+                confirmPasswordError.setVisible(true);
                 fieldEditCustomerPassword.getStyleClass().add("error");
                 fieldEditCustomerConfirmPassword.getStyleClass().add("error");
                 return;
             }
             
             if (!HelperMethods.validatePassword(newPassword)) {
-                viewCustomerResponse.setText("Password must be 8-32 characters with at least one uppercase letter, one lowercase letter, and one number.");
-                viewCustomerResponse.setVisible(true);
+                passwordError.setText("Password must be 8-32 characters with at least one uppercase letter, one lowercase letter, and one number.");
+                passwordError.setVisible(true);
                 fieldEditCustomerPassword.getStyleClass().add("error");
                 return;
             }
@@ -158,15 +183,33 @@ public class EditUserController {
 
         // Validate other required fields
         if (dob == null || gender == null || status == null || phoneNumber.isEmpty()) {
-            viewCustomerResponse.setText("Please fill in all required fields.");
-            viewCustomerResponse.setVisible(true);
+            if (dob == null) {
+                dobError.setText("Date of birth is required.");
+                dobError.setVisible(true);
+                fieldEditCustomerDOB.getStyleClass().add("error");
+            }
+            if (gender == null) {
+                nameError.setText("Gender is required.");
+                nameError.setVisible(true);
+                fieldEditCustomerGender.getStyleClass().add("error");
+            }
+            if (status == null) {
+                emailError.setText("Status is required.");
+                emailError.setVisible(true);
+                fieldEditCustomerStatus.getStyleClass().add("error");
+            }
+            if (phoneNumber.isEmpty()) {
+                phoneError.setText("Phone number is required.");
+                phoneError.setVisible(true);
+                fieldEditCustomerPhone.getStyleClass().add("error");
+            }
             return;
         }
 
         // Validate Date of Birth (must be 18+ years old)
         if (dob == null) {
-            viewCustomerResponse.setText("Please select a date of birth.");
-            viewCustomerResponse.setVisible(true);
+            dobError.setText("Please select a date of birth.");
+            dobError.setVisible(true);
             fieldEditCustomerDOB.getStyleClass().add("error");
             return;
         }
@@ -174,23 +217,23 @@ public class EditUserController {
         // Calculate age
         Period age = Period.between(dob, LocalDate.now());
         if (age.getYears() < 18) {
-            viewCustomerResponse.setText("User must be at least 18 years old.");
-            viewCustomerResponse.setVisible(true);
+            dobError.setText("User must be at least 18 years old.");
+            dobError.setVisible(true);
             fieldEditCustomerDOB.getStyleClass().add("error");
             return;
         }
 
         // Validate Phone Number (numbers only)
         if (!phoneNumber.matches("\\d+")) {
-            viewCustomerResponse.setText("Phone number must contain numbers only.");
-            viewCustomerResponse.setVisible(true);
+            phoneError.setText("Phone number must contain numbers only.");
+            phoneError.setVisible(true);
             fieldEditCustomerPhone.getStyleClass().add("error");
             return;
         }
 
         if (phoneNumber.length() < 10 || phoneNumber.length() > 15) {
-            viewCustomerResponse.setText("Phone number must be between 10 and 15 digits.");
-            viewCustomerResponse.setVisible(true);
+            phoneError.setText("Phone number must be between 10 and 15 digits.");
+            phoneError.setVisible(true);
             fieldEditCustomerPhone.getStyleClass().add("error");
             return;
         }
@@ -229,15 +272,15 @@ public class EditUserController {
                 showModernAlert("Success", "User updated successfully!");
                 redirectToUsersList();
             } else {
-                viewCustomerResponse.setText("Failed to update user.");
-                viewCustomerResponse.setVisible(true);
+                nameError.setText("Failed to update user.");
+                nameError.setVisible(true);
             }
         });
 
         updateCustomerTask.setOnFailed(e -> {
             Throwable throwable = updateCustomerTask.getException();
-            viewCustomerResponse.setText("Error: " + throwable.getMessage());
-            viewCustomerResponse.setVisible(true);
+            nameError.setText("Error: " + throwable.getMessage());
+            nameError.setVisible(true);
         });
 
         new Thread(updateCustomerTask).start();
@@ -278,19 +321,19 @@ public class EditUserController {
                     fieldEditCustomerStatus.setValue(user.getStatus().toLowerCase());
                 }
 
-                viewCustomerResponse.setVisible(false);
-
+                // Clear any visible error messages
+                clearErrors();
             } else {
-                viewCustomerResponse.setText("User not found.");
-                viewCustomerResponse.setVisible(true);
+                nameError.setText("User not found.");
+                nameError.setVisible(true);
                 clearFields();
             }
         });
 
         fillCustomerTask.setOnFailed(e -> {
             Throwable throwable = fillCustomerTask.getException();
-            viewCustomerResponse.setText("Error: " + throwable.getMessage());
-            viewCustomerResponse.setVisible(true);
+            nameError.setText("Error: " + throwable.getMessage());
+            nameError.setVisible(true);
             clearFields();
         });
 
@@ -397,5 +440,16 @@ public class EditUserController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // Clear all previous error messages
+    private void clearErrors() {
+        nameError.setVisible(false);
+        emailError.setVisible(false);
+        usernameError.setVisible(false);
+        phoneError.setVisible(false);
+        dobError.setVisible(false);
+        passwordError.setVisible(false);
+        confirmPasswordError.setVisible(false);
     }
 }

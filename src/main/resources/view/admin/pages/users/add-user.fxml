@@ -18,29 +18,36 @@
 
     <Label text="Full Name:" layoutX="20.0" layoutY="60.0"/>
     <TextField fx:id="fieldCreateUserName" layoutX="150.0" layoutY="60.0" prefWidth="400.0"/>
+    <Text fx:id="nameError" layoutX="150.0" layoutY="90.0" fill="red" visible="false"/>
 
     <Label text="Email:" layoutX="20.0" layoutY="100.0"/>
     <TextField fx:id="fieldCreateUserEmail" layoutX="150.0" layoutY="100.0" prefWidth="400.0"/>
+    <Text fx:id="emailError" layoutX="150.0" layoutY="130.0" fill="red" visible="false"/>
 
     <Label text="Username:" layoutX="20.0" layoutY="140.0"/>
     <TextField fx:id="fieldCreateUserUsername" layoutX="150.0" layoutY="140.0" prefWidth="400.0"/>
+    <Text fx:id="usernameError" layoutX="150.0" layoutY="170.0" fill="red" visible="false"/>
 
     <Label text="Password:" layoutX="20.0" layoutY="180.0"/>
     <PasswordField fx:id="fieldCreateUserPassword" layoutX="150.0" layoutY="180.0" prefWidth="400.0"/>
+    <Text fx:id="passwordError" layoutX="150.0" layoutY="210.0" fill="red" visible="false"/>
 
     <Label text="Date of Birth:" layoutX="20.0" layoutY="220.0"/>
     <DatePicker fx:id="fieldCreateUserDOB" layoutX="150.0" layoutY="220.0" prefWidth="400.0"/>
+    <Text fx:id="dobError" layoutX="150.0" layoutY="250.0" fill="red" visible="false"/>
 
     <Label text="Gender:" layoutX="20.0" layoutY="260.0"/>
     <ComboBox fx:id="fieldCreateUserGender" layoutX="150.0" layoutY="260.0" prefWidth="400.0"/>
+    <Text fx:id="genderError" layoutX="150.0" layoutY="290.0" fill="red" visible="false"/>
 
     <Label text="Phone Number:" layoutX="20.0" layoutY="300.0"/>
     <TextField fx:id="fieldCreateUserPhone" layoutX="150.0" layoutY="300.0" prefWidth="400.0"/>
+    <Text fx:id="phoneError" layoutX="150.0" layoutY="330.0" fill="red" visible="false"/>
 
     <Label text="Status:" layoutX="20.0" layoutY="340.0"/>
     <ComboBox fx:id="fieldCreateUserStatus" layoutX="150.0" layoutY="340.0" prefWidth="400.0"/>
+    <Text fx:id="statusError" layoutX="150.0" layoutY="370.0" fill="red" visible="false"/>
 
     <Button text="Create User" layoutX="150.0" layoutY="400.0" onAction="#btnCreateUserOnAction"/>
-    <Text fx:id="viewCreateUserResponse" layoutX="150.0" layoutY="440.0" fill="red" visible="false"/>
 
 </AnchorPane>

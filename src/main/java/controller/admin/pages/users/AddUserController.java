@@ -54,6 +54,23 @@ public class AddUserController {
     private Text viewCreateUserResponse;
 
     @FXML
+    private Text nameError;
+    @FXML
+    private Text emailError;
+    @FXML
+    private Text usernameError;
+    @FXML
+    private Text passwordError;
+    @FXML
+    private Text phoneError;
+    @FXML
+    private Text dobError;
+    @FXML
+    private Text genderError;
+    @FXML
+    private Text statusError;
+
+    @FXML
     public void initialize() {
         // Initialize combo boxes
         fieldCreateUserStatus.getItems().addAll("enabled", "disabled");
@@ -75,31 +92,44 @@ public class AddUserController {
                 fieldCreateUserPhone.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
+
+        // Initialize error texts as invisible
+        nameError.setVisible(false);
+        emailError.setVisible(false);
+        usernameError.setVisible(false);
+        passwordError.setVisible(false);
+        phoneError.setVisible(false);
+        dobError.setVisible(false);
+        genderError.setVisible(false);
+        statusError.setVisible(false);
     }
 
-    private void showError(String message) {
-        viewCreateUserResponse.setText(message);
-        viewCreateUserResponse.setVisible(true);
-    }
-
-    private void highlightErrorField(TextField field) {
-        field.getStyleClass().add("error");
-        field.setOnKeyTyped(e -> {
-            field.getStyleClass().remove("error");
-            viewCreateUserResponse.setVisible(false);
-        });
-    }
-
-    private void highlightErrorDatePicker(DatePicker datePicker) {
-        datePicker.getStyleClass().add("error");
-        datePicker.setOnAction(e -> {
-            datePicker.getStyleClass().remove("error");
-            viewCreateUserResponse.setVisible(false);
-        });
+    private void clearErrors() {
+        nameError.setVisible(false);
+        emailError.setVisible(false);
+        usernameError.setVisible(false);
+        passwordError.setVisible(false);
+        phoneError.setVisible(false);
+        dobError.setVisible(false);
+        genderError.setVisible(false);
+        statusError.setVisible(false);
+        
+        // Clear error styling
+        fieldCreateUserName.getStyleClass().remove("error");
+        fieldCreateUserEmail.getStyleClass().remove("error");
+        fieldCreateUserUsername.getStyleClass().remove("error");
+        fieldCreateUserPassword.getStyleClass().remove("error");
+        fieldCreateUserPhone.getStyleClass().remove("error");
+        fieldCreateUserDOB.getStyleClass().remove("error");
+        fieldCreateUserGender.getStyleClass().remove("error");
+        fieldCreateUserStatus.getStyleClass().remove("error");
     }
 
     @FXML
     public void btnCreateUserOnAction() {
+        // Clear previous errors
+        clearErrors();
+
         String fullName = fieldCreateUserName.getText();
         String email = fieldCreateUserEmail.getText();
         String username = fieldCreateUserUsername.getText();
@@ -109,25 +139,19 @@ public class AddUserController {
         String phone = fieldCreateUserPhone.getText();
         String status = fieldCreateUserStatus.getValue();
 
-        // Clear previous error styling
-        fieldCreateUserName.getStyleClass().remove("error");
-        fieldCreateUserEmail.getStyleClass().remove("error");
-        fieldCreateUserUsername.getStyleClass().remove("error");
-        fieldCreateUserPassword.getStyleClass().remove("error");
-        fieldCreateUserPhone.getStyleClass().remove("error");
-        fieldCreateUserDOB.getStyleClass().remove("error");
-
         // Validate Full Name
         if (fullName.isEmpty() || !HelperMethods.validateFullName(fullName)) {
-            showError("Full name must start with a capital letter and be 2-50 characters long. Each word should start with a capital letter.");
-            highlightErrorField(fieldCreateUserName);
+            nameError.setText("Full name must start with a capital letter and be 2-50 characters long.");
+            nameError.setVisible(true);
+            fieldCreateUserName.getStyleClass().add("error");
             return;
         }
 
         // Validate Username
         if (username.isEmpty() || !HelperMethods.validateUsername(username)) {
-            showError("Username must be 3-30 characters long, start with a letter, and contain only letters, numbers, or underscores.");
-            highlightErrorField(fieldCreateUserUsername);
+            usernameError.setText("Username must be 3-30 characters long, start with a letter.");
+            usernameError.setVisible(true);
+            fieldCreateUserUsername.getStyleClass().add("error");
             return;
         }
 
@@ -135,43 +159,45 @@ public class AddUserController {
         try {
             User userByUsername = Datasource.getInstance().getUserByUsername(username);
             if (userByUsername != null && userByUsername.getUsername() != null) {
-                showError("Username is already taken.");
-                highlightErrorField(fieldCreateUserUsername);
+                usernameError.setText("Username is already taken.");
+                usernameError.setVisible(true);
+                fieldCreateUserUsername.getStyleClass().add("error");
                 return;
             }
         } catch (SQLException e) {
-            showError("Error checking username availability.");
+            usernameError.setText("Error checking username availability.");
+            usernameError.setVisible(true);
             return;
         }
 
         // Validate Email
         if (email.isEmpty() || !HelperMethods.validateEmail(email)) {
-            showError("Enter a valid email address (e.g., user@example.com).");
-            highlightErrorField(fieldCreateUserEmail);
+            emailError.setText("Enter a valid email address (e.g., user@example.com).");
+            emailError.setVisible(true);
+            fieldCreateUserEmail.getStyleClass().add("error");
             return;
         }
 
-        // Check if email exists using the new method
+        // Check if email exists
         if (Datasource.getInstance().isEmailExists(email)) {
-            showError("Email is already registered.");
-            highlightErrorField(fieldCreateUserEmail);
+            emailError.setText("Email is already registered.");
+            emailError.setVisible(true);
+            fieldCreateUserEmail.getStyleClass().add("error");
             return;
         }
 
         // Validate Password
         if (password.isEmpty() || !HelperMethods.validatePassword(password)) {
-            showError("Password requirements:\n" +
-                     "• 8-32 characters\n" +
-                     "• At least one uppercase letter\n" +
-                     "• At least one lowercase letter\n" +
-                     "• At least one number");
-            highlightErrorField(fieldCreateUserPassword);
+            passwordError.setText("Password must be 8-32 characters with at least one uppercase letter, one lowercase letter, and one number.");
+            passwordError.setVisible(true);
+            fieldCreateUserPassword.getStyleClass().add("error");
             return;
         }
 
         // Validate Date of Birth
         if (dob == null) {
-            showError("Please select a date of birth.");
+            dobError.setText("Please select a date of birth.");
+            dobError.setVisible(true);
             fieldCreateUserDOB.getStyleClass().add("error");
             return;
         }
@@ -179,27 +205,39 @@ public class AddUserController {
         // Calculate age
         Period age = Period.between(dob, LocalDate.now());
         if (age.getYears() < 18) {
-            showError("User must be at least 18 years old.");
+            dobError.setText("User must be at least 18 years old.");
+            dobError.setVisible(true);
             fieldCreateUserDOB.getStyleClass().add("error");
             return;
         }
 
-        // Validate Phone Number (numbers only)
+        // Validate Phone Number
         if (!phone.matches("\\d+")) {
-            showError("Phone number must contain numbers only.");
-            highlightErrorField(fieldCreateUserPhone);
+            phoneError.setText("Phone number must contain numbers only.");
+            phoneError.setVisible(true);
+            fieldCreateUserPhone.getStyleClass().add("error");
             return;
         }
 
         if (phone.length() < 10 || phone.length() > 15) {
-            showError("Phone number must be between 10 and 15 digits.");
-            highlightErrorField(fieldCreateUserPhone);
+            phoneError.setText("Phone number must be between 10 and 15 digits.");
+            phoneError.setVisible(true);
+            fieldCreateUserPhone.getStyleClass().add("error");
             return;
         }
 
-        // Validate other required fields
-        if (gender == null || status == null) {
-            showError("Please fill in all required fields.");
+        // Validate Gender and Status
+        if (gender == null) {
+            genderError.setText("Please select a gender.");
+            genderError.setVisible(true);
+            fieldCreateUserGender.getStyleClass().add("error");
+            return;
+        }
+
+        if (status == null) {
+            statusError.setText("Please select a status.");
+            statusError.setVisible(true);
+            fieldCreateUserStatus.getStyleClass().add("error");
             return;
         }
 
@@ -218,8 +256,8 @@ public class AddUserController {
             showModernAlert("Success", "User created successfully!");
             redirectToUsersList();
         } else {
-            viewCreateUserResponse.setFill(javafx.scene.paint.Color.RED);
-            showError("Failed to create user.");
+            nameError.setText("Failed to create user.");
+            nameError.setVisible(true);
         }
     }
 
@@ -232,6 +270,7 @@ public class AddUserController {
         fieldCreateUserGender.setValue(null);
         fieldCreateUserPhone.clear();
         fieldCreateUserStatus.setValue("enabled");
+        clearErrors();
     }
 
     private void showModernAlert(String title, String content) {
