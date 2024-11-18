@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import model.User;
 import model.User.Gender;
 import model.Datasource;
@@ -21,6 +22,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
 import javafx.scene.layout.Region;
 import javafx.stage.StageStyle;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.StackPane;
+import java.io.IOException;
 
 public class EditUserController {
 
@@ -223,8 +227,7 @@ public class EditUserController {
         updateCustomerTask.setOnSucceeded(e -> {
             if (updateCustomerTask.valueProperty().get()) {
                 showModernAlert("Success", "User updated successfully!");
-                fieldEditCustomerPassword.clear();
-                fieldEditCustomerConfirmPassword.clear();
+                redirectToUsersList();
             } else {
                 viewCustomerResponse.setText("Failed to update user.");
                 viewCustomerResponse.setVisible(true);
@@ -374,5 +377,25 @@ public class EditUserController {
         alert.initStyle(StageStyle.UNDECORATED);
         
         alert.showAndWait();
+    }
+
+    private void redirectToUsersList() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/admin/pages/users/users.fxml"));
+            AnchorPane root = fxmlLoader.load();
+            
+            // Get the current StackPane (usersContent) and update its content
+            StackPane usersContent = (StackPane) fieldEditCustomerName.getScene().lookup("#usersContent");
+            if (usersContent != null) {
+                usersContent.getChildren().clear();
+                usersContent.getChildren().add(root);
+                
+                // Get the controller and refresh the users list
+                UsersController usersController = fxmlLoader.getController();
+                usersController.listUsers();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

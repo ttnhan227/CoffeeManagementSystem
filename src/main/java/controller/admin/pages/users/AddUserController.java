@@ -1,5 +1,6 @@
 package controller.admin.pages.users;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Period;
@@ -7,17 +8,21 @@ import java.time.Period;
 import app.utils.HelperMethods;
 import app.utils.PasswordUtils;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.StageStyle;
 import model.Datasource;
 import model.User;
+
 
 public class AddUserController {
 
@@ -211,7 +216,7 @@ public class AddUserController {
 
         if (success) {
             showModernAlert("Success", "User created successfully!");
-            clearForm();
+            redirectToUsersList();
         } else {
             viewCreateUserResponse.setFill(javafx.scene.paint.Color.RED);
             showError("Failed to create user.");
@@ -285,5 +290,24 @@ public class AddUserController {
         alert.initStyle(StageStyle.UNDECORATED);
         
         alert.showAndWait();
+    }
+    private void redirectToUsersList() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/admin/pages/users/users.fxml"));
+            AnchorPane root = fxmlLoader.load();
+
+            // Get the current StackPane (usersContent) and update its content
+            StackPane usersContent = (StackPane) fieldCreateUserName.getScene().lookup("#usersContent");
+            if (usersContent != null) {
+                usersContent.getChildren().clear();
+                usersContent.getChildren().add(root);
+
+                // Get the controller and refresh the users list
+                UsersController usersController = fxmlLoader.getController();
+                usersController.listUsers();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
