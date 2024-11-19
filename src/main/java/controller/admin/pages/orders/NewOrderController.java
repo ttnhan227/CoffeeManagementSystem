@@ -263,6 +263,9 @@ public class NewOrderController implements Initializable {
         ContextMenu contextMenu = new ContextMenu();
         
         searchField.setOnKeyReleased(event -> {
+            // Remove any existing alert messages
+            searchHBox.getChildren().remove(invalid);
+            
             String searchText = searchField.getText().trim();
             
             // Clear existing items
@@ -293,6 +296,9 @@ public class NewOrderController implements Initializable {
                     }
                     
                     item.setOnAction(e -> {
+                        // Remove any existing alert messages first
+                        searchHBox.getChildren().remove(invalid);
+                        
                         if (product.isDisabled()) {
                             // Show warning for disabled products
                             invalid.setText("This product is currently unavailable");
@@ -326,6 +332,9 @@ public class NewOrderController implements Initializable {
         
         // Prevent the TextField from showing its own dropdown
         searchField.setOnMouseClicked(event -> {
+            // Remove any existing alert messages
+            searchHBox.getChildren().remove(invalid);
+            
             if (!contextMenu.isShowing() && !searchField.getText().trim().isEmpty()) {
                 contextMenu.show(searchField, Side.BOTTOM, 0, 0);
             }
@@ -434,7 +443,7 @@ public class NewOrderController implements Initializable {
                 quantities.set(index, quantities.get(index)+quantitySpinner.getValue());
                 if(quantities.get(index) > product.getQuantity()){
                     quantities.set(index, product.getQuantity());
-                    //invalid.setText("Not enough stock to add");
+                    invalid.setText("Not enough stock to add");
                     noStock.setFill(Color.RED);
                     productHBox.getChildren().add(noStock);
                 }

@@ -261,22 +261,25 @@ public class NewOrderController implements Initializable {
     private void suggestionListLoader() {
         // Create a single ContextMenu instance that we'll reuse
         ContextMenu contextMenu = new ContextMenu();
-
+        
         searchField.setOnKeyReleased(event -> {
+            // Remove any existing alert messages
+            searchHBox.getChildren().remove(invalid);
+            
             String searchText = searchField.getText().trim();
-
+            
             // Clear existing items
             contextMenu.getItems().clear();
-
+            
             // Hide the context menu if search text is empty
             if (searchText.isEmpty()) {
                 contextMenu.hide();
                 return;
             }
-
+            
             // Get all products including disabled ones
             List<Product> products = Datasource.getInstance().searchProducts(searchText, Datasource.ORDER_BY_NONE, true);
-
+            
             if (products != null && !products.isEmpty()) {
                 for (Product product : products) {
                     // Create menu item with status indication
@@ -284,15 +287,18 @@ public class NewOrderController implements Initializable {
                     if (product.isDisabled()) {
                         itemText += " (Unavailable)";
                     }
-
+                    
                     MenuItem item = new MenuItem(itemText);
-
+                    
                     // Style disabled products differently
                     if (product.isDisabled()) {
                         item.setStyle("-fx-text-fill: #999999;"); // Gray out disabled products
                     }
-
+                    
                     item.setOnAction(e -> {
+                        // Remove any existing alert messages first
+                        searchHBox.getChildren().remove(invalid);
+                        
                         if (product.isDisabled()) {
                             // Show warning for disabled products
                             invalid.setText("This product is currently unavailable");
@@ -307,7 +313,7 @@ public class NewOrderController implements Initializable {
                     });
                     contextMenu.getItems().add(item);
                 }
-
+                
                 // Only show if not already showing
                 if (!contextMenu.isShowing()) {
                     contextMenu.show(searchField, Side.BOTTOM, 0, 0);
@@ -316,16 +322,19 @@ public class NewOrderController implements Initializable {
                 contextMenu.hide();
             }
         });
-
+        
         // Hide context menu when focus is lost
         searchField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (!isNowFocused) {
                 contextMenu.hide();
             }
         });
-
+        
         // Prevent the TextField from showing its own dropdown
         searchField.setOnMouseClicked(event -> {
+            // Remove any existing alert messages
+            searchHBox.getChildren().remove(invalid);
+            
             if (!contextMenu.isShowing() && !searchField.getText().trim().isEmpty()) {
                 contextMenu.show(searchField, Side.BOTTOM, 0, 0);
             }
@@ -348,7 +357,7 @@ public class NewOrderController implements Initializable {
                 searchField.setText("");
                 return;
             }
-
+            
             if (tempProduct.getQuantity() == 0) {
                 invalid.setText("Product has no stock remain");
                 invalid.setFill(Color.RED);
