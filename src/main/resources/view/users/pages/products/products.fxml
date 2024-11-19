@@ -46,7 +46,6 @@
                         </rowConstraints>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                             <TextField fx:id="fieldProductsSearch" layoutX="1.0" layoutY="2.0" prefHeight="25.0" prefWidth="291.0" promptText="Search coffee by name or type..." styleClass="search-field" />
-                            <Button layoutX="300.0" layoutY="2.0" mnemonicParsing="false" onAction="#btnProductsSearchOnAction" prefHeight="26.0" styleClass="button,info,sm" text="Search" />
                         </AnchorPane>
                         <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.columnIndex="1">
                             <Button mnemonicParsing="false" onAction="#btnAddProductOnClick" prefHeight="26.0" styleClass="button,success,sm" text="Add New Coffee" />

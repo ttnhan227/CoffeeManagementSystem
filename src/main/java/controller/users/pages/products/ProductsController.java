@@ -1,4 +1,5 @@
 package controller.users.pages.products;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import app.utils.HelperMethods;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
@@ -46,6 +48,8 @@ public class ProductsController {
     private TableColumn<Product, Void> colBtnEdit;
     @FXML
     private Button toggleStatusButton;
+    private ObservableList<Product> allProducts;
+    private ObservableList<Product> filteredProducts;
 
     public static TextFormatter<Double> formatDoubleField() {
         Pattern validEditingState = Pattern.compile("-?(([1-9][0-9]*)|0)?(\\.[0-9]*)?");
@@ -132,6 +136,7 @@ public class ProductsController {
         }
 
         setupImageColumn();
+        setupSearch();
         listProducts();
     }
 
@@ -284,42 +289,43 @@ public class ProductsController {
         alert.showAndWait();
     }
 
-    @FXML
-    private void btnProductsSearchOnAction() {
-        // If search field is empty, refresh the product list
-        if (fieldProductsSearch.getText().trim().isEmpty()) {
-            listProducts();
-            return;
-        }
+    private void setupSearch() {
+        fieldProductsSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.trim().isEmpty()) {
+                listProducts();
+            } else {
+                filterProducts(newValue.trim().toLowerCase());
+            }
+        });
+    }
 
-        Task<ObservableList<Product>> searchProductsTask = new Task<ObservableList<Product>>() {
+    private void filterProducts(String searchText) {
+        Task<Void> searchTask = new Task<>() {
             @Override
-            protected ObservableList<Product> call() {
-                return FXCollections.observableArrayList(
-                        Datasource.getInstance().searchProducts(
-                                fieldProductsSearch.getText().toLowerCase(),
-                                Datasource.ORDER_BY_NONE,
-                                false // Set to true if you want to include disabled products
-                        ));
+            protected Void call() {
+                List<Product> searchResults = Datasource.getInstance().searchProducts(
+                        searchText,
+                        Datasource.ORDER_BY_NONE,
+                        false // Set to true if you want to include disabled products
+                );
+
+                Platform.runLater(() -> {
+                    productsContainer.getChildren().clear();
+                    for (Product product : searchResults) {
+                        try {
+                            addProductCard(product);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+
+                return null;
             }
         };
 
-        searchProductsTask.setOnSucceeded(e -> {
-            productsContainer.getChildren().clear();
-            ObservableList<Product> products = searchProductsTask.getValue();
-            for (Product product : products) {
-                try {
-                    addProductCard(product);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-
-        new Thread(searchProductsTask).start();
+        new Thread(searchTask).start();
     }
-
-
 
     @FXML
     private void btnAddProductOnClick() {
