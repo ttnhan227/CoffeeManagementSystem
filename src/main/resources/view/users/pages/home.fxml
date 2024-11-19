@@ -46,6 +46,24 @@
                         </VBox>
                     </StackPane>
 
+                    <!-- Total Users -->
+                    <StackPane styleClass="stat-card" minWidth="350">
+                        <Rectangle arcHeight="20" arcWidth="20" height="200"
+                                   style="-fx-fill: transparent;" width="350"/>
+                        <VBox alignment="CENTER" spacing="15">
+                            <Label text="Total Users" style="-fx-text-fill: #4F321D;">
+                                <font>
+                                    <Font size="24"/>
+                                </font>
+                            </Label>
+                            <Label fx:id="employeesCount" text="0" style="-fx-text-fill: #2c3e50;">
+                                <font>
+                                    <Font name="System Bold" size="48"/>
+                                </font>
+                            </Label>
+                        </VBox>
+                    </StackPane>
+
                     <!-- Total Orders -->
                     <StackPane styleClass="stat-card" minWidth="350">
                         <Rectangle arcHeight="20" arcWidth="20" height="200"

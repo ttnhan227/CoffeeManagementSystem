@@ -36,7 +36,8 @@ public class UserHomeController {
     public Label productsCount;
     @FXML
     public Label customersCount;
-
+    @FXML
+    public Label employeesCount;
     @FXML
     public Label ordersCount;
     @FXML
@@ -64,6 +65,7 @@ public class UserHomeController {
 
             // Then load other components
             getDashboardProdCount();
+            getDashboardEmployeeCount();
             getDashboardOrderCount();
             getDashboardCustomerCount();
 
@@ -162,6 +164,20 @@ public class UserHomeController {
         new Thread(getDashProdCount).start();
     }
 
+    public void getDashboardEmployeeCount() {
+        Task<Integer> getDashEmployeeCount = new Task<Integer>() {
+            @Override
+            protected Integer call() {
+                return Datasource.getInstance().countAllEmployees();
+            }
+        };
+
+        getDashEmployeeCount.setOnSucceeded(e -> {
+            employeesCount.setText(String.valueOf(getDashEmployeeCount.valueProperty().getValue()));
+        });
+
+        new Thread(getDashEmployeeCount).start();
+    }
 
     public void getDashboardOrderCount() {
         Task<Integer> getDashOrderCount = new Task<Integer>() {
