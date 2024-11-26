@@ -31,6 +31,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.Datasource;
 import model.Order;
+import controller.SessionManager;
 
 public class MainDashboardController implements Initializable {
     @FXML
@@ -59,12 +60,9 @@ public class MainDashboardController implements Initializable {
     @FXML
     public Button btnCustomer;
 
-
-
     public void btnHomeOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/home.fxml");
     }
-
 
     public void btnProductsOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/products/products.fxml");
@@ -83,7 +81,6 @@ public class MainDashboardController implements Initializable {
         controller.listCustomers();
     }
 
-
     public void btnSettingsOnClick(ActionEvent actionEvent) {
         loadFxmlPage("/view/admin/pages/settings/settings.fxml");
     }
@@ -96,6 +93,8 @@ public class MainDashboardController implements Initializable {
 
         if (result.get() == ButtonType.OK) {
             UserSessionController.cleanUserSession();
+            SessionManager.getInstance().clearSession();
+            
             Stage dialogStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             dialogStage.close();
             Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/view/login.fxml")));
@@ -103,7 +102,6 @@ public class MainDashboardController implements Initializable {
             dialogStage.show();
         }
     }
-
 
     private FXMLLoader loadFxmlPage(String view_path) {
         FXMLLoader fxmlLoader = new FXMLLoader();
@@ -210,6 +208,5 @@ public class MainDashboardController implements Initializable {
 public void btnTableOnClick() {
     FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/table.fxml");
 }
-
 
 }

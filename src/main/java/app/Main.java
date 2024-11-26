@@ -1,5 +1,6 @@
 package app;
 
+import controller.SessionManager;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -11,20 +12,28 @@ import model.Datasource;
 
 public class Main extends Application {
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/view/login.fxml"));
+        Parent root;
+        
+        // Check for existing session
+        if (SessionManager.getInstance().hasActiveSession()) {
+            // Load appropriate dashboard based on user role
+            if (SessionManager.getInstance().getUserAdmin() == 0) {
+                root = FXMLLoader.load(getClass().getResource("/view/users/main-dashboard.fxml"));
+            } else {
+                root = FXMLLoader.load(getClass().getResource("/view/admin/main-dashboard.fxml"));
+            }
+            primaryStage.setMaximized(true);
+        } else {
+            root = FXMLLoader.load(getClass().getResource("/view/login.fxml"));
+        }
+        
         primaryStage.setTitle("Coffee Management System");
         primaryStage.getIcons().add(new Image(getClass().getResource("/view/resources/img/brand/pngtree-simple-coffee-shop-logo-png-image_13299684.png").toString()));
-
         primaryStage.setScene(new Scene(root, 800, 800));
         primaryStage.show();
     }
-
 
     @Override
     public void init() throws Exception {
@@ -41,5 +50,7 @@ public class Main extends Application {
         Datasource.getInstance().close();
     }
 
-
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.Datasource;
 import model.Order;
+import controller.SessionManager;
 
 import java.io.IOException;
 import java.net.URL;
@@ -73,6 +74,8 @@ public class UserMainDashboardController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             UserSessionController.cleanUserSession();
+            SessionManager.getInstance().clearSession();
+            
             Stage dialogStage;
             new Stage();
             Node node = (Node) actionEvent.getSource();

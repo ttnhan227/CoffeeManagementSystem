@@ -89,6 +89,16 @@ public class LoginController {
         UserSessionController.setUserAdmin(user.getAdmin());
         UserSessionController.setUserStatus(user.getStatus());
 
+        // Save session
+        SessionManager.getInstance().saveSession(
+            user.getId(),
+            user.getFullname(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getStatus(),
+            user.getAdmin()
+        );
+
         Node node = (Node) event.getSource();
         dialogStage = (Stage) node.getScene().getWindow();
         dialogStage.close();
