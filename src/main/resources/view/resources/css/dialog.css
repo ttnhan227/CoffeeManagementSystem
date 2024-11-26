@@ -1,6 +1,10 @@
 .dialog-pane {
-    -fx-background-color: white;
+    -fx-background-color: #ffffff;
     -fx-padding: 20px;
+}
+
+.dialog-pane .content {
+    -fx-padding: 15px 10px;
 }
 
 .dialog-pane .content.label {
@@ -9,26 +13,36 @@
 }
 
 .dialog-pane .header-panel {
-    -fx-background-color: #8b5e3c;
-    -fx-padding: 12 16;
+    -fx-background-color: #5D4037;
+    -fx-padding: 10px;
 }
 
 .dialog-pane .header-panel .label {
+    -fx-text-fill: white;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-fill: white;
 }
 
-.button-bar .button {
-    -fx-background-radius: 8;
-    -fx-cursor: hand;
-    -fx-font-weight: bold;
-    -fx-padding: 12 24;
-    -fx-background-color: #8b5e3c;
+.dialog-pane .button-bar .button {
+    -fx-background-color: #5D4037;
     -fx-text-fill: white;
-    -fx-effect: dropshadow(gaussian, rgba(139, 94, 60, 0.2), 4, 0, 0, 2);
+    -fx-font-size: 14px;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 4px;
 }
 
-.button-bar .button:hover {
-    -fx-background-color: #a06f47;
+.dialog-pane .button-bar .button:hover {
+    -fx-background-color: #8B6B61;
+}
+
+.dialog-pane .button-bar .button:pressed {
+    -fx-background-color: #321911;
+}
+
+.dialog-pane .button-bar .button.cancel {
+    -fx-background-color: #dc3545;
+}
+
+.dialog-pane .button-bar .button.cancel:hover {
+    -fx-background-color: #c82333;
 }

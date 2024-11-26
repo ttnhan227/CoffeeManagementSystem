@@ -1,14 +1,14 @@
 .chart-pie-label {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2c1c14;
+    -fx-text-fill: #5D4037;
     -fx-padding: 5px;
     -fx-background-color: rgba(255, 255, 255, 0.7);
     -fx-background-radius: 5px;
 }
 
 .chart-pie-label-line {
-    -fx-stroke: #4F321D;
+    -fx-stroke: #5D4037;
     -fx-stroke-width: 2px;
 }
 
@@ -19,7 +19,7 @@
 }
 
 .chart-legend-item {
-    -fx-text-fill: #2c1c14 !important;
+    -fx-text-fill: #5D4037 !important;
     -fx-font-size: 14px !important;
     -fx-font-weight: bold !important;
 }
@@ -34,3 +34,88 @@
 .default-color2.chart-pie { -fx-pie-color: #ffc107; }
 .default-color3.chart-pie { -fx-pie-color: #e91e63; }
 .default-color4.chart-pie { -fx-pie-color: #9c27b0; }
+
+.root {
+    -fx-background-color: #f5f5f5;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* Card Styles */
+.card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+}
+
+.card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 4);
+}
+
+/* Statistics Card */
+.stat-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+}
+
+.stat-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5D4037;
+}
+
+.stat-value {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5D4037;
+}
+
+/* Chart Styles */
+.chart {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-title {
+    -fx-text-fill: #5D4037;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.axis {
+    -fx-tick-label-fill: #5D4037;
+}
+
+.axis-label {
+    -fx-text-fill: #5D4037;
+}
+
+/* Recent Orders Table */
+.table-view {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+}
+
+.table-view .column-header {
+    -fx-background-color: #5D4037;
+    -fx-text-fill: white;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: #ffffff;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: derive(#ffffff, -2%);
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: derive(#8B6B61, 90%);
+}

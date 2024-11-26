@@ -14,6 +14,7 @@ import controller.admin.pages.orders.UserOrdersController;
 import controller.admin.pages.orders.ViewOrderController;
 import controller.admin.pages.products.ProductsController;
 import controller.admin.pages.users.UsersController;
+import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,14 +22,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.geometry.Pos;
 import model.Datasource;
 import model.Order;
 import controller.SessionManager;
@@ -59,6 +58,8 @@ public class MainDashboardController implements Initializable {
     public Button btnNewOrder;
     @FXML
     public Button btnCustomer;
+    @FXML
+    private StackPane loadingOverlay;
 
     public void btnHomeOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/home.fxml");
@@ -69,6 +70,7 @@ public class MainDashboardController implements Initializable {
         ProductsController controller = fxmlLoader.getController();
         controller.listProducts();
     }
+
     public void btnUsersOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/users/users.fxml");
         UsersController controller = fxmlLoader.getController();
@@ -94,58 +96,13 @@ public class MainDashboardController implements Initializable {
         if (result.get() == ButtonType.OK) {
             UserSessionController.cleanUserSession();
             SessionManager.getInstance().clearSession();
-            
+
             Stage dialogStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             dialogStage.close();
             Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/view/login.fxml")));
             dialogStage.setScene(scene);
             dialogStage.show();
         }
-    }
-
-    private FXMLLoader loadFxmlPage(String view_path) {
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        try {
-            fxmlLoader.load(getClass().getResource(view_path).openStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        AnchorPane root = fxmlLoader.getRoot();
-        dashContent.getChildren().clear();
-        dashContent.getChildren().add(root);
-
-        return fxmlLoader;
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        lblUsrName.setText(UserSessionController.getUserFullName());
-
-        // Apply scale transition on buttons for hover effect
-        applyScaleEffect(btnHome);
-        applyScaleEffect(btnProducts);
-        applyScaleEffect(btnUsers);
-        applyScaleEffect(btnOrders);
-//        applyScaleEffect(btnSettings);
-        applyScaleEffect(lblLogOut);
-        applyScaleEffect(btnNewOrder);
-        applyScaleEffect(btnCustomer);
-
-        // Load home page
-        loadFxmlPage("/view/admin/pages/home.fxml");
-    }
-
-    private void applyScaleEffect(Button button) {
-        ScaleTransition scaleIn = new ScaleTransition(Duration.millis(200), button);
-        scaleIn.setToX(1.1); // Slightly enlarge the button
-        scaleIn.setToY(1.1);
-
-        ScaleTransition scaleOut = new ScaleTransition(Duration.millis(200), button);
-        scaleOut.setToX(1); // Reset the button to normal size
-        scaleOut.setToY(1);
-
-        button.setOnMouseEntered(event -> scaleIn.play());
-        button.setOnMouseExited(event -> scaleOut.play());
     }
 
     public void btnOrdersOnClick(ActionEvent actionEvent) {
@@ -163,7 +120,7 @@ public class MainDashboardController implements Initializable {
     public void viewOrderDetail(ActionEvent actionEvent, Order order) throws IOException {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/orders/viewOrder.fxml");
         ViewOrderController controller = fxmlLoader.getController();
-        controller.setAdminMainDashboardController(this); // Correctly set the dashboard controller
+        controller.setAdminMainDashboardController(this);
         controller.setOrder(order);
 
         controller.orderIdField.setText(String.valueOf(order.getId()));
@@ -198,15 +155,118 @@ public class MainDashboardController implements Initializable {
         controller.setMainDashboardController(this);
     }
 
-//    public void btnRevenueOnClick(){
-//        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/revenue.fxml");
-//        //RevenueController controller = fxmlLoader.getController();
-//        //controller.createBarChart();
-//        //.createLineChart();
-//        //controller.updateChart(2024);
-//    }
-public void btnTableOnClick() {
-    FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/table.fxml");
-}
+    public void btnTableOnClick() {
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/admin/pages/table.fxml");
+    }
 
+    private void showLoading() {
+        if (loadingOverlay == null) {
+            loadingOverlay = new StackPane();
+            loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.3);");
+
+            ProgressIndicator progressIndicator = new ProgressIndicator();
+            progressIndicator.setMaxSize(50, 50);
+            progressIndicator.getStyleClass().add("spinner");
+
+            loadingOverlay.getChildren().add(progressIndicator);
+            dashContent.getChildren().add(loadingOverlay);
+            StackPane.setAlignment(loadingOverlay, Pos.CENTER);
+        }
+        loadingOverlay.setVisible(true);
+
+        // Add fade-in animation
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(200), loadingOverlay);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+        fadeIn.play();
+    }
+
+    private void hideLoading() {
+        if (loadingOverlay != null) {
+            // Add fade-out animation
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(200), loadingOverlay);
+            fadeOut.setFromValue(1);
+            fadeOut.setToValue(0);
+            fadeOut.setOnFinished(e -> loadingOverlay.setVisible(false));
+            fadeOut.play();
+        }
+    }
+
+    private FXMLLoader loadFxmlPage(String fxmlPath) {
+        try {
+            showLoading();
+
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Node node = fxmlLoader.load();
+
+            // Add fade-in animation for the new content
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(300), node);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+
+            // Clear existing content with fade-out
+            if (!dashContent.getChildren().isEmpty()) {
+                Node oldContent = dashContent.getChildren().get(0);
+                FadeTransition fadeOut = new FadeTransition(Duration.millis(200), oldContent);
+                fadeOut.setFromValue(1);
+                fadeOut.setToValue(0);
+                fadeOut.setOnFinished(e -> {
+                    dashContent.getChildren().clear();
+                    dashContent.getChildren().add(node);
+                    fadeIn.play();
+                });
+                fadeOut.play();
+            } else {
+                dashContent.getChildren().add(node);
+                fadeIn.play();
+            }
+
+            hideLoading();
+            return fxmlLoader;
+
+        } catch (IOException e) {
+            hideLoading();
+            e.printStackTrace();
+            showError("Error loading page", "Could not load " + fxmlPath);
+            return null;
+        }
+    }
+
+    private void showError(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        lblUsrName.setText(UserSessionController.getUserFullName());
+
+        // Apply scale transition on buttons for hover effect
+        applyScaleEffect(btnHome);
+        applyScaleEffect(btnProducts);
+        applyScaleEffect(btnUsers);
+        applyScaleEffect(btnOrders);
+        applyScaleEffect(lblLogOut);
+        applyScaleEffect(btnNewOrder);
+        applyScaleEffect(btnCustomer);
+
+        // Load home page by default
+        loadFxmlPage("/view/admin/pages/home.fxml");
+    }
+
+    private void applyScaleEffect(Button button) {
+        ScaleTransition scaleIn = new ScaleTransition(Duration.millis(200), button);
+        scaleIn.setToX(1.1);
+        scaleIn.setToY(1.1);
+
+        ScaleTransition scaleOut = new ScaleTransition(Duration.millis(200), button);
+        scaleOut.setToX(1.0);
+        scaleOut.setToY(1.0);
+
+        button.setOnMouseEntered(e -> scaleIn.play());
+        button.setOnMouseExited(e -> scaleOut.play());
+    }
 }

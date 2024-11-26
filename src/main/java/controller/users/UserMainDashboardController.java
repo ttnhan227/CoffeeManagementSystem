@@ -32,11 +32,17 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class UserMainDashboardController implements Initializable {
+    @FXML
     public Button btnHome;
+    @FXML
     public Button btnProducts;
+    @FXML
     public Button btnOrders;
+    @FXML
     public Button lblLogOut;
+    @FXML
     public AnchorPane dashHead;
+    @FXML
     public Button btnNewOrder;
     @FXML
     public Button btnTable;
@@ -47,99 +53,116 @@ public class UserMainDashboardController implements Initializable {
     @FXML
     public Button btnCustomer;
 
-
-    // On Click methods for buttons
-    public void btnHomeOnClick(ActionEvent actionEvent) {
-        FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/home.fxml");
-
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Set user name from session
+        lblUsrName.setText(UserSessionController.getUserFullName());
+        
+        // Load home page by default
+        btnHomeOnClick(null);
+        
+        // Add hover animations to menu buttons
+        addButtonAnimation(btnHome);
+        addButtonAnimation(btnProducts);
+        addButtonAnimation(btnOrders);
+        addButtonAnimation(btnNewOrder);
+        addButtonAnimation(btnCustomer);
+        addButtonAnimation(btnTable);
     }
 
+    private void addButtonAnimation(Button button) {
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(200), button);
+        
+        button.setOnMouseEntered(e -> {
+            scaleTransition.setToX(1.1);
+            scaleTransition.setToY(1.1);
+            scaleTransition.playFromStart();
+        });
+        
+        button.setOnMouseExited(e -> {
+            scaleTransition.setToX(1.0);
+            scaleTransition.setToY(1.0);
+            scaleTransition.playFromStart();
+        });
+    }
+
+    private FXMLLoader loadFxmlPage(String viewPath) {
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        try {
+            fxmlLoader.setLocation(getClass().getResource(viewPath));
+            Node node = fxmlLoader.load();
+            dashContent.getChildren().setAll(node);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showErrorAlert("Error Loading Page", "Failed to load the requested page. Please try again.");
+        }
+        return fxmlLoader;
+    }
+
+    private void showErrorAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    @FXML
+    public void btnHomeOnClick(ActionEvent actionEvent) {
+        FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/home.fxml");
+    }
+
+    @FXML
     public void btnOrdersOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/orders/orders.fxml");
         UserOrdersController ordersController = fxmlLoader.getController();
         ordersController.setMainDashboardController(this);
     }
 
+    @FXML
     public void btnProductsOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/products/products.fxml");
-        ProductsController userController = fxmlLoader.getController();
-        userController.listProducts();
+        ProductsController productsController = fxmlLoader.getController();
+        productsController.listProducts();
     }
 
+    @FXML
     public void btnLogOutOnClick(ActionEvent actionEvent) throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Are you sure that you want to log out?");
         alert.setTitle("Log Out?");
-
+        alert.setHeaderText("Are you sure that you want to log out?");
+        
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
+        if (result.isPresent() && result.get() == ButtonType.OK) {
             UserSessionController.cleanUserSession();
             SessionManager.getInstance().clearSession();
             
-            Stage dialogStage;
-            new Stage();
-            Node node = (Node) actionEvent.getSource();
-            dialogStage = (Stage) node.getScene().getWindow();
-            dialogStage.close();
+            Stage currentStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            currentStage.close();
+            
             Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/view/login.fxml")));
-            dialogStage.setScene(scene);
-            dialogStage.show();
+            Stage newStage = new Stage();
+            newStage.setScene(scene);
+            newStage.show();
         }
     }
 
-    public void onClickNewOrder(ActionEvent actionEvent) throws IOException {
+    @FXML
+    public void onClickNewOrder(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/orders/newOrder.fxml");
         NewOrderController controller = fxmlLoader.getController();
         controller.setMainDashboardController(this);
     }
+
+    @FXML
     public void btnCustomerOnClick(ActionEvent actionEvent) {
         FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/customers/customers.fxml");
         CustomerController controller = fxmlLoader.getController();
     }
 
-    private FXMLLoader loadFxmlPage(String view_path) {
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        try {
-            fxmlLoader.load(getClass().getResource(view_path).openStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        AnchorPane root = fxmlLoader.getRoot();
-        dashContent.getChildren().clear();
-        dashContent.getChildren().add(root);
-
-        return fxmlLoader;
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        lblUsrName.setText(UserSessionController.getUserFullName());
-
-        // Apply scale transition on buttons for hover effect
-        applyScaleEffect(btnHome);
-        applyScaleEffect(btnProducts);
-        applyScaleEffect(btnOrders);
-        applyScaleEffect(btnNewOrder);
-        applyScaleEffect(lblLogOut);
-
-        // Load default page (Home page)
-        FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/home.fxml");
-
-    }
-
-    private void applyScaleEffect(Button button) {
-        // Scale transition for mouse hover effects
-        ScaleTransition scaleIn = new ScaleTransition(Duration.millis(200), button);
-        scaleIn.setToX(1.1); // Slightly enlarge the button
-        scaleIn.setToY(1.1);
-
-        ScaleTransition scaleOut = new ScaleTransition(Duration.millis(200), button);
-        scaleOut.setToX(1); // Reset to original size
-        scaleOut.setToY(1);
-
-        // Trigger scale transition on mouse enter/exit
-        button.setOnMouseEntered(event -> scaleIn.play());
-        button.setOnMouseExited(event -> scaleOut.play());
+    @FXML
+    public void btnTableOnClick(ActionEvent actionEvent) {
+        loadFxmlPage("/view/users/pages/tables/tables.fxml");
     }
 
     public void viewOrderDetail(ActionEvent actionEvent, Order order) throws IOException {
@@ -147,33 +170,9 @@ public class UserMainDashboardController implements Initializable {
         ViewOrderController controller = fxmlLoader.getController();
         controller.setMainDashboardController(this);
         controller.setOrder(order);
-        controller.orderIdField.setText(String.valueOf(order.getId()));
-        controller.employeeField.setText(Datasource.getInstance().searchOneEmployeeById(order.getEmployeeID()).getFullname());
-        if (order.getCustomerID() == null) {
-            controller.customerField.setText("");
-        } else {
-            controller.customerField.setText(Datasource.getInstance().searchOneCustomerById(order.getCustomerID()).getName());
-        }
-        if (order.getTableID() == null) {
-            controller.tableIdField.setText("Take Away");
-        } else {
-            controller.tableIdField.setText(String.valueOf(order.getTableID()));
-            controller.tableCapacity.setText(String.valueOf(Datasource.getInstance().getOneTable(order.getTableID()).getCapacity()));
-        }
-        if (order.getCouponID() == null) {
-            controller.couponIdField.setText("");
-        } else {
-            controller.couponIdField.setText(String.valueOf(order.getCouponID()));
-        }
-
-        controller.setOrderDetailsList(Datasource.getInstance().searchAllOrderDetailByOrderID(order.getId()));
         controller.loadProductList();
         controller.totalText.setText(String.valueOf(order.getTotal()));
         controller.finalText.setText(String.valueOf(order.getFin()));
         controller.discountText.setText(order.getDiscount() + "%");
     }
-    public void btnTableOnClick() {
-        FXMLLoader fxmlLoader = loadFxmlPage("/view/users/pages/table.fxml");
-    }
-
 }

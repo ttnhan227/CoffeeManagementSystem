@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -18,137 +17,140 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane id="AnchorPane" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" stylesheets="@../resources/css/dashboard.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.admin.MainDashboardController" style="-fx-background-color: transparent;">
-    <StackPane layoutY="-9.0" prefHeight="800.0" prefWidth="1280.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <BorderPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <left>
-                <AnchorPane fx:id="acDashBord">
-                    <AnchorPane prefWidth="127.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                            <children>
+<AnchorPane id="AnchorPane" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" stylesheets="@../resources/css/dashboard.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.admin.MainDashboardController">
+    <children>
+        <StackPane layoutY="-9.0" prefHeight="800.0" prefWidth="1280.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <BorderPane prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <left>
+                    <AnchorPane fx:id="acDashBord">
+                        <AnchorPane prefWidth="127.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <children>
 
+                                    <Button fx:id="btnHome" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnHomeOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Home">
+                                        <graphic>
+                                            <ImageView fitHeight="40.0" fitWidth="40.0">
+                                                <Image url="@../resources/img/icon/icon_coffee/home.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="btnProducts" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnProductsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Menu">
+                                        <graphic>
+                                            <ImageView fitHeight="40.0" fitWidth="40.0">
+                                                <Image url="@../resources/img/icon/icon_coffee/menu.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="btnNewOrder" contentDisplay="TOP" mnemonicParsing="false" onAction="#onClickNewOrder" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="New Order">
+                                        <graphic>
+                                            <ImageView fitHeight="40.0" fitWidth="40.0">
+                                                <Image url="@../resources/img/icon/icon_coffee/new_order.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="btnOrders" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnOrdersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Orders">
+                                        <graphic>
+                                            <ImageView fitHeight="40.0" fitWidth="40.0">
+                                                <Image url="@../resources/img/icon/icon_coffee/order.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="btnUsers" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnUsersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Users">
+                                        <graphic>
+                                            <ImageView fitHeight="40.0" fitWidth="40.0">
+                                                <Image url="@../resources/img/icon/icon_coffee/user.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="btnCoupon" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCouponOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Coupon">
+                                        <graphic>
+                                            <ImageView fitHeight="40.0" fitWidth="40.0">
+                                                <Image url="@../resources/img/icon/icon_coffee/voucher2.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="btnCustomer" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCustomerOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Customer">
+                                        <graphic>
+                                            <ImageView fitHeight="40.0" fitWidth="40.0">
+                                                <Image url="@../resources/img/icon/icon_coffee/customer.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="btnTable" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnTableOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Table">
+                                        <graphic>
+                                            <ImageView fitHeight="40.0" fitWidth="40.0">
+                                                <Image url="@../resources/img/icon/icon_coffee/table.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </Button>
+<!--                                    <Button fx:id="btnSettings" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnSettingsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Settings">-->
+<!--                                        <graphic>-->
+<!--                                            <ImageView fitHeight="40.0" fitWidth="40.0">-->
+<!--                                                <Image url="@../resources/img/icon/icon_coffee/setting.png"/>-->
+<!--                                            </ImageView>-->
+<!--                                        </graphic>-->
+<!--                                    </Button>-->
 
-                                <Button fx:id="btnHome" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnHomeOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Home">
-                                    <graphic>
-                                        <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <Image url="@../resources/img/icon/icon_coffee/home.png"/>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="btnProducts" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnProductsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Menu">
-                                    <graphic>
-                                        <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <Image url="@../resources/img/icon/icon_coffee/menu.png"/>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="btnNewOrder" contentDisplay="TOP" mnemonicParsing="false" onAction="#onClickNewOrder" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="New Order">
-                                    <graphic>
-                                        <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <Image url="@../resources/img/icon/icon_coffee/new_order.png"/>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="btnOrders" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnOrdersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Orders">
-                                    <graphic>
-                                        <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <Image url="@../resources/img/icon/icon_coffee/order.png"/>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="btnUsers" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnUsersOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Users">
-                                    <graphic>
-                                        <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <Image url="@../resources/img/icon/icon_coffee/user.png"/>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="btnCoupon" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCouponOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Coupon">
-                                    <graphic>
-                                        <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <Image url="@../resources/img/icon/icon_coffee/voucher2.png"/>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="btnCustomer" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCustomerOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Customer">
-                                    <graphic>
-                                        <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <Image url="@../resources/img/icon/icon_coffee/customer.png"/>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="btnTable" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnTableOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Table">
-                                    <graphic>
-                                        <ImageView fitHeight="40.0" fitWidth="40.0">
-                                            <Image url="@../resources/img/icon/icon_coffee/table.png"/>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-<!--                                <Button fx:id="btnSettings" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnSettingsOnClick" prefHeight="78.0" prefWidth="127.0" styleClass="menuButton" text="Settings">-->
-<!--                                    <graphic>-->
-<!--                                        <ImageView fitHeight="40.0" fitWidth="40.0">-->
-<!--                                            <Image url="@../resources/img/icon/icon_coffee/setting.png"/>-->
-<!--                                        </ImageView>-->
-<!--                                    </graphic>-->
-<!--                                </Button>-->
+                                </children>
+                            </VBox>
 
-                            </children>
-                        </VBox>
-
-                    </AnchorPane>
-                </AnchorPane>
-            </left>
-            <center>
-                <StackPane fx:id="dashContent" prefHeight="150.0" prefWidth="200.0" />
-            </center>
-            <top>
-                <AnchorPane fx:id="dashHead" prefHeight="42.0" prefWidth="753.0" BorderPane.alignment="CENTER">
-                    <effect>
-                        <DropShadow height="50.0" radius="12.0" spread="0.15" width="0.0">
-                            <color>
-                                <Color red="0.7368420958518982" green="0.7368420958518982" blue="0.7368420958518982" />
-                            </color>
-                        </DropShadow>
-                    </effect>
-                    <GridPane layoutX="14.0" layoutY="-15.0" prefHeight="60.0" prefWidth="751.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        </rowConstraints>
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
-                            <children>
-                                <ImageView fitHeight="47.0" fitWidth="45.0" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../resources/img/brand/pngtree-simple-coffee-shop-logo-png-image_13299684.png" />
-                                    </image>
-                                </ImageView>
-                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Coffee Management System" wrappingWidth="228.810546875">
-                                    <font>
-                                        <Font name="System Italic" size="17.0" />
-                                    </font>
-                                </Text>
-                            </children>
-                        </HBox>
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                         </AnchorPane>
-                        <HBox alignment="CENTER_RIGHT" prefHeight="60.0" prefWidth="200.0" GridPane.columnIndex="2">
-                            <Label alignment="TOP_RIGHT" text="Hi " textAlignment="RIGHT">
-                            </Label>
-                            <Label fx:id="lblUsrName" alignment="TOP_RIGHT" textAlignment="RIGHT">
-                            </Label>
-                            <Button fx:id="lblLogOut" contentDisplay="TOP" layoutY="300.0" mnemonicParsing="false" onAction="#btnLogOutOnClick" styleClass="button, xs, danger" text="Log Out">
-                                <HBox.margin>
-                                    <Insets left="10.0" right="10.0" />
-                                </HBox.margin>
-                            </Button>
-                        </HBox>
-                    </GridPane>
-                </AnchorPane>
-            </top>
-        </BorderPane>
-    </StackPane>
+                    </AnchorPane>
+                </left>
+                <center>
+                    <StackPane fx:id="dashContent" prefHeight="150.0" prefWidth="200.0">
+                        <!-- Loading overlay will be added dynamically -->
+                    </StackPane>
+                </center>
+                <top>
+                    <AnchorPane fx:id="dashHead" prefHeight="42.0" prefWidth="753.0" BorderPane.alignment="CENTER">
+                        <effect>
+                            <DropShadow height="50.0" radius="12.0" spread="0.15" width="0.0">
+                                <color>
+                                    <Color red="0.7368420958518982" green="0.7368420958518982" blue="0.7368420958518982" />
+                                </color>
+                            </DropShadow>
+                        </effect>
+                        <GridPane layoutX="14.0" layoutY="-15.0" prefHeight="60.0" prefWidth="751.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                <children>
+                                    <ImageView fitHeight="47.0" fitWidth="45.0" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../resources/img/brand/pngtree-simple-coffee-shop-logo-png-image_13299684.png" />
+                                        </image>
+                                    </ImageView>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Coffee Management System" wrappingWidth="228.810546875">
+                                        <font>
+                                            <Font name="System Italic" size="17.0" />
+                                        </font>
+                                    </Text>
+                                </children>
+                            </HBox>
+                            <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+                            </AnchorPane>
+                            <HBox alignment="CENTER_RIGHT" prefHeight="60.0" prefWidth="200.0" GridPane.columnIndex="2">
+                                <Label alignment="TOP_RIGHT" text="Hi " textAlignment="RIGHT">
+                                </Label>
+                                <Label fx:id="lblUsrName" alignment="TOP_RIGHT" textAlignment="RIGHT">
+                                </Label>
+                                <Button fx:id="lblLogOut" contentDisplay="TOP" layoutY="300.0" mnemonicParsing="false" onAction="#btnLogOutOnClick" styleClass="button, xs, danger" text="Log Out">
+                                    <HBox.margin>
+                                        <Insets left="10.0" right="10.0" />
+                                    </HBox.margin>
+                                </Button>
+                            </HBox>
+                        </GridPane>
+                    </AnchorPane>
+                </top>
+            </BorderPane>
+        </StackPane>
+    </children>
 </AnchorPane>
